@@ -1,0 +1,1 @@
+ this is my first commit to gitHub, please take this and end this endless procedure of setting up git!
