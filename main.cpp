@@ -245,10 +245,6 @@ Graph::DFS(int startNode, int noOfNodesTraversed) {
     while(dfsStack.empty() == false) {
         
         pTempNode = dfsStack.top();
-        if( pTempNode != NULL) {
-            
-            dfsStack.pop();
-        }
         
         for ( i = 0; i< __pAdjList[pTempNode->_vIndex-1].size(); i++) {
             
@@ -264,6 +260,10 @@ Graph::DFS(int startNode, int noOfNodesTraversed) {
                 i= 0;
                 noOfNodesTraversed++;
             }
+        }
+        if( pTempNode != NULL) {  //The current node has been processed and all nodes connected to it have been traversed.      
+            
+            dfsStack.pop();
         }
     }
     
