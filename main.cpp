@@ -11,6 +11,7 @@
 #include <list>
 #include <stack>
 #include <queue>
+#include <map>
 
 using namespace std;
 
@@ -42,6 +43,7 @@ class Graph {
     
     int __totalVertices;
     vector<GraphNode*>*     __pAdjList;
+    map<int, vector<GraphNode*>*>*  __pAdjMap;
 public:
     Graph()    {
         
@@ -76,6 +78,7 @@ Graph::Construct(int noOfVertices) {
         return r;
     __totalVertices= noOfVertices;
     __pAdjList = new (std::nothrow) vector<GraphNode*>[__totalVertices];
+    __pAdjMap = new (std::nothrow) map<int, vector<GraphNode*>*>;
     
     r = true;
     return r;
@@ -88,6 +91,7 @@ Graph::CreateGraph(int noOfVertices){
     
     __totalVertices= noOfVertices;
     __pAdjList = new (std::nothrow) vector<GraphNode*>[__totalVertices];
+    __pAdjMap = new (std::nothrow) map<int, vector<GraphNode*>*>;
     //return pGraph;
     return NULL;
     
@@ -112,6 +116,39 @@ Graph::PrintAdjList(void) {
         }
         cout<<endl;
     }
+    
+    std::cout<<"GRAPH FROM HASHMAP"<<endl;
+    for (auto& x: *__pAdjMap) {
+        std::cout << x.first << ": " << '\n';
+    }
+    
+    std::cout<<"ANOTHER WAY OF PRINTING HASHMAP"<<endl;
+    while (!__pAdjMap->empty())
+    {
+        vector<GraphNode*>* pAdjList = NULL;
+        
+        std::cout <<"#"<<__pAdjMap->begin()->first<<" ";
+        pAdjList = __pAdjMap->begin()->second;
+        
+        if (pAdjList != NULL ) {
+            
+            for ( int i = 0; i < pAdjList->size();i++) {
+            
+                GraphNode*  pTempNode = pAdjList->at(i);
+                if ( pTempNode != NULL)
+                    std::cout<< pTempNode->_vIndex<<" ";
+                else
+                    std::cout<<" ";
+            }
+        }
+        pAdjList->clear();
+        delete pAdjList;
+        pAdjList = NULL;
+        
+        std::cout<<endl;
+        __pAdjMap->erase(__pAdjMap->begin());
+    }
+    
 }
 void
 Graph::ClearGraph(void) {
@@ -131,14 +168,20 @@ Graph::ClearGraph(void) {
             __pAdjList[i].clear();
         }
     }
+    
+    __pAdjMap->clear();
+    delete __pAdjMap;
+    __pAdjMap = NULL;
+    
     delete [] __pAdjList;
     return;
 }
 void 
 Graph::AddEdge(int source, int dest) {
 
-    int j=0;    
     GraphNode*      pSourceNode = NULL, *pDestinationNode = NULL;
+    std::map<int, vector<GraphNode*>*>::iterator mapItrSource;
+    std::map<int, vector<GraphNode*>*>::iterator mapItrDesti;
     
     if( __pAdjList[source-1].size() == 0) {
         
@@ -165,6 +208,60 @@ Graph::AddEdge(int source, int dest) {
         return;
     if ( pDestinationNode == NULL )
         return;
+    
+    if ( __pAdjMap->size() == 0 ) {
+        
+        vector<GraphNode*>*     pLocalAdjList = NULL;
+        pLocalAdjList = new (std::nothrow) vector<GraphNode*>;
+        
+        pLocalAdjList->push_back(pDestinationNode);
+        __pAdjMap->insert(std::pair<int, vector<GraphNode*>*> (source, pLocalAdjList));
+        
+        pLocalAdjList = NULL;
+        pLocalAdjList = new (std::nothrow) vector<GraphNode*>;
+        
+        pLocalAdjList->push_back(pSourceNode);
+        __pAdjMap->insert(std::pair<int, vector<GraphNode*>*> (dest, pLocalAdjList));
+        
+    }
+    else {
+        
+        vector<GraphNode*>* pLocalList = NULL;
+        mapItrSource =  __pAdjMap->find(source);
+        
+        pLocalList = mapItrSource->second;
+        if( pLocalList != NULL && mapItrSource != __pAdjMap->end()) {
+            
+            pLocalList->push_back(pDestinationNode);
+        }
+        else {
+            
+            vector<GraphNode*>*     pLocalAdjList = NULL;
+            pLocalAdjList = new (std::nothrow) vector<GraphNode*>;
+            
+            pLocalAdjList->push_back(pDestinationNode);
+            __pAdjMap->insert(std::pair<int, vector<GraphNode*>*> (source, pLocalAdjList));
+
+        }
+        
+        mapItrDesti =  __pAdjMap->find(dest);
+        
+        pLocalList = NULL;
+        pLocalList = mapItrDesti->second;
+        if( pLocalList != NULL && mapItrDesti != __pAdjMap->end()) {
+            
+            pLocalList->push_back(pSourceNode);
+        }
+        else {
+            
+            vector<GraphNode*>*     pLocalAdjList = NULL;
+            pLocalAdjList = new (std::nothrow) vector<GraphNode*>;
+            
+            pLocalAdjList->push_back(pSourceNode);
+            __pAdjMap->insert(std::pair<int, vector<GraphNode*>*> (dest, pLocalAdjList));
+        }
+        
+    }
     
     __pAdjList[source-1].push_back(pDestinationNode);
     __pAdjList[dest-1].push_back(pSourceNode);
