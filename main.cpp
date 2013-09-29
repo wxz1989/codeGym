@@ -15,11 +15,19 @@
 
 using namespace std;
 
-//sample input.
+/****Sample input-1****/
 //First line of input
 //9 10
 //Second line of input.
 //4 1 1 2 1 5 2 3 2 7 3 7 7 6 4 8 5 8 8 9
+
+/****Sample input-2****/
+//4 3
+//1 2 2 4 2 5
+
+/****Sample input-3****/
+//11 10
+//1 2 1 7 7 8 8 9 7 11 9 10 2 3 5 6 3 4 4 5
 
 
 class GraphNode {
