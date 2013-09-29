@@ -22,17 +22,23 @@ using namespace std;
 //4 1 1 2 1 5 2 3 2 7 3 7 7 6 4 8 5 8 8 9
 
 
-class GraphNode
-{
+class GraphNode {
+    
 public:
-    GraphNode()
-    {
+    GraphNode() {
+        
         _vIndex = -1;
         _isProcessed = false;
     }
-    GraphNode(int vIndex)
-    {
+    GraphNode(int vIndex) {
+        
         _vIndex = vIndex;
+        _isProcessed = false;
+    }
+    
+    ~GraphNode() {
+        
+        _vIndex = -1;
         _isProcessed = false;
     }
     int _vIndex;
@@ -43,6 +49,7 @@ class Graph {
     
     int __totalVertices;
     map<int, map<int, GraphNode*>*>*  __pAdjMap;
+    vector<GraphNode*>  __nodeTracker;
 public:
     Graph()    {
         
@@ -52,14 +59,19 @@ public:
     
     Graph(int V)    {
         
-        CreateGraph(V);
+        __totalVertices = V;
+        __pAdjMap = NULL;
         
     }
+    
+    ~Graph();
     
     Graph*  CreateGraph(int noOfVertices);
     bool    Construct(int noOfVertices);
     void    PrintAdjList(void);
     void    ClearGraph(void);
+    
+    GraphNode*      CreateNewNode(int);
     void    AddEdge(int source, int dest);
     
     GraphNode* FindNode(int Source, int Destination);
@@ -71,6 +83,14 @@ public:
     void    ArticulationPoints(void);
 };
 
+
+Graph::~Graph() {
+    
+    if( __pAdjMap != NULL) {
+        
+        ClearGraph();
+    }
+}
 
 bool
 Graph::Construct(int noOfVertices) {
@@ -87,12 +107,8 @@ Graph::Construct(int noOfVertices) {
 Graph*
 Graph::CreateGraph(int noOfVertices){
     
-    //Graph*  pGraph = NULL;
-    //pGraph = new (std::nothrow) Graph(noOfVertices);
-    
     __totalVertices= noOfVertices;
     __pAdjMap = new (std::nothrow) map<int, map<int, GraphNode*>*>;
-    //return pGraph;
     return NULL;
     
 }
@@ -103,7 +119,7 @@ Graph::PrintAdjList(void) {
     std::map<int, GraphNode*>::iterator mapItrSource;
     std::map<int, map<int, GraphNode*>*>::iterator mapItrDesti;
     
-    std::cout<<"ADJACENCY LIST USING HASHMAP"<<endl;
+    std::cout<<"Adjacency List : "<<endl;
     
     if ( __pAdjMap == NULL)
         return;
@@ -119,7 +135,7 @@ Graph::PrintAdjList(void) {
         
         if (pAdjList != NULL && mapItrDesti != __pAdjMap->end()) {
             
-            std::cout<<"#"<<mapItrDesti->first;
+            std::cout<<"#"<<mapItrDesti->first<<":";
             for ( mapItrSource = pAdjList->begin(); mapItrSource != pAdjList->end(); ++mapItrSource){
                 
                 pNode = mapItrSource->second;
@@ -137,16 +153,27 @@ void
 Graph::ClearGraph(void) {
     
     GraphNode* pNode = NULL;
+    
+    for(int i = 0; i <__nodeTracker.size();i++) {
+        
+        pNode = __nodeTracker.at(i);
+        
+        if(pNode!= NULL) {
+            
+            delete pNode;
+            pNode = NULL;
+        }
+    }
+    __nodeTracker.clear();
+    
     while (!__pAdjMap->empty()) {
         
         map<int, GraphNode*>*  pAdjList = NULL;
         pAdjList = __pAdjMap->begin()->second;
         
-        if (pAdjList != NULL ) {
+        if (pAdjList != NULL  && __pAdjMap->begin() != __pAdjMap->end()) {
             
             while (!pAdjList->empty()) {
-                
-                pNode = pAdjList->begin()->second;
                 
                 pAdjList->erase(pAdjList->begin());
             }
@@ -156,12 +183,28 @@ Graph::ClearGraph(void) {
         }
         __pAdjMap->erase(__pAdjMap->begin());
     }
-    
     __pAdjMap->clear();
-    delete __pAdjMap;
-    __pAdjMap = NULL;
+    
+    if ( __pAdjMap != NULL ) {
+        
+        delete __pAdjMap;
+        __pAdjMap = NULL;
+    }
     
 }
+
+GraphNode*
+Graph::CreateNewNode(int verticeValue) {
+    
+    GraphNode*       pNode = NULL;
+    pNode = new (std::nothrow) GraphNode(verticeValue);
+    
+    if ( pNode!= NULL)
+        __nodeTracker.push_back(pNode);
+    return pNode;
+}
+
+
 void 
 Graph::AddEdge(int source, int dest) {
 
@@ -173,8 +216,8 @@ Graph::AddEdge(int source, int dest) {
         
         map<int, GraphNode*>*   pLocalMap = NULL;
         
-        pSourceNode = new (std::nothrow) GraphNode(source);
-        pDestinationNode = new (std::nothrow) GraphNode(dest);
+        pSourceNode =  CreateNewNode(source);
+        pDestinationNode = CreateNewNode(dest);
         
         pLocalMap = new (std::nothrow) map<int, GraphNode*>;
         pLocalMap->insert(std::pair<int, GraphNode*>(dest, pDestinationNode));
@@ -201,8 +244,10 @@ Graph::AddEdge(int source, int dest) {
         pLocalList = mapItrSource->second;
         if( pLocalList != NULL && mapItrSource != __pAdjMap->end()) {
             
-            if ( pNode == NULL)
-                pDestinationNode = new (std::nothrow) GraphNode(dest);
+            if ( pNode == NULL) {
+                
+                pDestinationNode = CreateNewNode(dest);
+            }
             else
                 pDestinationNode = pNode;
             
@@ -213,8 +258,10 @@ Graph::AddEdge(int source, int dest) {
             map<int, GraphNode*>*     pLocaList = NULL;
             pLocaList = new (std::nothrow) map<int, GraphNode*>;
             
-            if ( pNode == NULL)
-                pDestinationNode = new (std::nothrow) GraphNode(dest);
+            if ( pNode == NULL) {
+                
+                pDestinationNode = CreateNewNode(dest);
+            }
             else
                 pDestinationNode = pNode;
             
@@ -238,7 +285,7 @@ Graph::AddEdge(int source, int dest) {
         if( pLocalList != NULL && mapItrDesti != __pAdjMap->end()) {
             
             if ( pNode == NULL)
-                pSourceNode = new (std::nothrow) GraphNode(source);
+                pSourceNode =  CreateNewNode(source);
             else
                 pSourceNode = pNode;
             
@@ -250,7 +297,7 @@ Graph::AddEdge(int source, int dest) {
             pLocaList = new (std::nothrow) map<int, GraphNode*>;
             
             if ( pNode == NULL)
-                pSourceNode = new (std::nothrow) GraphNode(source);
+                pSourceNode = CreateNewNode(source);
             else
                 pSourceNode = pNode;
             
@@ -365,13 +412,12 @@ Graph::DFS(int startNode, int noOfNodesTraversed) {
         
         pTempNode = dfsStack.top();
         
-    JUMP:
         mapItr = __pAdjMap->find(pTempNode->_vIndex);
         pLocalMap = mapItr->second;
         
         if ( pLocalMap != NULL && mapItr != __pAdjMap->end()) {
             
-            for ( mapItrLocal = pLocalMap->begin(); mapItrLocal != pLocalMap->end(); ++ mapItrLocal) {
+            for ( mapItrLocal = pLocalMap->begin(); mapItrLocal != pLocalMap->end();) {
                 
                 pPushNode = mapItrLocal->second;
                 
@@ -386,13 +432,27 @@ Graph::DFS(int startNode, int noOfNodesTraversed) {
                         
                         pTempNode = pPushNode;
                         
-                        goto JUMP;
                         noOfNodesTraversed++;
+                        
+                        
+                        //New map to traverse.
+                        mapItr = __pAdjMap->find(pTempNode->_vIndex);
+                        pLocalMap = mapItr->second;
+                        
+                        if( pLocalMap!= NULL && mapItr != __pAdjMap->end()) {
+                            
+                            mapItrLocal = pLocalMap->begin();
+                            continue;
+                        }
+                        else
+                            ++mapItrLocal++;
                     }
+                    else
+                        ++mapItrLocal;
                 }
             }
         }
-        if( pTempNode != NULL)   //The current node has been processed and all nodes connected to it have been traversed.
+        if( pTempNode != NULL)
             dfsStack.pop();
     }
     
@@ -422,17 +482,6 @@ Graph::FindNode(int Source, int Destination) {
         
         if (pAdjList != NULL && mapItrDesti != __pAdjMap->end()) {
             
-            /*
-            for ( mapItrSource = pAdjList->begin(); mapItrSource != pAdjList->end(); ++mapItrSource){
-             
-                pNode = mapItrSource->second;
-                
-                if ( pNode != NULL && mapItrSource != pAdjList->end()) {
-                    
-                    if ( pNode->_vIndex == Destination)
-                        return pNode;
-                }
-            }*/
             mapItrSource = pAdjList->find(Destination);
             pNode = mapItrSource->second;
             
@@ -446,8 +495,8 @@ Graph::FindNode(int Source, int Destination) {
 }
 
 
-int main(int argc, const char * argv[])
-{
+int main(int argc, const char * argv[]) {
+    
     int V =0, E=0;
     int startNode=-1;
     
