@@ -6,6 +6,11 @@
 //  Copyright (c) 2013 Rakesh Gajjar. All rights reserved.
 //
 
+
+//Currently this code works only for undirected graphs.
+//With little changes, it can be easily upgraded to support directed graphs.
+
+
 #include <iostream>
 #include <vector>
 #include <list>
@@ -28,6 +33,14 @@ using namespace std;
 /****Sample input-3****/
 //11 10
 //1 2 1 7 7 8 8 9 7 11 9 10 2 3 5 6 3 4 4 5
+
+/****Sample Input-4***/
+// 7 11
+//5 7 6 7 1 2 6 5 4 5 4 6 2 3 3 5 4 2 2 5 1 4
+
+/***Sample Input-5***/
+//6 7
+//2 5 5 4 4 3 2 3 0 1 2 1 5 0
 
 
 class GraphNode {
@@ -329,21 +342,17 @@ Graph::BFS(int startNode, int noOfNodesTraversed) {
     map<int, GraphNode*>*       pLocalMap = NULL;
     
     queue<GraphNode*> bfsQueue;
-
-    
-    if(startNode < 0 || startNode > __totalVertices) {
-        
-        std::cout<<"Invalid node to start"<<endl;
-        return;
-    }
     
     std::cout<<"Breadth First Search:";
     
     pTempNode = FindNode(0, startNode);
     if ( pTempNode != NULL)
         pTempNode->_isProcessed = true;
-    else
+    else {
+        
+        std::cout<<"Invalid node to start"<<endl;
         return;
+    }
     
     bfsQueue.push(pTempNode);
     noOfNodesTraversed++;
@@ -395,19 +404,16 @@ Graph::DFS(int startNode, int noOfNodesTraversed) {
     
     stack<GraphNode*>   dfsStack;
     
-    if(startNode < 0 || startNode > __totalVertices) {
-        
-        std::cout<<"Invalid node to start"<<endl;
-        return;
-    }
-    
     std::cout<<"Depth First Search:";
     
     pTempNode = FindNode(0, startNode);
     if ( pTempNode != NULL)
         pTempNode->_isProcessed = true;
-    else
+    else {
+        
+        std::cout<<"Invalid node to start"<<endl;
         return;
+    }
     
     dfsStack.push(pTempNode);
     
@@ -453,7 +459,7 @@ Graph::DFS(int startNode, int noOfNodesTraversed) {
                             continue;
                         }
                         else
-                            ++mapItrLocal++;
+                            ++mapItrLocal;
                     }
                     else
                         ++mapItrLocal;
