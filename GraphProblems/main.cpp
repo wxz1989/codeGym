@@ -91,7 +91,7 @@ public:
     void    ArticulationPoints(void);
 };
 
-
+//Consructor
 Graph::~Graph() {
     
     if( __pAdjMap != NULL) {
