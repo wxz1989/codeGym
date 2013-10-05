@@ -42,6 +42,19 @@ using namespace std;
 //6 7
 //2 5 5 4 4 3 2 3 0 1 2 1 5 0
 
+/****Sample Input-6****/
+//6 6
+//5 0 5 2 4 0 4 1 2 3 3 1
+
+
+enum  EdgeDirection{
+
+    DIR_UNDIRECTED=0,
+    DIR_SOURCE_TO_DEST = 0,
+    DIR_DEST_TO_SOURCE,
+    DIR_BIDIRECTIONAL,
+    DIR_MAX,
+};
 
 class GraphNode {
     
@@ -93,9 +106,9 @@ public:
     void    ClearGraph(void);
     
     GraphNode*      CreateNewNode(int);
-    void    AddEdge(int source, int dest);
+    void    AddEdge(int source, int dest, bool directedEdge=false);
     
-    GraphNode* FindNode(int Source, int Destination);
+    GraphNode* FindNode(int Destination);
     
     void    BFS(int starNode, int noOfNodesTraversed);
     void    DFS(int starNode, int noOfNodesTraversed);
@@ -119,6 +132,7 @@ Graph::Construct(int noOfVertices) {
     bool r = false;
     if ( noOfVertices <= 0)
         return r;
+    
     __totalVertices= noOfVertices;
     __pAdjMap = new (std::nothrow) map<int, map<int, GraphNode*>*>;
     
@@ -227,7 +241,7 @@ Graph::CreateNewNode(int verticeValue) {
 
 
 void 
-Graph::AddEdge(int source, int dest) {
+Graph::AddEdge(int source, int dest, bool directedEdge) {
 
     GraphNode*      pSourceNode = NULL, *pDestinationNode = NULL;
     std::map<int, map<int, GraphNode*>*>::iterator mapItrSource;
@@ -240,37 +254,54 @@ Graph::AddEdge(int source, int dest) {
         pSourceNode =  CreateNewNode(source);
         pDestinationNode = CreateNewNode(dest);
         
+        if( pSourceNode == NULL)
+            return;
+        if ( pDestinationNode == NULL)
+            return;
+        
+        
+        //Destination is added to Source vertice.
+        //The name source mean directional edge starts from Source node and reaches to destination vertice.
         pLocalMap = new (std::nothrow) map<int, GraphNode*>;
         pLocalMap->insert(std::pair<int, GraphNode*>(dest, pDestinationNode));
         
         __pAdjMap->insert(std::pair<int, map<int, GraphNode*>*>(source, pLocalMap));
         
+        
         pLocalMap = NULL;
         pLocalMap = new (std::nothrow) map<int, GraphNode*>;
         pLocalMap->insert(std::pair<int, GraphNode*>(source, pSourceNode));
         
-        __pAdjMap->insert(std::pair<int, map<int, GraphNode*>*> (dest, pLocalMap));
+        if ( directedEdge ==false) {
+            
+            //For directional graphs, source should not be added to destination.
+            __pAdjMap->insert(std::pair<int, map<int, GraphNode*>*> (dest, pLocalMap));
+            
+        }
+        
         
     }
     else {
         
-        GraphNode*     pNode = NULL;
-        
-        pNode = FindNode(source, dest);
         
         //Adding destination to source...
+        GraphNode*     pNode = NULL;
+        pNode = FindNode(dest);
+        
+        if ( pNode == NULL) {
+            
+            pDestinationNode = CreateNewNode(dest);
+        }
+        else
+            pDestinationNode = pNode;
+        
         map<int, GraphNode*>* pLocalList = NULL;
         mapItrSource =  __pAdjMap->find(source);
         
         pLocalList = mapItrSource->second;
+        
+        
         if( pLocalList != NULL && mapItrSource != __pAdjMap->end()) {
-            
-            if ( pNode == NULL) {
-                
-                pDestinationNode = CreateNewNode(dest);
-            }
-            else
-                pDestinationNode = pNode;
             
             pLocalList->insert(std::pair<int, GraphNode*>(dest, pDestinationNode));
         }
@@ -278,54 +309,55 @@ Graph::AddEdge(int source, int dest) {
             
             map<int, GraphNode*>*     pLocaList = NULL;
             pLocaList = new (std::nothrow) map<int, GraphNode*>;
-            
-            if ( pNode == NULL) {
-                
-                pDestinationNode = CreateNewNode(dest);
-            }
-            else
-                pDestinationNode = pNode;
-            
             pLocaList->insert(std::pair<int, GraphNode*>(dest, pDestinationNode));
             
             __pAdjMap->insert(std::pair<int, map<int, GraphNode*>*> (source, pLocaList));
-
+            
         }
         //Addition of destination to source is done...
         
         
         //Adding source to the destination..
-        
-        pNode = NULL;
-        pNode = FindNode(dest, source);
-        
-        pLocalList = NULL;
-        mapItrDesti =  __pAdjMap->find(dest);
-        
-        pLocalList = mapItrDesti->second;
-        if( pLocalList != NULL && mapItrDesti != __pAdjMap->end()) {
+        if ( directedEdge ==false) {
+            
+            pNode = NULL;
+            pNode = FindNode(source);
             
             if ( pNode == NULL)
                 pSourceNode =  CreateNewNode(source);
             else
                 pSourceNode = pNode;
-            
-            pLocalList->insert(std::pair<int, GraphNode*>(source, pSourceNode));
+        }
+        
+        pLocalList = NULL;
+        mapItrDesti =  __pAdjMap->find(dest);
+        
+        pLocalList = mapItrDesti->second;
+        
+        if ( directedEdge == false ) {
+            if( pLocalList != NULL && mapItrDesti != __pAdjMap->end()) {
+                
+                pLocalList->insert(std::pair<int, GraphNode*>(source, pSourceNode));
+            }
+            else {
+                
+                map<int, GraphNode*>*     pLocaList = NULL;
+                pLocaList = new (std::nothrow) map<int, GraphNode*>;
+                pLocaList->insert(std::pair<int, GraphNode*>(source, pSourceNode));
+                
+                __pAdjMap->insert(std::pair<int, map<int, GraphNode*>*> (dest, pLocaList));
+                
+            }
         }
         else {
             
-            map<int, GraphNode*>*     pLocaList = NULL;
-            pLocaList = new (std::nothrow) map<int, GraphNode*>;
-            
-            if ( pNode == NULL)
-                pSourceNode = CreateNewNode(source);
-            else
-                pSourceNode = pNode;
-            
-            pLocaList->insert(std::pair<int, GraphNode*>(source, pSourceNode));
-            
-            __pAdjMap->insert(std::pair<int, map<int, GraphNode*>*> (dest, pLocaList));
-            
+            if( pLocalList == NULL || mapItrDesti == __pAdjMap->end()) {
+                map<int, GraphNode*>*     pLocaList = NULL;
+                pLocaList = new (std::nothrow) map<int, GraphNode*>;
+                pLocaList->insert(std::pair<int, GraphNode*>(source, pSourceNode));
+                
+                __pAdjMap->insert(std::pair<int, map<int, GraphNode*>*> (dest, pLocaList));
+            }
         }
         //Addition of source to destinaton is done...
     }
@@ -345,13 +377,20 @@ Graph::BFS(int startNode, int noOfNodesTraversed) {
     
     std::cout<<"Breadth First Search:";
     
-    pTempNode = FindNode(0, startNode);
+    pTempNode = FindNode(startNode);
     if ( pTempNode != NULL)
         pTempNode->_isProcessed = true;
     else {
         
-        std::cout<<"Invalid node to start"<<endl;
-        return;
+        pTempNode = CreateNewNode(startNode);
+        mapItr = __pAdjMap->find(pTempNode->_vIndex);
+        pLocalMap = mapItr->second;
+        
+        if ( pLocalMap == NULL || mapItr == __pAdjMap->end()) {
+            
+            std::cout<<"Invalid node to start"<<endl;
+            return;
+        }
     }
     
     bfsQueue.push(pTempNode);
@@ -406,13 +445,20 @@ Graph::DFS(int startNode, int noOfNodesTraversed) {
     
     std::cout<<"Depth First Search:";
     
-    pTempNode = FindNode(0, startNode);
+    pTempNode = FindNode(startNode);
     if ( pTempNode != NULL)
         pTempNode->_isProcessed = true;
     else {
         
-        std::cout<<"Invalid node to start"<<endl;
-        return;
+        pTempNode = CreateNewNode(startNode);
+        mapItr = __pAdjMap->find(pTempNode->_vIndex);
+        pLocalMap = mapItr->second;
+        
+        if ( pLocalMap == NULL || mapItr == __pAdjMap->end()) {
+            
+            std::cout<<"Invalid node to start"<<endl;
+            return;
+        }
     }
     
     dfsStack.push(pTempNode);
@@ -464,6 +510,8 @@ Graph::DFS(int startNode, int noOfNodesTraversed) {
                     else
                         ++mapItrLocal;
                 }
+                else
+                    ++mapItrLocal;
             }
         }
         if( pTempNode != NULL)
@@ -476,7 +524,7 @@ Graph::DFS(int startNode, int noOfNodesTraversed) {
 
 
 GraphNode*
-Graph::FindNode(int Source, int Destination) {
+Graph::FindNode(int Destination) {
 
     GraphNode*  pNode = NULL;
     std::map<int, GraphNode*>::iterator mapItrSource;
@@ -513,10 +561,15 @@ int main(int argc, const char * argv[]) {
     
     int V =0, E=0;
     int startNode=-1;
+    char graphDirection = '\0';
+    
     
     int nodes= 0;
     int E1[50] = {0}, E2[50] = {0};
     // insert code here...
+    
+    std::cout<<"Is this a Directed graph? (y/N) : ";
+    std::cin>>graphDirection;
     
     std::cin>>V;
     std::cin>>E;
@@ -532,8 +585,8 @@ int main(int argc, const char * argv[]) {
         std::cin>>E1[i];
         std::cin>>E2[i];
         
-        grp1.AddEdge(E1[i], E2[i]);
-        grp2.AddEdge(E1[i], E2[i]);
+        grp1.AddEdge(E1[i], E2[i] , (graphDirection=='y' ? true : false));
+        grp2.AddEdge(E1[i], E2[i], (graphDirection=='y' ? true : false));
     }
     
     grp1.PrintAdjList();
