@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Rakesh Gajjar. All rights reserved.
 //
 
-
+//Test for branch creation and git merge commands.
 //Currently this code works only for undirected graphs.
 //With little changes, it can be easily upgraded to support directed graphs.
 
@@ -17,6 +17,8 @@
 #include <stack>
 #include <queue>
 #include <map>
+
+//STASHING AND MERGING ISSUES...
 
 using namespace std;
 
