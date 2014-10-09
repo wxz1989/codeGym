@@ -112,30 +112,50 @@ ClearList(NodePtr pHeadNode){
 
 void RemoveDuplicateNode(NodePtr pHeadNode)
 {
+	int i = 0;
 	if ( pHeadNode == NULL )
 		return;
 
+	NodePtr tempNode;
+	tempNode = pHeadNode;
+
 	//Approach:1 First find out size of the linked list first.. create an arary of same size, keep updating a flag of all visited nodes.
 	int iSize = 0;
-	while ( pHeadNode != NULL )
+	while ( tempNode  != NULL )
 	{
 		iSize++;
-		pHeadNode = pHeadNode->pNext;
+		tempNode = tempNode->pNext;
 	}
-	std::cout<<"Total nodes : "<< iSize;
+	std::cout<<"Total nodes : "<< iSize<<endl;
 	bool bSize[iSize];			//by this time time complexity is already O(n) reached and space complexity has also become O(2*n)
 
+	for ( i =0; i < iSize ; i++ )
+		bSize[i] =0;
+
+	i = 0;
 	iSize =0;
-	while ( pHeadNode != NULL )
+
+	NodePtr tmpNode;
+	tmpNode = pHeadNode;
+	while ( tmpNode != NULL )
         {
-                pHeadNode = pHeadNode->pNext;
-		bSize[iSize++] = 1;			//Assuming the data is only in form of integers.
+		std::cout<<"Curent Index ["<<iSize<<"]";
+                tmpNode = tmpNode->pNext;
+		if ( bSize[iSize] == 1 )
+                {
+                        std::cout<<"Duplicate node at "<<"["<<i<<"] found"<<endl;
+			bSize[iSize]  = -1;
+                }
+                else
+			bSize[iSize] = 1;			//Assuming the data is only in form of integers.
+		iSize++;
         }
-	std::cout<<endl;
-	for ( int i =0; i < iSize ; i++ )
+	std::cout<<"Total Nodes:"<<iSize<<endl;
+	std::cout<<"Nodes visited are following:"<<endl;
+
+	for ( i =0; i < iSize ; i++ )
 	{
-		std::cout<<"["<< i<<"]"<<bSize[i];
+		std::cout<<"["<< i<<"]"<<bSize[i]<<endl;
 	}
-	std::cout<<endl;
 	iSize =0;
 }
