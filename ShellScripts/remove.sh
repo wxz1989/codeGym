@@ -1,10 +1,23 @@
 #code to delete folders containing no files...
 
+
+if [ ! -d "$1" ]
+then
+	echo "Directory doesn not exist"
+	exit 1
+fi
+
 input="yes"
 var=-1
+dirCount=-1
 
 #important line which pull the no of files and folders in a given folder...
-var=$(ls -F $1 | grep -v / | wc -l)	
+dirCount=$(ls -lR $1 | grep ^d | wc -l)
+var=$(ls -F $1 | grep -v / | wc -l)
+
+echo "Directory count is [$dirCount]"
+
+var=$(( $dirCount + $var ))
 
 echo "File count in" $1 "is [" $var "]"
 
