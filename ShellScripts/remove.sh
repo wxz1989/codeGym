@@ -12,14 +12,14 @@ var=-1
 dirCount=-1
 
 #important line which pull the no of files and folders in a given folder...
-dirCount=$(ls -lR $1 | grep ^d | wc -l)
-var=$(ls -F $1 | grep -v / | wc -l)
-
+#dirCount=$(ls -lR "$1" | grep ^d | wc -l)
+dirCount=$(find "$1" -type d -maxdepth 1 | wc -l)
+(( dirCount-- ))
+var=$(ls -F "$1" | grep -v / | wc -l)
 echo "Directory count is [$dirCount]"
-
+echo "File count in" "$1" "is [$var]"
 var=$(( $dirCount + $var ))
-
-echo "File count in" $1 "is [" $var "]"
+echo "Total files/folder count in" "$1" "is [$var]"
 
 if [ $var -ge 1 ]
 then
@@ -32,9 +32,9 @@ then
 		read confirm
 		if [ "$confirm" == "yes" -o "$confirm" == "y" ]
 		then
-			rm -rf $1
+			rm -rf "$1"
 		else
-			echo "Congratulations..." $1 "has files and it's not deleted!!!"
+			echo "$1" "has files and it's not deleted!!!"
 		fi
 	else
 		echo "you choose not to delete this folder/files"
@@ -44,7 +44,7 @@ else
 	read input
 	if [ "$input" == "yes" -o "$input" == "y" ]
 	then
-		rm -rf $1
+		rm -rf "$1"
 	else
 		echo "you choose not to delete this folder"
 	fi
