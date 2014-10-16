@@ -23,11 +23,11 @@ echo "Total files/folder count in" "$1" "is [$var]"
 
 if [ $var -ge 1 ]
 then
-	echo "Do you want to delete all this file?"
+	echo "Delete all this file/folders?"
 	read input
 	if [ "$input" == "yes" -o "$input" == "y" ]
 	then
-		echo "There are files and you choose to delete it, are you sure about it???"
+		echo "Files/Folders are there and you choose to delete it, sure about it???"
 		confirm="no"
 		read confirm
 		if [ "$confirm" == "yes" -o "$confirm" == "y" ]
@@ -37,7 +37,7 @@ then
 			echo "$1" "has files and it's not deleted!!!"
 		fi
 	else
-		echo "you choose not to delete this folder/files"
+		echo "Not to deleting this folder/files"
 	fi
 else
 	echo "No files found in this folder...deleting it...is that okay???"
@@ -46,8 +46,8 @@ else
 	then
 		rm -rf "$1"
 	else
-		echo "you choose not to delete this folder"
+		echo "Not to deleting this folder/file"
 	fi
 fi
 
-echo "Operation successfull"
+echo "Completed!!!"
