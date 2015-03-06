@@ -1,0 +1,10 @@
+//Week-0 We want Scruberry(Late Submission)
+http://www.codeskulptor.org/#user39_GUivlqrpBy_0.py
+
+
+//Week-1-Rock Scissor Paper Lizard Spock
+http://www.codeskulptor.org/#user39_c777zz1uP5_28.py
+
+
+//Week-2 Guess the number
+http://www.codeskulptor.org/#user39_0FeLVaWdqp_4.py
