@@ -8,3 +8,14 @@ http://www.codeskulptor.org/#user39_c777zz1uP5_28.py
 
 //Week-2 Guess the number
 http://www.codeskulptor.org/#user39_0FeLVaWdqp_4.py
+
+
+//Practice Assignments : 
+http://www.codeskulptor.org/#user39_wYiTAKlPVr_3.py
+http://www.codeskulptor.org/#user39_ljmvtLexy2_8.py	
+http://www.codeskulptor.org/#exercises_drawing_format_solution.py
+http://www.codeskulptor.org/#user39_wpzgQ24x8M_6.py
+http://www.codeskulptor.org/#exercises_drawing_ball_template.py
+http://www.codeskulptor.org/#user39_VO6QCklLLh_3.py
+http://www.codeskulptor.org/#user39_dfB8gkm0Bs_6.py
+
