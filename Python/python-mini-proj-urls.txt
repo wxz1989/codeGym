@@ -19,3 +19,14 @@ http://www.codeskulptor.org/#exercises_drawing_ball_template.py
 http://www.codeskulptor.org/#user39_VO6QCklLLh_3.py
 http://www.codeskulptor.org/#user39_dfB8gkm0Bs_6.py
 
+# Motidying starting and stoping timer programatically
+http://www.codeskulptor.org/#user39_NYKnveKG5V_7.py
+
+# ********[INTERESTING]************
+# computing square root of a number mathematically without using a math library.
+http://www.codeskulptor.org/#user39_hRa1fJV2FQ_0.py
+# ********[INTERESTING]************
+
+
+# Some math formaula to generate a series of numbers
+http://www.codeskulptor.org/#user39_hRa1fJV2FQ_4.py
