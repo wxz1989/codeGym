@@ -193,6 +193,7 @@ DefaultArgs("Vipul")
 print "Global Names:", globals()
 print "Local Names:", locals()
 
+"""
 print "Raw Input from Concole:"
 str = raw_input("Enter your input: ");
 print "Received input is : ", str
@@ -208,6 +209,6 @@ fp.write(str);
 
 
 fp.close()
-
+"""
 
 
