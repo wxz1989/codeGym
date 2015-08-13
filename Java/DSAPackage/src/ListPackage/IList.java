@@ -1,0 +1,5 @@
+package ListPackage;
+
+interface IList{
+	
+}
