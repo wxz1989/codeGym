@@ -1,9 +1,11 @@
 package Factory;
+import LinkedList.*;
 
-import TreeLibrary.ITree;
-import TreeLibrary.Node;
+import NodePkg.Node;
+import Tree.ITree;
 
 interface IFactory{
 	public ITree CreateTree();
 	public Node CreateNode();
+	public List CreateLinkedList();
 }
