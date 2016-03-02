@@ -25,3 +25,7 @@ int main ()
 	cout<<"Sum ["<<sum<<"]"<< '\n';
 	return 0;
 }
+
+function Test(){
+	//testingFileEdition
+}
