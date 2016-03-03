@@ -1,0 +1,20 @@
+{
+  "name": "rmdbwebservices",
+  "version": "0.0.1",
+  "description": "IMDB like movie web service",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+   "main":"./bin/www",
+  "engines": {
+     "node": "0.10.x"
+   },
+  "dependencies": {
+    "express": "~4.2.0",
+    "body-parser": "~1.0.0",
+    "mongoose": "~3.8.11"
+  },
+  "author": "Rakesh Gajjar",
+  "license": "MIT"
+}

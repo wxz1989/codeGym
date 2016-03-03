@@ -1,0 +1,13 @@
+{
+  "name": "filelist",
+  "version": "0.0.1",
+  "description": "fileListing command line utility ",
+  "main": "readDir.js",
+  "scripts": {
+    "test": "node readDir.js"
+  },
+  "author": "Rakesh Gajjar",
+  "license": "UNLICENSED",
+  "preferGlobal":true,
+  "bin" : { "filelist" : "readDir.js" }
+}
