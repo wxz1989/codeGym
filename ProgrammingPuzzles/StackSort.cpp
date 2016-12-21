@@ -1,5 +1,7 @@
 #include <iostream>       // std::cout
 #include <stack>          // std::stack
+#include <time.h>
+#include <stdlib.h>
 
 using namespace std;
 
@@ -51,19 +53,27 @@ int main ()
 {
 	std::stack<int> mystack;
 
-	/*
+	srand(time(NULL));
+	int sizeOfStack = rand()%10;
+	srand(time(NULL));
+	for ( int i = 0; i< sizeOfStack;i++){
+		mystack.push(rand()%10);
+	}
+
+	/* Sample Input, asked during interview
 	mystack.push(5);
 	mystack.push(2);
 	mystack.push(1);
 	mystack.push(9);
 	mystack.push(7);
-	*/
+	//
 
 	mystack.push(5);
 	mystack.push(4);
 	mystack.push(3);
 	mystack.push(2);
 	mystack.push(1);
+	*/
 
 	cout<<"Original Stack:"<<endl;
 	PrintStack(mystack);
