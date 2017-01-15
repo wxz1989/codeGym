@@ -32,6 +32,8 @@ i = 3, j = [4] => INVALID
 */
 void RemoveDuplicate(char* inputArr, int length){
 
+	if ( length <= 0 || inputArr == NULL ){ cout << "Invalid Parameters"<< endl; return;}
+
 	for( int i = 0; i< length;i++){
 		for ( int j = i+1; j< length;j++){
 
@@ -57,7 +59,6 @@ void RemoveDuplicate(char* inputArr, int length){
 
 int main(int argc, char* argv[]){
 
-
 	char* pInputArray = NULL;
 	int strLen = 0;
 
@@ -68,15 +69,22 @@ int main(int argc, char* argv[]){
 	} else {
 		char testString[] = "(EMPTY)";
 		strLen = strlen(testString);
-		pInputArray = new char[strLen+1];
+		pInputArray = new char[strLen];
 		strncpy(pInputArray, testString, strLen);
+		//pInputArray[strLen+1] = (char)'/0';
 	}
 
 	Print(pInputArray);
 	RemoveDuplicate(pInputArray, strLen);
 	Print(pInputArray);
 
+
+
 	delete [] pInputArray;
 	pInputArray = NULL;
+
+	RemoveDuplicate(pInputArray, -1);
+	RemoveDuplicate(pInputArray, 10);
+
 	return 0;
 }
