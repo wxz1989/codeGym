@@ -8,10 +8,8 @@ void ReversePtr(char** cPtr, int length, int cur);
 void ReverseArr(char* cPtr, int length, int cur);
 
 void ReverseArr(char* cPtr, int length, int cur){
-	if ( cPtr == NULL ){
-		return;
-	}
-
+	
+	if ( cPtr == NULL ){ return; }
 	if ( length <= 0 ) { return; }
 	if ( cur >= length) { return; }
 
@@ -20,17 +18,13 @@ void ReverseArr(char* cPtr, int length, int cur){
 		char temp = cPtr[cur];
 		cPtr[cur] = cPtr[(length-1) - cur];
 		cPtr[(length-1) - cur] = temp;
-
 	}
 	return;
 }
 
 void ReversePtr(char** cPtr, int length, int cur){
 
-	if ( cPtr == NULL && *cPtr == NULL ){
-		return;
-	}
-
+	if ( cPtr == NULL && *cPtr == NULL ){ return; }
 	if ( length <= 0 ) { return; }
 	if ( cur >= length) { return; }
 
@@ -38,14 +32,9 @@ void ReversePtr(char** cPtr, int length, int cur){
 
 	if( cur >= length/2 ){
 		char temp = (*cPtr)[cur];
-
 		(*cPtr)[cur] = (*cPtr)[(length-1) - cur];
-
 		(*cPtr)[(length-1) - cur] = temp;
-
 	}
-
-
 	return;
 }
 

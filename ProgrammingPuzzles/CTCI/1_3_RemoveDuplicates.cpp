@@ -24,9 +24,11 @@ void Print(char inputArr[]){
 2. Every ith element is compared against other n-i elements and hence for every iteration, (n*n-1) comparisions are made.
 3. e.g
 inputStr = "TEST"
-n = 6
-i = 0, j = [1...n] => n compared to other n-1 elements. => n*n-1
-i = 1, j = [2...n] => n compared to other n-1 elements. => n*n-1
+n = 4
+i = 0, j = [1...3] => 0 compared to other 3 elements. => n*n-1
+i = 1, j = [2...3] => 1 compared to other 2 elements. => n*n-1
+i = 2, j = [3...3] => 2 compared to other 1 elements. => n*n-1
+i = 3, j = [4] => INVALID
 */
 void RemoveDuplicate(char* inputArr, int length){
 
@@ -64,7 +66,6 @@ int main(int argc, char* argv[]){
 		pInputArray = new char[strLen];
 		strncpy(pInputArray, argv[1], strLen);
 	} else {
-
 		char testString[] = "(EMPTY)";
 		strLen = strlen(testString);
 		pInputArray = new char[strLen+1];
