@@ -30,7 +30,7 @@ void ReversePtr(char** cPtr, int length, int cur){
 
 	ReversePtr(cPtr, length, cur+1);
 
-	if( cur >= length/2 ){
+	if( cur >= length/2 ){	
 		char temp = (*cPtr)[cur];
 		(*cPtr)[cur] = (*cPtr)[(length-1) - cur];
 		(*cPtr)[(length-1) - cur] = temp;
