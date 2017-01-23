@@ -5,15 +5,14 @@ using namespace std;
 #define MAX_ARRAY_SIZE 100
 
 int N;
-int permuteArr[MAX_ARRAY_SIZE] = { 0 };
+char permuteArr[MAX_ARRAY_SIZE] = { 0 };
+char permString[MAX_ARRAY_SIZE] = {0};
 int visited[MAX_ARRAY_SIZE] = { 0 };
-int permString[MAX_ARRAY_SIZE] = {0};
 
-
-void Reset();
-bool IsValid(int index);
-int Permute();
-int PermuteRec(int array[], int length, int index, int count);
+void 	Reset();
+bool 	IsValid(int index);
+int 	Permute(char arr[], int length);
+int 	PermuteRec(char array[], int length, int index, int count);
 
 void Reset(){
 	for (int i = 0; i < N; i++){
@@ -29,13 +28,13 @@ bool IsValid(int index){
 	return true;
 }
 
-int Permute(int arr[], int length){
+int Permute(char arr[], int length){
 
 	for (int i = 0; i < N; i++){  PermuteRec(permuteArr, length, i,0); 	}
 	return 0;
 }
 
-int PermuteRec(int array[], int length, int index,int count){
+int PermuteRec(char array[], int length, int index,int count){
 
 	if (!IsValid(index)) { return 0; }
 	if (length <= 0 || index < 0 ){ return 0; }
