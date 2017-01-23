@@ -7,10 +7,7 @@ using namespace std;
 #define STACK_CAPACITY 10
 #define MIN_VALUE  999999999
 
-int stackCount =0;
-int stackIndexCount =0;
-
-int minValue = 999999999;
+int minValue = MIN_VALUE;
 
 stack<stack<int>*> mMultiStack;
 stack<int> minStack;
@@ -31,6 +28,7 @@ int GetMinValue(){
 }
 
 void PrintStack(){
+	int stackCount = mMultiStack.size();
 	cout << "Multi Stack Content:" << endl;
 	while( !mMultiStack.empty() ){
 		stack<int>* pTempStack = NULL;
@@ -63,7 +61,6 @@ int CreateNewStack(){
 	stack<int>* pTemp = new stack<int>;
 	pCurrentStack = pTemp;
 	mMultiStack.push(pCurrentStack);
-	stackCount++;
 	return 1;
 }
 
@@ -71,8 +68,6 @@ int Init(){
 	if( mMultiStack.empty()){
 		pCurrentStack = new stack<int>;
 		mMultiStack.push(pCurrentStack);
-
-		stackCount++;
 		return 1;
 	}
 	return 0;
@@ -135,17 +130,14 @@ void Push(int value){
 		} 
 		pTempStack = GetCurrentStackPtr();
 		pTempStack->push(value);
-		stackIndexCount++;
 	} else {
 		pTempStack = GetCurrentStackPtr();
 		pTempStack->push(value);
-		stackIndexCount++;
 
-		if ( stackIndexCount == STACK_CAPACITY ){
+		if ( pTempStack->size() == STACK_CAPACITY ){
 			if ( !CreateNewStack() ){
 				cout << "Stack Rellocation failed"<< endl;
 			}
-			stackIndexCount = 0;
 		}
 	}
 
@@ -178,14 +170,15 @@ int main(int argc, char* argv[]){
 			Push(value);
 		}
 	}
-	//PrintStack();
+	PrintStack();
 
 	//Read untill all elements are read from stack.
+	/*
 	cout << "Total Stack Size:" << totalStackSize << endl;
 	for ( int i = 0; i< totalStackSize;i++){
 		cout << "Top=>(" << i+1 <<") "<<  Top() << "   MinValue:("<< GetMinValue() <<")" << endl;
 		Pop();
-	}
+	}*/
 	Reset();
 
 	return 0;
