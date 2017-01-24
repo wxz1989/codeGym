@@ -40,22 +40,15 @@ bool SortStack(stack<int> orgStk){
 	while ( orgStk.empty() == false){
 		PN = orgStk.top();
 		orgStk.pop();
-		if( auxiStk.empty()){
-			auxiStk.push(PN);
-		} else {
-			if ( PN <=auxiStk.top()){
-				auxiStk.push(PN);
-			} else {
-				while (auxiStk.empty() == false && PN > auxiStk.top() ){
-					int temp = auxiStk.top();
-					auxiStk.pop();
-					orgStk.push(temp);
-				}
-				auxiStk.push(PN);
-			}
+		
+		while (auxiStk.empty() == false && PN > auxiStk.top() ){
+			int temp = auxiStk.top();
+			auxiStk.pop();
+			orgStk.push(temp);
 		}
-		PrintStack(auxiStk);
+		auxiStk.push(PN);
 	}
+	PrintStack(auxiStk);
 	return false;
 }
 
