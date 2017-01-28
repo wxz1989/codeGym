@@ -7,17 +7,60 @@ using namespace std;
 //#define READ_INPUT_FROM_FILE
 #endif
 
+
+void findSqrt(int value){
+
+	if ( value <= 0 ){ return; }
+	int i = 1;
+
+	//while ((i*(i++)) < value );
+	while ((i*i) < value ){ i++; }
+
+	cout << "I is: " << i << endl;
+	if( i*i == value ){
+		cout << "Sqrt of " << value << " is ["<< i <<"]" << endl;
+	} else {
+		cout << "Can't find Sqrt of "<< value << "!" << endl;
+	}
+}
+
+
+/*
+	Using Babylonian Method of finding Square Root
+*/
+void FindSqrt(int value){
+
+	if ( value <= 0 ){ return; }
+	int i = 1;
+
+	float x = value;
+	float y = 1;
+	float e = 0.00001;
+
+	while ((x-y) > e){
+
+		cout << "X:[" << x << "] Y:[" << y <<"]" << endl;
+		x = (x+y)/2;
+		y = value /x;
+	}
+
+	cout << "Sqrt of " << value << " is ["<< x <<"]" << endl;
+}
+
+//Time Complexity : O(logN)
+//Space Complexity: O()
 int findFactors( int factorArray[], int value){
 	
-	if ( value == 0 ){ return 0;}
-
 	int index = 0;
 	int divIndex = 1;
 
 	int tempValue = value;
 	factorArray[index++] = divIndex++;
 
-	if ( value == 1 ){ return index; }
+	if ( value == 0 || value == 1 ){ 
+		if ( value ==0 ){ factorArray[--index] = 0; }
+		return index;
+	}
 	
 	while (tempValue >0 && divIndex <= tempValue ){
 		if ( tempValue % divIndex == 0 ){
@@ -82,7 +125,7 @@ int main ()
 	srand(time(NULL));
 	for ( int tc = 0; tc< test_cases;tc++){
 		//call your functions with random value
-		int value = (rand()%9999);
+		int value = (rand()%50);
 		cout <<"=====================" << endl;
 		cout << "FindingFactors[" << tc+1 <<"] of:" <<  value << endl;
 		int factorsCount = findFactors(factorArray, value);
@@ -91,5 +134,9 @@ int main ()
 		cout <<"=====================" << endl;
 	}
 #endif
+
+	findSqrt(625);
+	FindSqrt(625);
+
 	return 0;
 }
