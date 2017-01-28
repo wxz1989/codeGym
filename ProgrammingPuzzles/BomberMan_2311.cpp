@@ -22,6 +22,11 @@
 #50 
 */
 
+/*
+NOTE: Important consideration was, bomb falls only on the top of a tower and not withing or middle of any building
+Eearlier assumption of dropping bomb in the middle of a tower can lead to other confustion and miscalculations
+*/
+
 int N = 0;
 int W = 0;
 int H = 0;
@@ -83,6 +88,7 @@ void ReInit(){
 		}
 	}
 }
+/* this function varies as per the new assumption, bomb falls right on the top of a tower and not anywhere within*/
 
 void ReArrangeBlocks(){
 	for (int i = H - 1; i >= 0; i--){
@@ -227,5 +233,6 @@ int main(int argc, char** argv)
 		cout << "#" << test_case << " " << Ans << endl;
 		Reset();
 	}
+	fclose("Bomberman_Sample_Input");
 	return 0; // Your program should return 0 on normal termination.
 }

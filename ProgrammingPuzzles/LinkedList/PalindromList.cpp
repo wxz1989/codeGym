@@ -5,7 +5,7 @@ using namespace std;
 struct Node{
 
 	int data;
-	Node* pNext;
+	Node* next;
 };
 
 typedef Node* NodePtr;
@@ -18,7 +18,7 @@ bool PalindromList(NodePtr pHead);
 void PrintList(NodePtr pHead){
 	while ( pHead != NULL){
 		cout <<pHead->data<<" ";
-		pHead = pHead->pNext;
+		pHead = pHead->next;
 	}
 	cout<< endl;
 }
@@ -30,10 +30,10 @@ bool RecCompare(NodeDPtr pHead, NodePtr pMid, NodePtr pCmp){
 	if ( *pHead == pMid ){  return bRet; }
 	if ( pCmp == NULL ){ return true; }
 
-	bRet = RecCompare(pHead, pMid, pCmp->pNext);
+	bRet = RecCompare(pHead, pMid, pCmp->next);
 	if ( bRet == true){
 		if ( (*pHead)->data == pCmp->data){
-			*pHead = (*pHead)->pNext;
+			*pHead = (*pHead)->next;
 			return true;
 		} else {
 			return false;
@@ -49,18 +49,18 @@ bool PalindromList(NodePtr pHead){
 	if ( pHead == NULL ){			//Empty
 		return false;
 	} 
-	if ( pHead->pNext == NULL){		//Single Node
+	if ( pHead->next == NULL){		//Single Node
 		return false;
 	} 
-	if( pHead->pNext->pNext == NULL){	//Two Nodes.
-		if( pHead->data == pHead->pNext->data){
+	if( pHead->next->next == NULL){	//Two Nodes.
+		if( pHead->data == pHead->next->data){
 			return true;
 		} else {
 			return false;
 		}
 	}
-	if( pHead->pNext->pNext->pNext == NULL){  //Three Nodes
-		if( pHead->data == pHead->pNext->pNext->data){
+	if( pHead->next->next->next == NULL){  //Three Nodes
+		if( pHead->data == pHead->next->next->data){
 			return true;
 		} else {
 			return false;
@@ -71,14 +71,14 @@ bool PalindromList(NodePtr pHead){
 	//Find mid, end and counts of the list.
 
 	while ( true ){
-		if ( pE->pNext != NULL ){
-			if ( pE->pNext->pNext!= NULL ){
-				pE = pE->pNext->pNext;
+		if ( pE->next != NULL ){
+			if ( pE->next->next!= NULL ){
+				pE = pE->next->next;
 				iE++;
-				pM = pM->pNext;
+				pM = pM->next;
 				iM++;
 			} else { 
-				pE = pE->pNext;
+				pE = pE->next;
 				iE++;
 				break;
 			}
@@ -89,13 +89,13 @@ bool PalindromList(NodePtr pHead){
 	Count = (iE + iM) +1;
 
 	if ( (Count %2) == 0 ){		//Even No of Elements in the list
-		if( pM->data != pM->pNext->data){
+		if( pM->data != pM->next->data){
 			return false;
 		} else {
-			return RecCompare(&pHead, pM, pM->pNext->pNext);
+			return RecCompare(&pHead, pM, pM->next->next);
 		}
 	} else {					//Odd No of Elements in the list
-		return RecCompare(&pHead, pM, pM->pNext); 
+		return RecCompare(&pHead, pM, pM->next); 
 	}
 
 }
@@ -117,12 +117,12 @@ int main(){
 
 			pNew = new Node();
 			pNew->data = data;
-			pNew->pNext = NULL;
+			pNew->next = NULL;
 
 			if ( pHead == NULL){
 				pHead = pNew;
 			} else {
-				pLast->pNext = pNew;
+				pLast->next = pNew;
 			}
 			pLast= pNew;
 		}
