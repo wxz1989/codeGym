@@ -28,7 +28,9 @@ void PrintStack(stack<int> orgStk){
 	}
 	cout <<"]"<<endl;
 }
-
+//Time Complexity = O(N^2)
+//Space Complexity = O(N). 
+//A new Auxiliary stack auxiStk, is taken for storying elements before writing it back to original Stack 
 bool SortStack(stack<int> orgStk){
 
 	if ( orgStk.empty()){ return false; }
