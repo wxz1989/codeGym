@@ -2,6 +2,7 @@
 #include <stack>          // std::stack
 #include <time.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #ifndef READ_DATA_FROM_FILE
 #define READ_DATA_FROM_FILE
@@ -18,7 +19,7 @@ void Reset(){
 using namespace std;
 
 void PrintStack(stack<int> orgStk){
-	
+
 	if ( orgStk.empty()){ return; }
 	cout <<"Stack["<<orgStk.size()<<"]:[";
 
@@ -28,7 +29,9 @@ void PrintStack(stack<int> orgStk){
 	}
 	cout <<"]"<<endl;
 }
-
+//Time Complexity = O(N^2)
+//Space Complexity = O(N). 
+//A new Auxiliary stack auxiStk, is taken for storying elements before writing it back to original Stack 
 bool SortStack(stack<int> orgStk){
 
 	if ( orgStk.empty()){ return false; }
@@ -52,6 +55,32 @@ bool SortStack(stack<int> orgStk){
 	return false;
 }
 
+void InsertIntoStack(std::stack<int>& stk, int Value){
+	//cout << "InsertIntoStack:[" << Value << "]" << endl;
+	if( stk.empty() || Value < stk.top() ){
+		stk.push(Value);
+	} else{
+		int top = stk.top();
+		stk.pop();
+		InsertIntoStack(stk, Value);
+		stk.push(top);
+	}
+	return;
+}
+
+void SortStackRec(std::stack<int>& orgStk){
+	
+	if( !orgStk.empty() ){
+		int top = orgStk.top();
+		orgStk.pop();
+		SortStackRec(orgStk);
+		
+		//cout << "Inserting:[" << top << "]" << endl;
+		InsertIntoStack(orgStk, top);
+		//PrintStack(orgStk);
+	}
+	return;
+}
 
 int main ()
 {
@@ -75,7 +104,10 @@ int main ()
 		}	
 		cout<<"Original Stack:"<<endl;
 		PrintStack(sortStack);
-		SortStack(sortStack);
+		//SortStack(sortStack)
+		cout<<"Sorted Stack:"<<endl;;
+		SortStackRec(sortStack);
+		PrintStack(sortStack)	;
 		Reset();
 	}
 #else
@@ -88,7 +120,8 @@ int main ()
 	}
 	cout<<"Original Stack:"<<endl;
 	PrintStack(sortStack);
-	SortStack(sortStack);
+	SortStackRec(sortStack);
+	PrintStack(sortStack);
 #endif
 	
 	return 0;
