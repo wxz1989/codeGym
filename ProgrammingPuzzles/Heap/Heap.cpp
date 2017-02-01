@@ -159,12 +159,14 @@ std::string Heap::ToString(){
 	}
 	sprintf(buffer, "%d]", heapArray[index]);
 	retValue.append(buffer);*/
-	std::cout << "Heap" << std::endl;
+	
 	std::cout << "Size: " << heapSize << std::endl;
-	for (int i = 1; i <= heapSize; i++){
-		std::cout << heapArray[i] << " ";
+	std::cout << "Heap:[";
+	int i;
+	for (i = 1; i < heapSize; i++){
+		std::cout << heapArray[i] << ",";
 	}
-	std::cout << std::endl;
+	std::cout << heapArray[i] << "]" <<  std::endl;
 	return retValue;
 }
 
@@ -208,6 +210,7 @@ int main(){
 	mHeap.BuildHeap(myArray, sizeOfHeap);
 	mHeap.ToString();
 	mHeap.Clear();
+
 #endif
 	return 0;
 }
