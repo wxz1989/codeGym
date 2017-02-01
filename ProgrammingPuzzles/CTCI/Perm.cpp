@@ -14,6 +14,24 @@ bool 	IsValid(int index);
 int 	Permute(char arr[], int length);
 int 	PermuteRec(char array[], int length, int index, int count);
 
+/*
+A New algorithm devised from CTCI books is BASE AND BUILD.
+Consider P is a function generating Permutation and it operates on the given string (inputStr)
+P(inputString)
+1. Consider base case to be, P("A"), which generates permutation and given only 1 value as an output(A).
+2. Add new letter e.g B, and insert it in all possible places to the output of earlier permuation P("A").
+	hence P("AB")=  {AB, BA}
+
+3. Take another letter, for e.g, C, and insert it in P("AB"). Insert C to all possible places of earlier input function P("AB")
+	hence it becomes: P("ABC") = {C{P("AB")}}
+	P("ABC") = {C{"AB", "BA"}}
+	P("ABC") = {
+					{"CAB", "ACB", "ABC"}, 
+					{"CBA", "BCA", "BAC"},
+				}
+4. Simillartly try with D.
+*/
+
 void Reset(){
 	for (int i = 0; i < N; i++){
 		permuteArr[i] = 0;
