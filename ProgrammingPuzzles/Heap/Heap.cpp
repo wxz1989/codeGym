@@ -208,7 +208,6 @@ int main(){
 	mHeap.BuildHeap(myArray, sizeOfHeap);
 	mHeap.ToString();
 	mHeap.Clear();
-
 #endif
 	return 0;
 }
