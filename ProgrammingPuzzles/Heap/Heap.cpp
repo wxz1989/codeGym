@@ -12,6 +12,8 @@ using namespace std;
 #define INVALID -1
 #define MAX_HEAP_SIZE 1000
 
+void PrintHeapArray( int arrayp[], int size);
+
 class Heap{
 
 public:
@@ -160,7 +162,7 @@ std::string Heap::ToString(){
 	sprintf(buffer, "%d]", heapArray[index]);
 	retValue.append(buffer);*/
 	
-	std::cout << "Size: " << heapSize << std::endl;
+	std::cout << "Size:" << heapSize << std::endl;
 	std::cout << "Heap:[";
 	int i;
 	for (i = 1; i < heapSize; i++){
@@ -190,6 +192,9 @@ int main(){
 		for (int i = 0; i < sizeOfHeap; i++){
 			cin >> myArray[i];
 		}
+
+		cout <<"========================"<< endl;
+		PrintHeapArray(myArray, sizeOfHeap);
 		mHeap.BuildHeap(myArray, sizeOfHeap);
 		mHeap.ToString();
 		mHeap.Clear();
@@ -200,17 +205,25 @@ int main(){
 	sizeOfHeap = rand()%20;
 	srand(time(NULL));
 
-	cout << "Heap Array:[";
 	for ( int i = 0; i< sizeOfHeap;i++){
 		int heapValue = rand()%99;
 		myArray[i] = heapValue;	
-		cout << heapValue << " ";
 	}
-	cout << "]" << endl;
+
+	cout <<"========================"<< endl;
+	PrintHeapArray(myArray, sizeOfHeap);
 	mHeap.BuildHeap(myArray, sizeOfHeap);
 	mHeap.ToString();
 	mHeap.Clear();
 
 #endif
 	return 0;
+}
+
+void PrintHeapArray( int array[], int size){
+	int i;
+
+	cout << "Org Heap Array:[";
+	for ( i = 0; i<size-1;i++){ cout << array[i] << ","; }
+	cout << array[i] << "]" << endl;
 }
