@@ -1,96 +1,30 @@
-#include <iostream>
-#include <memory.h>
-#include <stdlib.h>
-#include <stdio.h>
-
-#ifndef READ_DATA_FROM_FILE
-//#define READ_DATA_FROM_FILE
-#endif
+#include "Heap.h"
 
 using namespace std;
-
-#define INVALID -1
-#define MAX_HEAP_SIZE 1000
 
 void PrintHeapArray( int arrayp[], int size);
 void ResetHeapArray(int myArray[],int sizeOfHeap);
 
-class Heap{
-
-public:
-	Heap();
-	Heap(size_t size);
-
-private:
-	enum HeapType{
-		MIN_HEAP = 0,
-		MAX_HEAP,
-	};
-	int heapArray[MAX_HEAP_SIZE];
-
-	HeapType type;
-	size_t 	heapSize;
-public:
-	void Add(int value);
-	bool Remove(int value);
-	bool Update(int valueToUpdate, int newValue);
-
-	void BuildHeap(int a[], int N);
-		
-	int GetMin();
-	int GetMax();
-	int GetSize();
-
-	void Clear(void);
-
-	void SetHeapSize(size_t size);
-	size_t GetHeapSize(void);
-
-	std::string ToString();
-
-	void SetHeapType(int type);
-	int GetHeapType(void);
-
-private:
-	void Heapify();
-	void HeaptifyUtil(int index);
-};
-
-
-void Heap::SetHeapSize(size_t size){
-	heapSize = size;
+Heap::Heap(){
+	mHeapType = Heap::MIN_HEAP;
+	heapSize = 0;
+	heapCapacity = INT_CAPACITY;
+	memset(heapArray, 0, sizeof(int)* MAX_HEAP_SIZE);
 }
-
-size_t Heap::GetHeapSize(void){
-	return heapSize;
+Heap::Heap(HeapType hType, size_t cap){
+	mHeapType = hType;
+	heapCapacity = cap;
+	heapSize = 0;
+	memset(heapArray, 0, sizeof(int)* MAX_HEAP_SIZE);
 }
 
 void Heap::Clear(void){
-	memset(heapArray, 0, sizeof(int)* heapSize);
-	heapSize = 0;
+	memset(heapArray, 0, sizeof(int)* MAX_HEAP_SIZE);
 	SetHeapSize(0);
 }
 
-void Heap::SetHeapType(int t){
-	type = (HeapType)t;
-}
-
-int Heap::GetHeapType(void){
-	return (HeapType)type;
-}
-
-Heap::Heap(){
-	type = (HeapType)0;
-	heapSize = 0;
-	memset(heapArray, 0, sizeof(int)* MAX_HEAP_SIZE);
-}
-Heap::Heap(size_t t){
-	type = (HeapType)t;
-	heapSize = 0;
-	memset(heapArray, 0, sizeof(int)* MAX_HEAP_SIZE);
-}
-
 void Heap::Add(int value){
+
 	heapArray[(heapSize++)+1] = value;
 	if ( heapSize > 1 ){  Heapify(); }	
 }
@@ -101,32 +35,78 @@ bool Heap::Update(int valueToUpdate, int newValue){
 	return false;
 }
 
+void Heap::SetHeapSize(size_t size){
+	heapSize = size;
+}
+
+size_t Heap::GetHeapSize(void){
+	return heapSize;
+}
+
+void Heap::SetHeapType(int t){
+	mHeapType = (HeapType)t;
+}
+
+int Heap::GetHeapType(void){
+	return (HeapType)mHeapType;
+}
+
+bool Heap::IsValid(int childIndex, int parent){
+
+	bool retValue = false;
+
+	if( childIndex <= heapSize  && parent <= heapSize ){ retValue=true; }
+	else { retValue = false; }
+
+	return retValue;
+}
+
+int Heap::GetSwapIndex(int lIndex, int rIndex, int parent){
+
+	int index = -1;
+	int pivotIndex = -1;
+
+	int left = heapArray[lIndex];
+	int right = heapArray[rIndex];
+	if ( mHeapType == Heap::MIN_HEAP ){
+
+		if ( left < right){
+			index = lIndex;
+		} else {
+			index = rIndex;
+		}
+		if( heapArray[parent] > heapArray[index] ){ pivotIndex=index; }
+	} else {
+
+		if ( left > right){
+			index = lIndex;
+		} else {
+			index = rIndex;
+		}
+
+		if( heapArray[parent] < heapArray[index] ){ pivotIndex=index; }
+	}
+	return pivotIndex;
+}
+
 //ToDo:Implement Min using Delete Root from MinHeap and Max using Delete Root in MaxHeap
-int Heap::GetMin(){ 
+int Heap::Delete(){ 
 
 	if ( heapSize == 0 ) { cout << "Error: Empty Heap" << endl; return -1;}
-	if ( type != MIN_HEAP){ cout << "Invalid request, this is MIN HEAP" << endl; return -1; }
 
 	int minValue = heapArray[1];
-	for( int i = 1; i<heapSize+1; i++){ heapArray[i] = heapArray[i+1]; }
+	//for( int i = 1; i<heapSize+1; i++){ heapArray[i] = heapArray[i+1]; }
+
+	heapArray[1] = heapArray[heapSize];
+	heapArray[heapSize] = 0;
+
 	heapSize--;
 
 	Heapify();
 
 	return minValue; 
 }
-int Heap::GetMax(){ 
-	if ( heapSize == 0 ) { cout << "Error :Empty Heap" << endl; return -1;}
-	if ( type != MAX_HEAP){ cout << "Error: Invalid request, this is MAX HEAP" << endl; return -1; }
 
-	int minValue = heapArray[1];
-	for( int i = 1; i<heapSize; i++){ heapArray[i] = heapArray[i+1]; }
-	heapSize--;
-
-	Heapify();
-
-	return minValue; 
-}
 int Heap::GetSize(){ return heapSize; }
 
 //Purpose of this function is to Copy value from the given HeapArray and use it for applying basic Heap algorithm HEAPIFY
@@ -139,7 +119,6 @@ void Heap::BuildHeap(int a[], int N){
 //Start from the middle of the heap and perform Heapify such that all element uptill root are covered
 void Heap::Heapify(){
 	bool bSwap = false;
-
 	if ( heapSize <= 1 ){ return; }
 
 	//ToDo: Improve on code qiality and algorithm here, shouldn't have to deal using two cases.
@@ -148,7 +127,7 @@ void Heap::Heapify(){
 		for (int i = heapSize/2; i>0; i--){ HeaptifyUtil(i); }	
 	} else {   	// Case for heap with more than <=2 elements
 		//as thre are only 2 elements compare the elements for Min/Max and Swap if required
-		if (type == MIN_HEAP){ 
+		if (mHeapType == MIN_HEAP){ 
 			if ( heapArray[1] > heapArray[2] ) {  bSwap = true; }
 		} else {
 			if ( heapArray[1] < heapArray[2] ) {  bSwap = true; }
@@ -163,45 +142,56 @@ void Heap::Heapify(){
 
 void Heap::HeaptifyUtil(int parentIndex){
 
+	if ( parentIndex <=0 || parentIndex > heapSize  ){ return; }
+
 	int pivot = INVALID;
-	int parent = heapArray[parentIndex];
 
 	int lCIndex = 2 * parentIndex;
 	int rCIndex = (2 * parentIndex) + 1;
 
+	int parent = heapArray[parentIndex];
 	int lChild = heapArray[lCIndex];
 	int rChild = heapArray[rCIndex];
 
-	if (parentIndex < 1){ return; }
-
 	// for min heap 
-	if (type == MIN_HEAP){
-		// MINHEAP RULE : Check if lChild index is LESS or EQUAL to heapSize
-		//Also check for Min Heap Property
-		// If current parent and leftChld relation violates Min Heap Property.
-		// If it does than select the curent Parent as Pivot and swap Parent and Child values.
+	// MINHEAP RULE : Check if lChild index is LESS or EQUAL to heapSize
+	//Also check for Min Heap Property
+	// If current parent and leftChld relation violates Min Heap Property.
+	// If it does than select the curent Parent as Pivot and swap Parent and Child values.
 
-		if (lCIndex <= heapSize && lChild < parent ) { pivot = lCIndex; }
-		if (rCIndex <= heapSize && rChild < parent ){ pivot = rCIndex; }
-	} else {
-		if (lCIndex <= heapSize && lChild > parent ){ pivot = lCIndex; }
-		if (rCIndex <= heapSize && rChild > parent ){ pivot = rCIndex; }
-	}
-
-	if ( pivot != INVALID ){
-		//Swap Smallest with parentIndex...
+	pivot = GetSwapIndex(lCIndex, rCIndex, parentIndex);
+	if ( pivot >0 && pivot <=heapSize ){
 		int temp = heapArray[parentIndex];
 		heapArray[parentIndex] = heapArray[pivot];
 		heapArray[pivot] = temp;
-
 		HeaptifyUtil(pivot);
-		HeaptifyUtil(parentIndex);
+		//HeaptifyUtil(parentIndex);  
+		//ToDo : Remove above call. Though by removing it results are inaccurate, 
+		// Somehow I feel it's redundant and there should be some other way of doing it
 	}
 	return;
 }
 
-std::string Heap::ToString(){
+std::string Heap::ToString(void){
 	std::string retValue("");
+	
+	char heapString[] = {0};
+
+	sprintf(heapString, "%s", "Heap:[");
+	retValue.append(heapString);
+
+	int i;
+	for (i = 1; i < heapSize; i++){
+		sprintf(heapString, "%d%c", heapArray[i], ',');
+		retValue.append(heapString);
+	}
+	sprintf(heapString, "%d%c", heapArray[i], ']');
+	retValue.append(heapString);
+
+	return retValue;
+}
+
+void Heap::PrintHeap(void){
 	
 	std::cout << "Size:" << heapSize << std::endl;
 	std::cout << "Heap:[";
@@ -210,13 +200,19 @@ std::string Heap::ToString(){
 		std::cout << heapArray[i] << ",";
 	}
 	std::cout << heapArray[i] << "]" <<  std::endl;
-	return retValue;
 }
+
+void Heap::HeapSort(void){
+}
+
+void Heap::Resize(void){
+}
+
 
 
 int main(){
 
-	Heap mHeap(0);
+	Heap mHeap(Heap::MAX_HEAP);
 
 	int myArray[MAX_HEAP_SIZE] = { 0 };
 	int test_cases = 0;
@@ -230,20 +226,33 @@ int main(){
 		
 		cin >> sizeOfHeap;
 
-		mHeap.SetHeapSize(sizeOfHeap);
-
-		for (int i = 0; i < mHeap.GetHeapSize(); i++){
+		//mHeap.SetHeapSize(sizeOfHeap);
+		for (int i = 0; i < sizeOfHeap; i++){
 			cin >> myArray[i];
 			mHeap.Add(myArray[i]);
 		}
-
-		cout <<"========================"<< endl;
+		//mHeap.SetHeapSize(sizeOfHeap);
+		cout <<"# "<< tc+1 << endl;
 		PrintHeapArray(myArray, mHeap.GetHeapSize());
 		//mHeap.BuildHeap(myArray, sizeOfHeap);
-		mHeap.ToString();
+		//mHeap.PrintHeap();
+		cout << mHeap.ToString() << endl;
+		
+		//mHeap.GetHeapType() == 0 ? mHeap.SetHeapType(1) : mHeap.SetHeapType(0);
+		while ( mHeap.GetSize() > 0 ){
+			int min = -1;
+			min = mHeap.Delete();
+			if( min != -1 ){
+				cout << "Min: " << min << endl;
+			} else {
+				cout << "Invalid min" << endl;
+			}
+			//mHeap.PrintHeap();
+			cout << mHeap.ToString() << endl;
+		}
+
 		mHeap.Clear();
 		ResetHeapArray(myArray, mHeap.GetHeapSize());
-		//mHeap.GetHeapType() == 0 ? mHeap.SetHeapType(1) : mHeap.SetHeapType(0);
 	}
 #else
 	srand(time(NULL));
@@ -261,19 +270,20 @@ int main(){
 	cout <<"========================"<< endl;
 	PrintHeapArray(myArray, mHeap.GetHeapSize());
 	//mHeap.BuildHeap(myArray, sizeOfHeap);
-	mHeap.ToString();
+	mHeap.PrintHeap();
 	//mHeap.Clear();
 	//ResetHeapArray(myArray, sizeOfHeap);
 
 	while ( mHeap.GetSize() > 0 ){
 		int min = -1;
-		min = mHeap.GetMin();
+		min = mHeap.Delete();
 		if( min != -1 ){
 			cout << "Min: " << min << endl;
 		} else {
 			cout << "Invalid min" << endl;
 		}
-		//mHeap.ToString();
+		//mHeap.PrintHeap();
+		//cout << mHeap.ToString() << endl;
 	}
 
 
@@ -287,8 +297,7 @@ void ResetHeapArray(int array[], int size){
 
 void PrintHeapArray( int array[], int size){
 	int i;
-
-	cout << "Org Heap Array:[";
+	cout << "Org Heap Array[" << size << "]:[" ;
 	for ( i = 0; i<size-1;i++){ cout << array[i] << ","; }
 	cout << array[i] << "]" << endl;
 }
