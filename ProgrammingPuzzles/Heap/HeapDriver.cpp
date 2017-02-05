@@ -124,6 +124,8 @@ int main(int argc, char* argv[]){
 			Test_SampleInput(mHeap);		
 		}else if ( strcmp(argv[1],  "1") == 0){
 			Test_RandomisedDataInput(mHeap);
+		} else {
+			Test_SampleInput(mHeap);
 		}
 	}
 
