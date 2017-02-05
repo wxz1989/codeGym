@@ -7,8 +7,8 @@
 #define READ_DATA_FROM_FILE
 #endif
 
-#define INVALID -1
-#define MAX_HEAP_SIZE 1000
+#define INVALID -999999999
+#define MAX_HEAP_SIZE 100
 
 
 class Heap{
@@ -21,13 +21,17 @@ public:
 
 	Heap();
 	Heap(HeapType heapType, size_t cap = INT_CAPACITY);
-
+	~Heap();
 private:
-	int heapArray[MAX_HEAP_SIZE];
+	//int heapArray[MAX_HEAP_SIZE];
+
+	int* pHeapArray;
 	HeapType mHeapType;
 	size_t 	heapSize;
 	size_t 	heapCapacity;
 public:
+
+	void Init(void);
 	void Add(int value);
 	bool Remove(int value);
 	bool Update(int valueToUpdate, int newValue);
@@ -45,12 +49,15 @@ public:
 
 	//This function checks Bounds of the child and parent indeices as well as their Values.
 	// If values of parent and child violates current heapType then it will return false, otherwise validity is TRUE.
-	bool IsValid(int childIndex, int parent);
+	bool IsValid(int childIndex  /*, int parent*/);
 	int GetSwapIndex ( int left, int right, int parent);	
 	void Clear(void);
 
 	void SetHeapSize(size_t size);
 	size_t GetHeapSize(void);
+
+	void SetHeapCapacity(size_t cap);
+	size_t GetHeapCapacity(void);
 
 	void PrintHeap(void);
 	std::string ToString(void);
