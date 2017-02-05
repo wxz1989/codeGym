@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "Heap.h"
 
@@ -20,16 +21,15 @@ void PrintHeapArray( int array[], int size){
 	cout << array[i] << "]" << endl;
 }
 
-int main(){
+void Test_SampleInput(Heap& heapArg );
+void Test_RandomisedDataInput(Heap& heapArg);
 
-	Heap mHeap(Heap::MIN_HEAP);
-	mHeap.Init();
+void Test_SampleInput(Heap& heapArg){
 
 	int myArray[MAX_HEAP_SIZE] = { 0 };
 	int test_cases = 0;
 	int sizeOfHeap = 0;
 
-#ifdef READ_DATA_FROM_FILE
 	freopen("HeapSampleInput.txt", "r", stdin);
 	cin >> test_cases;
 
@@ -40,14 +40,14 @@ int main(){
 		//mHeap.SetHeapSize(sizeOfHeap);
 		for (int i = 0; i < sizeOfHeap; i++){
 			cin >> myArray[i];
-			mHeap.Add(myArray[i]);
+			heapArg.Add(myArray[i]);
 		}
 		//mHeap.SetHeapSize(sizeOfHeap);
 		cout <<"# "<< tc+1 << endl;
-		PrintHeapArray(myArray, mHeap.GetHeapSize());
+		PrintHeapArray(myArray, heapArg.GetHeapSize());
 		//mHeap.BuildHeap(myArray, sizeOfHeap);
 		//mHeap.PrintHeap();
-		cout << mHeap.ToString() << endl;
+		cout << heapArg.ToString() << endl;
 		
 		//mHeap.GetHeapType() == 0 ? mHeap.SetHeapType(1) : mHeap.SetHeapType(0);
 		/*while ( mHeap.GetSize() > 0 ){
@@ -62,12 +62,18 @@ int main(){
 			cout << mHeap.ToString() << endl;
 		}*/
 
-		mHeap.HeapSort();
+		heapArg.HeapSort();
 
-		mHeap.Clear();
-		ResetHeapArray(myArray, mHeap.GetHeapSize());
+		heapArg.Clear();
+		ResetHeapArray(myArray, heapArg.GetHeapSize());
 	}
-#else
+}
+void Test_RandomisedDataInput(Heap& heapArg){
+
+	int myArray[MAX_HEAP_SIZE] = { 0 };
+	int test_cases = 0;
+	int sizeOfHeap = 0;
+
 	srand(time(NULL));
 	sizeOfHeap = rand()%10;
 	srand(time(NULL));
@@ -77,18 +83,18 @@ int main(){
 	for ( int i = 0; i< sizeOfHeap;i++){
 		int heapValue = rand()%30;
 		myArray[i] = heapValue;	
-		mHeap.Add(myArray[i]);
+		heapArg.Add(myArray[i]);
 	}
 
 	cout <<"========================"<< endl;
-	PrintHeapArray(myArray, mHeap.GetHeapSize());
-	//mHeap.BuildHeap(myArray, sizeOfHeap);
-	mHeap.PrintHeap();
-	//mHeap.Clear();
+	PrintHeapArray(myArray, heapArg.GetHeapSize());
+	//heapArg.BuildHeap(myArray, sizeOfHeap);
+	heapArg.PrintHeap();
+	//heapArg.Clear();
 	//ResetHeapArray(myArray, sizeOfHeap);
 
-	mHeap.HeapSort();
-	mHeap.clear();
+	heapArg.HeapSort();
+	heapArg.Clear();
 
 	/*
 	while ( mHeap.GetSize() > 0 ){
@@ -104,7 +110,25 @@ int main(){
 	}
 	*/
 
+}
 
+int main(int argc, char* argv[]){
+
+	Heap mHeap(Heap::MIN_HEAP);
+	mHeap.Init();
+
+	cout << "Arg Count:" << argc << endl;
+	if ( argc > 1){
+		cout << "Arg :" << argv[1]<< endl;
+		if ( strcmp(argv[1],  "0") == 0 ){
+			Test_SampleInput(mHeap);		
+		}else if ( strcmp(argv[1],  "1") == 0){
+			Test_RandomisedDataInput(mHeap);
+		}
+	}
+
+#ifdef READ_DATA_FROM_FILE
+#else
 #endif
 	return 0;
 }

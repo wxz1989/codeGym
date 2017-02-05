@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 #ifndef READ_DATA_FROM_FILE
-#define READ_DATA_FROM_FILE
+//#define READ_DATA_FROM_FILE
 #endif
 
 #define INVALID -999999999

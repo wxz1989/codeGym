@@ -2,9 +2,6 @@
 
 using namespace std;
 
-void PrintHeapArray( int arrayp[], int size);
-void ResetHeapArray(int myArray[],int sizeOfHeap);
-
 Heap::Heap(){
 	pHeapArray = NULL;
 	mHeapType = Heap::MIN_HEAP;
@@ -31,15 +28,15 @@ void Heap::Init(void){
 	memset(pHeapArray, 0, sizeof(int)* heapCapacity);
 }
 void Heap::Clear(void){
-	memset(pHeapArray, 0, sizeof(int)* heapSize);
-	SetHeapSize(0);
+	memset(pHeapArray, 0, sizeof(int)* heapCapacity);
+	heapSize = 0;
 }
 
 void Heap::Add(int value){
 
 	pHeapArray[heapSize+1] = value;
 	heapSize++;
-	if ( heapSize >= heapCapacity){
+	if ( heapSize == heapCapacity){
 		Resize();
 	}
 	if ( heapSize > 1 ){  Heapify(); }	
@@ -260,12 +257,17 @@ void Heap::HeapSort(void){
 }
 
 void Heap::Resize(void){
-	int* pBackUp = new int[2*heapCapacity];
+
+	cout << "Resize Called"<< endl;
+
+	heapCapacity *=2; 
+	int* pBackUp = new int[heapCapacity];
 	memcpy(pBackUp, pHeapArray, sizeof(int)* heapSize);
 
 	delete [] pHeapArray;
 	pHeapArray = pBackUp;
-	heapCapacity *=2; 
+	
+	cout << "Resized Heap Size :"<< heapCapacity << endl;
 }
 
 void Heap::SetHeapCapacity(size_t cap){
