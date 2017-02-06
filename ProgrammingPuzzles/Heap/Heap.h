@@ -2,6 +2,7 @@
 #include <memory.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #ifndef READ_DATA_FROM_FILE
 //#define READ_DATA_FROM_FILE
@@ -37,8 +38,8 @@ public:
 	bool Update(int valueToUpdate, int newValue);
 
 	void BuildHeap(int a[], int N);
-		
-	//int GetMin();
+
+	int GetTop();
 	//int GetMax();
 
 	int Delete(void);
@@ -50,7 +51,7 @@ public:
 	//This function checks Bounds of the child and parent indeices as well as their Values.
 	// If values of parent and child violates current heapType then it will return false, otherwise validity is TRUE.
 	bool IsValid(int childIndex  /*, int parent*/);
-	int GetSwapIndex ( int left, int right, int parent);	
+	int GetSwapIndex(int left, int right, int parent);
 	void Clear(void);
 
 	void SetHeapSize(size_t size);
@@ -64,6 +65,8 @@ public:
 
 	void SetHeapType(int type);
 	int GetHeapType(void);
+
+	//void TestHS();
 private:
 	//Doubles size of the Heap data structure when Heap is alrady at it's max Capacity and a new element is inserted
 	void Resize(void);
