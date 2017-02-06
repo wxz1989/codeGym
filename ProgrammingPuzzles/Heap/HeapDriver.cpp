@@ -75,7 +75,6 @@ void Test_SampleInput(Heap& heapArg){
 void Test_RandomisedDataInput(Heap& heapArg){
 
 	int myArray[MAX_HEAP_SIZE] = { 0 };
-	int test_cases = 0;
 	int sizeOfHeap = 0;
 
 	srand(time(NULL));
@@ -111,12 +110,31 @@ int main(int argc, char* argv[]){
 	mHeap.Init();
 
 	cout << "Arg Count:" << argc << endl;
-	if (argc > 1){
-		cout << "Arg :" << argv[1] << endl;
+	if (argc == 2){
 		if (strcmp(argv[1], "0") == 0){
 			Test_SampleInput(mHeap);
 		}
 		else if (strcmp(argv[1], "1") == 0){
+			Test_RandomisedDataInput(mHeap);
+		}
+		else {
+			Test_SampleInput(mHeap);
+		}
+	} else if ( argc == 3 ){
+		if (strcmp(argv[1], "0") == 0)	 {  // Heap: Test Mode(0: for SampleInput, 1: RandomizedInput)
+			if (strcmp(argv[2], "0") == 0){		// Heap: HeapType(0: for MinHeap, 1: MaxHeap)
+				mHeap.SetHeapType(Heap::MIN_HEAP);
+			} else if (strcmp(argv[2], "1") == 0){ 
+				mHeap.SetHeapType(Heap::MAX_HEAP);
+			}
+			Test_SampleInput(mHeap);
+		}
+		else if (strcmp(argv[1], "1") == 0){
+			if (strcmp(argv[2], "0") == 0){		// Heap: HeapType(0: for MinHeap, 1: MaxHeap)
+				mHeap.SetHeapType(Heap::MIN_HEAP);
+			} else if (strcmp(argv[2], "1") == 0){ 
+				mHeap.SetHeapType(Heap::MAX_HEAP);
+			}
 			Test_RandomisedDataInput(mHeap);
 		}
 		else {

@@ -26,6 +26,7 @@ Heap::~Heap(){
 void Heap::Init(void){
 
 	if ( pHeapArray != NULL ){  delete [] pHeapArray; }
+	if ( heapCapacity <= 0 ){ heapCapacity = INT_CAPACITY; }
 
 	pHeapArray = new int[heapCapacity];
 	memset(pHeapArray, 0, sizeof(int)* heapCapacity);
@@ -52,6 +53,7 @@ bool Heap::Update(int valueToUpdate, int newValue){
 }
 
 void Heap::SetHeapSize(size_t size){
+	if ( size <=0 ) { cout << "Error : Invalid heap size!" << endl; return; }
 	heapSize = size;
 }
 
@@ -59,19 +61,21 @@ size_t Heap::GetHeapSize(void){
 	return heapSize;
 }
 
-void Heap::SetHeapType(int t){
-	mHeapType = (HeapType)t;
+void Heap::SetHeapType(Heap::HeapType t){
+
+	if ( t >= Heap::MIN_HEAP && t <= Heap::MAX_HEAP ){ mHeapType = t; return; }
+	t = Heap::MIN_HEAP;
 }
 
-int Heap::GetHeapType(void){
-	return (HeapType)mHeapType;
+Heap::HeapType Heap::GetHeapType(void){
+	return mHeapType;
 }
 
-bool Heap::IsValid(int childIndex /*, int parent*/){
+bool Heap::IsValid(int childIndex){
 
 	bool retValue = false;
 
-	if (childIndex <= heapSize  /*&& parent <= heapSize*/){ retValue = true; }
+	if ( childIndex >0 && childIndex <= heapSize ){ retValue = true; }
 	else { retValue = false; }
 
 	return retValue;
@@ -149,6 +153,9 @@ int Heap::GetSize(){ return heapSize; }
 
 //Purpose of this function is to Copy value from the given HeapArray and use it for applying basic Heap algorithm HEAPIFY
 void Heap::BuildHeap(int a[], int N){
+
+	if ( N <=0 ){ cout << "Error: Invalid Heap Size!" << endl ; heapSize = 0; return; }
+
 	if ( N >= heapCapacity){ Resize(); }
 	for (int i = 0; i< N; i++){ pHeapArray[i + 1] = a[i]; }
 	heapSize = N;
@@ -183,16 +190,13 @@ void Heap::Heapify(){
 
 void Heap::HeaptifyUtil(int parentIndex){
 
-	if (parentIndex <= 0 || parentIndex > heapSize){ return; }
+	//if (parentIndex <= 0 || parentIndex > heapSize){ return; }
+	if (!IsValid(parentIndex)) { return; }
 
 	int pivot = INVALID;
 
 	int lCIndex = 2 * parentIndex;
 	int rCIndex = (2 * parentIndex) + 1;
-
-	int parent = pHeapArray[parentIndex];
-	int lChild = pHeapArray[lCIndex];
-	int rChild = pHeapArray[rCIndex];
 
 	// for min heap 
 	// MINHEAP RULE : Check if lChild index is LESS or EQUAL to heapSize
@@ -228,7 +232,7 @@ std::string Heap::ToString(void){
 	sprintf(pHeapString, "%d%c", pHeapArray[i], ']');
 	retValue.append(pHeapString);
 
-	delete []pHeapString;
+	delete [] pHeapString;
 
 	return retValue;
 }
@@ -246,9 +250,9 @@ void Heap::PrintHeap(void){
 
 void Heap::HeapSort(void){
 
-	int start = 1, end = heapSize;
-
 	int index = 0;
+	if( heapSize <=0 || heapCapacity <=0 ){ cout<< "Error : Invalid heap!"<< endl; return; }
+
 	int* sorted = new int[heapSize];
 	memset(sorted, 0, sizeof(int)* heapSize);
 
@@ -273,7 +277,9 @@ void Heap::HeapSort(void){
 
 void Heap::Resize(void){
 
-	heapCapacity *= 2;
+	if ( heapCapacity <= 0 ){ heapCapacity = INT_CAPACITY; }
+	else { heapCapacity *= 2; }
+
 	int* pBackUp = new int[heapCapacity];
 	memset(pBackUp, 0, sizeof(int)* (heapSize + 1));
 	memcpy(pBackUp, pHeapArray, sizeof(int)*(heapSize+1));
@@ -283,6 +289,9 @@ void Heap::Resize(void){
 }
 
 void Heap::SetHeapCapacity(size_t cap){
+
+	if ( cap <= 0 ){ cout << "Error : Invalid Heap Capacity!" << endl; return; }
+
 	heapCapacity = cap;
 }
 size_t Heap::GetHeapCapacity(void){
@@ -298,12 +307,12 @@ int Heap::GetTop(){
 		min = Delete();
 		if( min != INVALID ){
 			cout << "Min: " << min << endl;
-		} else {
-			cout << "Invalid min" << endl;
-		}
-		stringHeap = ToString();
-		cout << stringHeap << endl;
+			stringHeap = ToString();
+			cout << stringHeap << endl;
+			return min;
+		} 
 	}
+	return INVALID;
 }
 
 /*

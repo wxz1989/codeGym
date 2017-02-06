@@ -50,7 +50,7 @@ public:
 
 	//This function checks Bounds of the child and parent indeices as well as their Values.
 	// If values of parent and child violates current heapType then it will return false, otherwise validity is TRUE.
-	bool IsValid(int childIndex  /*, int parent*/);
+	bool IsValid(int childIndex );
 	int GetSwapIndex(int left, int right, int parent);
 	void Clear(void);
 
@@ -63,8 +63,8 @@ public:
 	void PrintHeap(void);
 	std::string ToString(void);
 
-	void SetHeapType(int type);
-	int GetHeapType(void);
+	void SetHeapType(Heap::HeapType type);
+	Heap::HeapType GetHeapType(void);
 
 	//void TestHS();
 private:
