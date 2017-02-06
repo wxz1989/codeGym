@@ -48,10 +48,6 @@ public:
 	//ToDo: Implement this and make it a complete expandable Heap Data Structure.
 	void HeapSort(void);
 
-	//This function checks Bounds of the child and parent indeices as well as their Values.
-	// If values of parent and child violates current heapType then it will return false, otherwise validity is TRUE.
-	bool IsValid(int childIndex );
-	int GetSwapIndex(int left, int right, int parent);
 	void Clear(void);
 
 	void SetHeapSize(size_t size);
@@ -68,6 +64,11 @@ public:
 
 	//void TestHS();
 private:
+	//This function checks Bounds of the child and parent indeices as well as their Values.
+	// If values of parent and child violates current heapType then it will return false, otherwise validity is TRUE.
+	bool IsValid(int childIndex );
+	int GetSwapIndex(int left, int right, int parent);
+	
 	//Doubles size of the Heap data structure when Heap is alrady at it's max Capacity and a new element is inserted
 	void Resize(void);
 	void Heapify();
