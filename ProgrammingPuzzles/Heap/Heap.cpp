@@ -240,8 +240,7 @@ std::string Heap::ToString(void){
 
 void Heap::PrintHeap(void){
 
-	std::cout << "Size:" << heapSize << std::endl;
-	std::cout << "Heap:[";
+	std::cout << "Heap[" << heapSize << "]:[" ;
 	int i;
 	for (i = 1; i < heapSize; i++){
 		std::cout << pHeapArray[i] << ",";
