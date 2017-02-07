@@ -215,6 +215,7 @@ void Heap::HeaptifyUtil(int parentIndex){
 }
 
 std::string Heap::ToString(void){
+	if ( heapSize <= 0 ){ cout << "Error : Invalid Heap Size!" << endl; return "Heap:[EMPTY]" ; }
 	std::string retValue("");
 
 	//char heapString[] = { 0 };
