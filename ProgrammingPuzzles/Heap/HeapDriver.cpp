@@ -16,6 +16,7 @@ void ResetHeapArray(int array[], int size){
 
 void PrintHeapArray(int array[], int size){
 	int i;
+	if ( size  <= 0 ){ cout<< "Error:Invalid Heap Size!" << endl; return; }
 	cout << "Org Heap Array[" << size << "]:[";
 	for (i = 0; i<size - 1; i++){ cout << array[i] << ","; }
 	cout << array[i] << "]" << endl;
@@ -78,13 +79,13 @@ void Test_RandomisedDataInput(Heap& heapArg){
 	int sizeOfHeap = 0;
 
 	srand(time(NULL));
-	sizeOfHeap = rand() % 10;
+	sizeOfHeap = rand() % 50;
 	srand(time(NULL));
 
 	//mHeap.SetHeapSize(sizeOfHeap);
 
 	for (int i = 0; i< sizeOfHeap; i++){
-		int heapValue = rand() % 30;
+		int heapValue = rand() % 100;
 		myArray[i] = heapValue;
 		heapArg.Add(myArray[i]);
 	}

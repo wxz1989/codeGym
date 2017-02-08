@@ -53,7 +53,7 @@ bool Heap::Update(int valueToUpdate, int newValue){
 }
 
 void Heap::SetHeapSize(size_t size){
-	if ( size <=0 ) { cout << "Error : Invalid heap size!" << endl; return; }
+	if ( size <=0 ) { cout << "Error:Invalid Heap size!" << endl; return; }
 	heapSize = size;
 }
 
@@ -134,7 +134,7 @@ int Heap::GetSwapIndex(int lIndex, int rIndex, int parent){
 //ToDo:Implement Min using Delete Root from MinHeap and Max using Delete Root in MaxHeap
 int Heap::Delete(){
 
-	if (heapSize == 0) { cout << "Error: Empty Heap" << endl; return INVALID; }
+	if (heapSize == 0) { cout << "Error:Empty Heap" << endl; return INVALID; }
 
 	int minValue = pHeapArray[1];
 	//for( int i = 1; i<heapSize+1; i++){ pHeapArray[i] = pHeapArray[i+1]; }
@@ -154,7 +154,7 @@ int Heap::GetSize(){ return heapSize; }
 //Purpose of this function is to Copy value from the given HeapArray and use it for applying basic Heap algorithm HEAPIFY
 void Heap::BuildHeap(int a[], int N){
 
-	if ( N <=0 ){ cout << "Error: Invalid Heap Size!" << endl ; heapSize = 0; return; }
+	if ( N <=0 ){ cout << "Error:Invalid Heap Size!" << endl ; heapSize = 0; return; }
 
 	if ( N >= heapCapacity){ Resize(); }
 	for (int i = 0; i< N; i++){ pHeapArray[i + 1] = a[i]; }
@@ -215,14 +215,19 @@ void Heap::HeaptifyUtil(int parentIndex){
 }
 
 std::string Heap::ToString(void){
-	if ( heapSize <= 0 ){ cout << "Error : Invalid Heap Size!" << endl; return "Heap:[EMPTY]" ; }
+	if ( heapSize <= 0 ){ cout << "Error:Invalid Heap Size!" << endl; return "Heap:[EMPTY]" ; }
 	std::string retValue("");
 
 	//char heapString[] = { 0 };
 	char* pHeapString = NULL;
-	pHeapString = new char[2];
+	pHeapString = new char[heapSize];
 
-	sprintf(pHeapString, "%s", "Heap:[");
+	sprintf(pHeapString, "%s", "Heap[");
+	retValue.append(pHeapString);
+	sprintf(pHeapString, "%ld", heapSize);
+	retValue.append(pHeapString);
+
+	sprintf(pHeapString, "%s", "]:[");
 	retValue.append(pHeapString);
 
 	int i;
@@ -251,7 +256,7 @@ void Heap::PrintHeap(void){
 void Heap::HeapSort(void){
 
 	int index = 0;
-	if( heapSize <=0 || heapCapacity <=0 ){ cout<< "Error : Invalid heap!"<< endl; return; }
+	if( heapSize <=0 || heapCapacity <=0 ){ cout<< "Error:Invalid Heap Size!"<< endl; return; }
 
 	int* sorted = new int[heapSize];
 	memset(sorted, 0, sizeof(int)* heapSize);
@@ -264,7 +269,7 @@ void Heap::HeapSort(void){
 		}
 	}
 
-	cout << "HeapSort:[";
+	std::cout << "HeapSort[" << index << "]:[" ;
 	int i;
 	for (i = 0; i < index - 1; i++){
 		cout << sorted[i] << ", ";
@@ -290,7 +295,7 @@ void Heap::Resize(void){
 
 void Heap::SetHeapCapacity(size_t cap){
 
-	if ( cap <= 0 ){ cout << "Error : Invalid Heap Capacity!" << endl; return; }
+	if ( cap <= 0 ){ cout << "Error:Invalid Heap Capacity!" << endl; return; }
 
 	heapCapacity = cap;
 }
