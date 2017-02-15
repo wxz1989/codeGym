@@ -53,19 +53,6 @@ void Test_SampleInput(Heap& heapArg){
 		std::string stringHeap= heapArg.ToString();
 		cout <<stringHeap << endl;
 
-		//mHeap.GetHeapType() == 0 ? mHeap.SetHeapType(1) : mHeap.SetHeapType(0);
-		/*while ( mHeap.GetSize() > 0 ){
-		int min = INVALID;
-		min = mHeap.Delete();
-		if( min != INVALID ){
-		cout << "Min: " << min << endl;
-		} else {
-		cout << "Invalid min" << endl;
-		}
-		//mHeap.PrintHeap();
-		cout << mHeap.ToString() << endl;
-		}*/
-
 		heapArg.HeapSort();
 		//heapArg.TestHS();
 
@@ -142,9 +129,5 @@ int main(int argc, char* argv[]){
 			Test_SampleInput(mHeap);
 		}
 	}
-
-#ifdef READ_DATA_FROM_FILE
-#else
-#endif
 	return 0;
 }
