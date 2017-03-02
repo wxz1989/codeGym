@@ -65,7 +65,7 @@ void Test_SampleInput(){
 	int sA= 0;
 	int sB = 0;
 
-	freopen("SampleInput.txt", "r", stdin);
+	freopen("FindCommonSampleInput.txt", "r", stdin);
 	cin >> test_cases;
 
 	for (int tc = 0; tc < test_cases; tc++){
