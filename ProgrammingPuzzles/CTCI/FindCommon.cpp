@@ -17,41 +17,21 @@ int Solve(int A[], int B[], int sA, int sB){
 	if (sA <= 0 || sB <= 0){ return -1; }
 
 	int matchCount = 0;
-
 	int iA=0, iB = 0;
-	//if (sA == sB)
-	{
-		for (iA = 0, iB = 0; iA<sA || iB<sA; ){
-			//cout << "Index A:" << iA << " Index B:" << iB << endl;
-			//cout << "Values of A :" << A[iA] << " Value of B:" << B[iB] << endl;
-			if (A[iA] < B[iB]) {
-				iA++;
-				if ( iA >= sA){ 
-					iA  -=1;
-					iB++;
-				}
-			} else if (A[iA] > B[iB]){
-				iB++;
-				if ( iB >=sB){
-					iB -=1;
-					iA++;
-				}
-			} else {
-				cout << "A:" << A[iA] << " B:" << B[iB] << endl;
-				iA++;
-				iB++;
 
-				if ( iA >= sA){ 
-					iA  -=1;
-					iB++;
-				}
-				if ( iB >=sB){
-					iB -=1;
-					iA++;
-				}
-				++matchCount;
-			}		
-		}
+	for (;iA<sA && iB<sB; ){
+		//cout << "Index A:" << iA << " Index B:" << iB << endl;
+		//cout << "Values of A :" << A[iA] << " Value of B:" << B[iB] << endl;
+		if (A[iA] < B[iB]) {
+			iA++;
+		} else if (A[iA] > B[iB]){
+			iB++;
+		} else {
+			cout << "A:" << A[iA] << " B:" << B[iB] << endl;
+			iA++;
+			iB++;
+			++matchCount;
+		}		
 	}
 	return matchCount;
 }
