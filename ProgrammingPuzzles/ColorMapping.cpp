@@ -87,8 +87,8 @@ int DFS( int arr[MAX_HEIGHT][MAX_WIDTH], int i, int j){
 	int redBlocks = 0;
 	for ( int i =0; i< H;i++){
 		for ( int j =0; j< W; j++){
-			if ( visitedArray[i][j] == 0 && arr[i][j] != 1){
-
+			//if ( visitedArray[i][j] == 0 && arr[i][j] != 1){
+			if ( IsValid(i,j) ){
 				//Recursive function calls to get Total Block Counts for every available section
 				
 				DFSUtil(arr, i, j);
