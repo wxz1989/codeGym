@@ -8,10 +8,12 @@ using namespace std;
 #define MAX_BLOCKS ((MAX_WIDTH)*(MAX_HEIGHT))
 
 int W=0, H = 0;
-int TotalRAreas = 0;
+int foundBlocks = 0;
+int distinctBlockCount =0;
+
 int whiteBoard[MAX_HEIGHT][MAX_WIDTH] = {0};
 int visitedArray[MAX_HEIGHT][MAX_WIDTH] = {0};
-int blockCountIndex =0;
+
 int blockCountArray[MAX_BLOCKS] = {0};
 
 void PrintMatrix(int arr[MAX_HEIGHT][MAX_WIDTH]){
@@ -28,10 +30,12 @@ void PrintMatrix(int arr[MAX_HEIGHT][MAX_WIDTH]){
 bool IsValid(int i, int j){
 	if ( (i >=0 && i<H) && 
 		(j>=0 && j<W) &&
-		visitedArray[i][j] == 0 && whiteBoard[i][j] != 1){
+		visitedArray[i][j] == 0 && 
+		whiteBoard[i][j] != 1)
+	{
 		return true;
-}
-return false;
+	}
+	return false;
 }
 
 void ResetData(){
@@ -42,8 +46,8 @@ void ResetData(){
 		}
 	}
 	
-	for (int i = 0; i <MAX_BLOCKS; i++){ blockCountArray[i] = 0; }
-	blockCountIndex = 0,W=0, H = 0,TotalRAreas = 0;
+	for (int i = 0; i <distinctBlockCount; i++){ blockCountArray[i] = 0; }
+	distinctBlockCount=0,W=0,H=0, foundBlocks=0;
 }
 
 int SortArray(int blockCount[], int length){
@@ -60,46 +64,47 @@ int SortArray(int blockCount[], int length){
 	return 1;
 }
 
-int DFSUtil( int arr[MAX_HEIGHT][MAX_WIDTH], int i, int j, int count, int dir){
-	int ret = 0;
-	if(!IsValid(i, j)){ return 0; }
-	TotalRAreas++;
+void DFSUtil( int arr[MAX_HEIGHT][MAX_WIDTH], int i, int j){
+	if(!IsValid(i, j)){ return; }
 
+	foundBlocks++;
 	visitedArray[i][j] = 1;
 //PrintVisitedMatrix();
 //Go right
-	ret = DFSUtil(arr, i, j+1, count+1, 0);
+	DFSUtil(arr, i, j+1);
 
 //Go Bottom
-	ret = DFSUtil(arr, i+1, j, count+1, 1); 
+	DFSUtil(arr, i+1, j); 
 //Go Left
-	ret = DFSUtil(arr, i, j-1, count+1, 1);
+	DFSUtil(arr, i, j-1);
 
 //Go Top
-	ret = DFSUtil(arr, i-1,j, count+1, 1);
-	return count;
+	DFSUtil(arr, i-1,j);
 }
 
 int DFS( int arr[MAX_HEIGHT][MAX_WIDTH], int i, int j){
-	int currnetCount =0;
-	int count = 0;
+
+	int redBlocks = 0;
 	for ( int i =0; i< H;i++){
 		for ( int j =0; j< W; j++){
 			if ( visitedArray[i][j] == 0 && arr[i][j] != 1){
-				int retValue = DFSUtil(arr, i, j, 0, count);
-				blockCountArray[blockCountIndex++] = TotalRAreas;
-				TotalRAreas = 0;
+
+				//Recursive function calls to get Total Block Counts for every available section
+				
+				DFSUtil(arr, i, j);
+				blockCountArray[distinctBlockCount++] = foundBlocks;
+
+				cout << "UnPainted blocks:[" <<i <<"," << j <<  "]:" << foundBlocks << endl;
+				//Reset the Global varialbe for total blocks found
+				foundBlocks = 0;
 			}
 		}
 	}
-	SortArray(blockCountArray, blockCountIndex);
-	int rValues = 0;
-	for ( int i = 0;i < blockCountIndex; i++){
-		if ( i % 3 == 0 ){
-			rValues += blockCountArray[i];
-		}
-	}
-	return rValues;
+	SortArray(blockCountArray, distinctBlockCount);
+	
+
+	for ( int i = 0;i < distinctBlockCount; i++){ if ( i % 3 == 0 ){ redBlocks += blockCountArray[i]; } }
+	return redBlocks;
 }
 
 int main(int argc, char** argv)
@@ -126,7 +131,7 @@ int main(int argc, char** argv)
 		Ans = DFS(whiteBoard, 0,0);
 		// Print the answer to standard output(screen).
 		//PrintMatrix(whiteBoard);
-		PrintMatrix(visitedArray);
+		//PrintMatrix(visitedArray);
 		cout << "#" << test_case << " " << Ans << endl;
 		ResetData();
 	}
