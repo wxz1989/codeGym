@@ -23,7 +23,9 @@ function getAuthUrl () {
     var oauth2Client = getOAuthClient();
     // generate a url that asks permissions for Google+ and Google Calendar scopes
     var scopes = [
-      'https://www.googleapis.com/auth/plus.me'
+      'https://www.googleapis.com/auth/plus.me',
+      'https://www.googleapis.com/auth/calendar',
+      'https://www.googleapis.com/auth/calendar.readonly'
     ];
 
     var url = oauth2Client.generateAuthUrl({
@@ -43,13 +45,16 @@ app.use("/oauthCallback", function (req, res) {
       if(!err) {
         oauth2Client.setCredentials(tokens);
         session["tokens"]=tokens;
-        res.send("Login successful!!" + "Token" + JSON.stringify(tokens) + "Sessios:" + JSON.stringify(session));
+        res.send("Login successful!!" + "Token:[" + JSON.stringify(tokens) + "]"+ " Sessions:[" + JSON.stringify(session) + "]");
         //&lt;a href="/details"&gt;Go to details page&lt;/a&gt;      
         }
       else{
         res.send("Login failed!");
       }
     });
+
+    listEvents(session["tokens"]);
+
 });
 
 app.use("/details", function (req, res) {
@@ -74,10 +79,42 @@ app.use("/", function (req, res) {
     //window.open(url,'mywindow','width=400,height=200')
 });
 
+function listEvents(auth) {
+
+    console.log("Called Listing Event Functions");
+  var calendar = google.calendar('v3');
+  calendar.events.list({
+    auth: auth,
+    calendarId: 'primary',
+    timeMin: (new Date()).toISOString(),
+    maxResults: 10,
+    singleEvents: true,
+    orderBy: 'startTime'
+  }, function(err, response) {
+    if (err) {
+      console.log('The API returned an error: ' + err);
+      return;
+    }
+    var events = response.items;
+    if (events.length == 0) {
+      console.log('No upcoming events found.');
+    } else {
+      console.log('Upcoming 10 events:');
+      for (var i = 0; i < events.length; i++) {
+        var event = events[i];
+        var start = event.start.dateTime || event.start.date;
+        console.log('%s - %s', start, event.summary);
+      }
+    }
+  });
+
+  console.log("Exited Listing Event Functions");
+}
+
 
 var port = 8080;
 var server = http.createServer(app);
 server.listen(port);
-server.on('listening', function () {
+server.on('listening', function () {Exited
     console.log("listening to "+ port);
 });
