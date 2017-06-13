@@ -1,15 +1,16 @@
 // TrieTree.cpp : Defines the entry point for the console application.
 //
-
-#include "stdafx.h"
-#include <math.h>
+#include <iostream>
 #include <stdio.h>
+#include <stdlib.h>
 
 #define MAX_SIZE 26
 static int __iIndex= 0;
 
 //Implementatio of Trie tree
 //data structure for trie
+
+using namespace std;
 
 struct TrieTreeNode
 {
@@ -24,14 +25,14 @@ bool	InsertValue(TrieTreeNode*	pHead,char*		pInput);
 void	FindWord(TrieTreeNode*	pHead,char*		pInput);
 void	FindWordByPrefix(TrieTreeNode*	pHead,char*		pInput);
 void	FreeTrieTree(TrieTreeNode*		pHead);
-void	ExtractWordFromNode(TrieTreeNode*		pHead);
+void	ExtractWordFromNode(TrieTreeNode*		pHead, std::string, std::string&);
 
-//Trie Tree Implementation
+//Trie Tree Implementation
 bool	InsertValue(TrieTreeNode*		pHead, char*		pInput)
 {
 	int					iInputStringLength = 0, iIndex=0;
 	char				tempChar='\0';
-	TrieTreeNode*		pTempHead= NULL;
+	TrieTreeNode*		pTempHead= NULL;
 	if ( pInput == NULL)
 	{
 		printf("\nInsertion failed!");
@@ -39,8 +40,8 @@ bool	InsertValue(TrieTreeNode*		pHead, char*		pInput)
 	}
 	pTempHead = pHead;
 	while(pInput[iInputStringLength++]);
-	iInputStringLength--;
-	printf("\nInput String Length is : [%d]",iInputStringLength);
+	iInputStringLength--;
+	printf("Input String Length is : [%s][%d] ", pInput, iInputStringLength);
 	for ( iIndex = 0; iIndex < iInputStringLength; iIndex++)
 	{
 		if ( pTempHead )
@@ -52,13 +53,13 @@ bool	InsertValue(TrieTreeNode*		pHead, char*		pInput)
 
 			if ( pTempHead->pChild[tempChar]==NULL )
 			{	
-				printf("\nNot found!");
+				//printf("\nNot found!");
 				TrieTreeNode*		pTempNode = new TrieTreeNode();
 				if ( pTempNode )
 				{
 					pTempNode->iIndex= __iIndex;
 					__iIndex++;
-					pTempNode->charValue = pInput[iIndex];
+					pTempNode->charValue = pInput[iIndex];
 					if ( iIndex == iInputStringLength-1)
 						pTempNode->bEndOfWord = true;
 					else
@@ -77,26 +78,27 @@ bool	InsertValue(TrieTreeNode*		pHead, char*		pInput)
 			return false;
 		}
 	}
+	cout << endl;
 	return true;
-}
+}
 void	FindWord(TrieTreeNode*		pHead, char*		pInput)
 {
 	int					iInputStringLength = 0, iIndex=0;
 	char				tempChar='\0';
-	TrieTreeNode*		pTempHead= NULL;
+	TrieTreeNode*		pTempHead= NULL;
 	if (pHead== NULL || pInput == NULL)
 	{
 		printf("\nInput String is Incorrect!");
 		return ;
 	}
 
-	pTempHead = pHead;
+	pTempHead = pHead;
 	while(pInput[iInputStringLength++]);
 	iInputStringLength--;
 
 	printf("\nInput String Length is : [%d]",iInputStringLength);
 	printf("\nWord Searching...");
-	printf("\n");
+	printf("\n");
 	for ( iIndex = 0; iIndex < iInputStringLength; iIndex++)
 	{
 		if ( pTempHead )
@@ -104,7 +106,7 @@ void	FindWord(TrieTreeNode*		pHead, char*		pInput)
 			if ( pInput[iIndex] >'A' && pInput[iIndex]<'Z')
 				tempChar = abs('A'- pInput[iIndex]);
 			else 
-				tempChar = abs('a'- pInput[iIndex]);
+				tempChar = abs('a'- pInput[iIndex]);
 			if ( pTempHead->pChild[tempChar] )
 			{	
 				printf("%c",pTempHead->pChild[tempChar]->charValue);
@@ -115,9 +117,8 @@ void	FindWord(TrieTreeNode*		pHead, char*		pInput)
 				}
 				pTempHead = pTempHead->pChild[tempChar];
 			}
-			else
-			{
-				printf("Not Found");
+			else{
+				//printf("Not Found");
 				return;
 			}
 		}
@@ -128,27 +129,40 @@ void	FindWord(TrieTreeNode*		pHead, char*		pInput)
 		}
 	}
 	return ;
-}
-void	FindWordByPrefix(TrieTreeNode*		pHead,char*		pInput)
+}
+void	FindWordByPrefix(TrieTreeNode*		pHead,std::string inputText)
 {
 	char				tempChar='\0';
 	int					iIndex=0;
 	TrieTreeNode*		pTempHead= NULL;
 
-	if (pHead== NULL || pInput == NULL)
-	{
-		printf("\nInput String is Incorrect!");
+	if (pHead== NULL || inputText.empty() ) {
+		cout << "Input String is Incorrect!" << endl;
 		return ;
-	}
+	}
+
 	pTempHead = pHead;
-	printf("\n");
-	if ( pInput[iIndex] >'A' && pInput[iIndex]<'Z')
-		tempChar = abs('A'- pInput[iIndex]);
+
+	if ( inputText.length() > 1 ){
+		cout << "First find all character matching the inputText, then find all it's comnbinations!" << endl;
+		//Do Something!
+	} else {
+		cout << "Character to match is: [" << inputText <<"]["<< inputText[0] <<"]"<< endl;
+	}
+	cout <<"Index:"  << inputText[0] << endl;
+	tempChar = inputText[0];
+
+	if ( inputText[0] >'A' && inputText[0] <'Z')				// As of now inputText is considered to be a Single character input
+		tempChar = abs('A'- tempChar);
 	else 
-		tempChar = abs('a'- pInput[iIndex]);
-	printf("\n******************\n");
-	if ( pTempHead->pChild[tempChar] )
-		ExtractWordFromNode(pTempHead->pChild[tempChar]);
+		tempChar = abs('a'- tempChar);
+
+	if ( pTempHead->pChild[tempChar] ){	
+		std::string prefix;
+		//prefix += ('a' + tempChar);
+		prefix.append(inputText);
+		ExtractWordFromNode(pTempHead->pChild[tempChar], inputText, prefix);
+	}
 	else
 	{
 		printf("\nHead is NULL! TrieTree is NULL");
@@ -156,63 +170,80 @@ void	FindWordByPrefix(TrieTreeNode*		pHead,char*		pInput)
 	}
 	printf("\n");
 	return ;
-}
-void ExtractWordFromNode(TrieTreeNode*		pHead)
+}
+
+
+void ExtractWordFromNode(TrieTreeNode*	pHead, std::string prefix,std::string& outputText)
 {
-	static char			cPrefixLetter='\0';
 	if ( pHead )
 	{
-		cPrefixLetter = pHead->charValue;
 		for ( int iIndex =0; iIndex < MAX_SIZE; iIndex++)
 		{
 			if ( pHead->pChild[iIndex] )
 			{
-				printf("%c", pHead->pChild[iIndex]->charValue);
 				if ( pHead->pChild[iIndex]->bEndOfWord )
 				{
-					printf("\n******************\n");
+					outputText += pHead->pChild[iIndex]->charValue;
+					cout  <<"Found Word: ["<<  outputText << "]" << endl;
+					outputText.erase(outputText.length()-1, 1);
+					//cout  <<"Removed Last Char: ["<<  outputText << "]" << endl;
 					return;
+				} else { 
+					//cout << "Found Character: [" << pHead->pChild[iIndex]->charValue << "]" << endl;
+					outputText += pHead->pChild[iIndex]->charValue;
+					ExtractWordFromNode(pHead->pChild[iIndex], prefix, outputText);
+					outputText.erase(outputText.length()-1, 1);
+					//cout  <<"Again Removed Last Char: ["<<  outputText << "]" << endl;
 				}
-				else
-					ExtractWordFromNode(pHead->pChild[iIndex]);
 			}
 		}
 	}
-}
+}
 void	FreeTrieTree(TrieTreeNode*		pHead)
 {
 	TrieTreeNode*		pHeadNode = NULL;
-	if ( pHead ==NULL)
-	{
+	if ( pHead ==NULL ) {
 		printf("Trie Head node is NULL! Nothing to Free.");
 		return;
-	}
+	}
+
+	if ( pHead->bEndOfWord ){
+		cout << "End of word detected at [" << pHead->charValue << "]" << endl;
+		delete pHead;
+		return;
+	}
 	pHeadNode = pHead;
-	if ( pHeadNode->pChild )
-	{
-		int iSizeToIterate = sizeof(pHeadNode->pChild)/sizeof(*(pHeadNode->pChild));
-		for ( int iIndex = 0; iIndex < iSizeToIterate; iIndex++)
-		{
-			if ( pHeadNode->pChild[iIndex])
-			{
-				FreeTrieTree(pHeadNode->pChild[iIndex]);
-				delete pHeadNode->pChild[iIndex];
-				__iIndex--;
-			}
+	for ( int iIndex = 0; iIndex < MAX_SIZE; iIndex++) {
+
+		if ( pHeadNode->pChild[iIndex]) {
+			cout << "Will Delete :[" << pHeadNode->pChild[iIndex]->charValue << "] " << endl;
+			FreeTrieTree(pHeadNode->pChild[iIndex]);
+			//cout << "Deleting : ["<< iIndex <<"] Char Value[" << pHeadNode->pChild[iIndex]->charValue << "] " << endl;
+
+			//delete pHeadNode->pChild[iIndex];
+			//pHeadNode->pChild[iIndex] = NULL;
+			//cout << "returning!!!" << endl;
+			//return;
 		}
 	}
-    delete pHead;
-	return;
+	cout << "Deleting headNode: [" << pHeadNode->charValue << "] " << endl;
+    delete pHeadNode;
+	return;
 }
-int _tmain(int argc, _TCHAR* argv[])
+int main(int argc, char* argv[])
 {
-	__pTrieHead = new TrieTreeNode();
+	__pTrieHead = new TrieTreeNode();
 	InsertValue(__pTrieHead, "truck");
 	InsertValue(__pTrieHead, "trick");
 	InsertValue(__pTrieHead, "trunck");
 	InsertValue(__pTrieHead, "trash");
-	InsertValue(__pTrieHead, "tank");
-	FindWordByPrefix(__pTrieHead, "t");
+	InsertValue(__pTrieHead, "tank");
+
+
+	//This is fixed at first so, you know the fixed characters and iterate untill you reach EOW.
+	std::string searchString("t");
+	//cin >> searchString;
+	FindWordByPrefix(__pTrieHead, searchString);
 	FreeTrieTree(__pTrieHead);
 	return 0;
 }
