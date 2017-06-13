@@ -3,14 +3,24 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
+#define SAMPLE_INPUT_SIZE 10
+#define MAX_ARRAY_SIZE 100
+
+using namespace std;
+
+void Test_SampleInput();
+void Test_RandomisedDataInput();
+int Solve();
+
 
 #define MAX_SIZE 26
 static int __iIndex= 0;
 
 //Implementatio of Trie tree
 //data structure for trie
-
-using namespace std;
 
 struct TrieTreeNode
 {
@@ -21,10 +31,19 @@ struct TrieTreeNode
 };
 static TrieTreeNode*	__pTrieHead = NULL;
 
+//Public
 bool	InsertValue(TrieTreeNode*	pHead,char*		pInput);
+//Public
 void	FindWord(TrieTreeNode*	pHead,char*		pInput);
+
+//Public 
 void	FindWordByPrefix(TrieTreeNode*	pHead,char*		pInput);
+void	FindWordByPrefix(TrieTreeNode*	pHead,std::string inputText);
+
+//Should be private and should do cleaup if asked explicitely or whlie terminating the trie object
 void	FreeTrieTree(TrieTreeNode*		pHead);
+
+//Private API
 void	ExtractWordFromNode(TrieTreeNode*		pHead, std::string, std::string&);
 
 //Trie Tree Implementation
@@ -54,7 +73,7 @@ bool	InsertValue(TrieTreeNode*		pHead, char*		pInput)
 			if ( pTempHead->pChild[tempChar]==NULL )
 			{	
 				//printf("\nNot found!");
-				TrieTreeNode*		pTempNode = new TrieTreeNode();
+				TrieTreeNode*		pTempNode = new TrieTreeNode();			//Make a factory and ask it to generate new nodes., use sample program template to generate new input data 
 				if ( pTempNode )
 				{
 					pTempNode->iIndex= __iIndex;
@@ -230,6 +249,8 @@ void	FreeTrieTree(TrieTreeNode*		pHead)
     delete pHeadNode;
 	return;
 }
+
+/*
 int main(int argc, char* argv[])
 {
 	__pTrieHead = new TrieTreeNode();
@@ -238,6 +259,10 @@ int main(int argc, char* argv[])
 	InsertValue(__pTrieHead, "trunck");
 	InsertValue(__pTrieHead, "trash");
 	InsertValue(__pTrieHead, "tank");
+	InsertValue(__pTrieHead, "rakesh");
+	InsertValue(__pTrieHead, "zebra");
+	InsertValue(__pTrieHead, "zambuvan");
+	InsertValue(__pTrieHead, "manpower");
 
 
 	//This is fixed at first so, you know the fixed characters and iterate untill you reach EOW.
@@ -245,5 +270,80 @@ int main(int argc, char* argv[])
 	//cin >> searchString;
 	FindWordByPrefix(__pTrieHead, searchString);
 	FreeTrieTree(__pTrieHead);
+	return 0;
+}*/
+
+
+void Test_SampleInput(){
+
+	cout << "Sample Input" << endl;
+	__pTrieHead = new TrieTreeNode();
+	char A[MAX_ARRAY_SIZE] = { 0 };	
+
+	int test_cases = 0;
+	int size= 0;
+
+	std::string inputString;
+
+	freopen("TrieTree_Sample_Input.txt", "r", stdin);
+	cin >> test_cases;
+
+	cout << test_cases << endl;
+	getline(cin , inputString);
+	for (int tc = 0; tc < test_cases; tc++){
+
+		//cin >> size
+		getline(cin , inputString);;
+		cout << "Sample Input:[" << inputString << "]" << endl;
+		InsertValue(__pTrieHead, (char*)inputString.c_str());
+		//int Ans = Solve();
+		//cout << "# " << tc + 1 <<" " << Ans << endl;
+	}
+}
+void Test_RandomisedDataInput(){
+
+	char A[MAX_ARRAY_SIZE] = { 0 };
+	int size = 0;
+
+	srand(time(NULL));
+	size = rand() % SAMPLE_INPUT_SIZE;
+	srand(time(NULL));
+
+	for (int i = 0; i< size; i++){
+		int value = rand() % MAX_SIZE;
+		A[i] = value;
+	}
+
+}
+
+
+int Solve(){
+	//This is fixed at first so, you know the fixed characters and iterate untill you reach EOW.
+	std::string searchString("t");
+	//cin >> searchString;
+	FindWordByPrefix(__pTrieHead, searchString);
+	FreeTrieTree(__pTrieHead);
+	return 0;
+}
+
+int main(int argc, char* argv[]){
+
+	cout << "Arg Count:" << argc << endl;
+	if (argc > 1){
+		cout << "Arg :" << argv[1] << endl;
+		if (strcmp(argv[1], "0") == 0){
+			Test_SampleInput();
+		}
+		else if (strcmp(argv[1], "1") == 0){
+			Test_RandomisedDataInput();
+		}
+		else {
+			Test_SampleInput();
+		}
+	} else {
+		Test_SampleInput();
+	}
+
+
 	return 0;
 }
