@@ -4,7 +4,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sstream>
 #include <time.h>
+#include <stdio_ext.h>
 
 #define SAMPLE_INPUT_SIZE 10
 #define MAX_ARRAY_SIZE 100
@@ -60,7 +62,7 @@ bool	InsertValue(TrieTreeNode*		pHead, char*		pInput)
 	pTempHead = pHead;
 	while(pInput[iInputStringLength++]);
 	iInputStringLength--;
-	printf("Input String Length is : [%s][%d] ", pInput, iInputStringLength);
+	printf("InputStr: [%s][%d] ", pInput, iInputStringLength);
 	for ( iIndex = 0; iIndex < iInputStringLength; iIndex++)
 	{
 		if ( pTempHead )
@@ -227,7 +229,7 @@ void	FreeTrieTree(TrieTreeNode*		pHead)
 	}
 
 	if ( pHead->bEndOfWord ){
-		cout << "End of word detected at [" << pHead->charValue << "]" << endl;
+		//cout << "End of word detected at [" << pHead->charValue << "]" << endl;
 		delete pHead;
 		return;
 	}
@@ -235,7 +237,7 @@ void	FreeTrieTree(TrieTreeNode*		pHead)
 	for ( int iIndex = 0; iIndex < MAX_SIZE; iIndex++) {
 
 		if ( pHeadNode->pChild[iIndex]) {
-			cout << "Will Delete :[" << pHeadNode->pChild[iIndex]->charValue << "] " << endl;
+			//cout << "Will Delete :[" << pHeadNode->pChild[iIndex]->charValue << "] " << endl;
 			FreeTrieTree(pHeadNode->pChild[iIndex]);
 			//cout << "Deleting : ["<< iIndex <<"] Char Value[" << pHeadNode->pChild[iIndex]->charValue << "] " << endl;
 
@@ -245,38 +247,13 @@ void	FreeTrieTree(TrieTreeNode*		pHead)
 			//return;
 		}
 	}
-	cout << "Deleting headNode: [" << pHeadNode->charValue << "] " << endl;
+	//cout << "Deleting headNode: [" << pHeadNode->charValue << "] " << endl;
     delete pHeadNode;
 	return;
 }
 
-/*
-int main(int argc, char* argv[])
-{
-	__pTrieHead = new TrieTreeNode();
-	InsertValue(__pTrieHead, "truck");
-	InsertValue(__pTrieHead, "trick");
-	InsertValue(__pTrieHead, "trunck");
-	InsertValue(__pTrieHead, "trash");
-	InsertValue(__pTrieHead, "tank");
-	InsertValue(__pTrieHead, "rakesh");
-	InsertValue(__pTrieHead, "zebra");
-	InsertValue(__pTrieHead, "zambuvan");
-	InsertValue(__pTrieHead, "manpower");
-
-
-	//This is fixed at first so, you know the fixed characters and iterate untill you reach EOW.
-	std::string searchString("t");
-	//cin >> searchString;
-	FindWordByPrefix(__pTrieHead, searchString);
-	FreeTrieTree(__pTrieHead);
-	return 0;
-}*/
-
-
 void Test_SampleInput(){
 
-	cout << "Sample Input" << endl;
 	__pTrieHead = new TrieTreeNode();
 	char A[MAX_ARRAY_SIZE] = { 0 };	
 
@@ -285,20 +262,53 @@ void Test_SampleInput(){
 
 	std::string inputString;
 
+	fflush(stdin);
 	freopen("TrieTree_Sample_Input.txt", "r", stdin);
-	cin >> test_cases;
+	cin.clear();        //clear badbit flag
+    cin.sync();   
+	//Converting String to Number using getline
+	getline(cin, inputString);
 
-	cout << test_cases << endl;
-	getline(cin , inputString);
-	for (int tc = 0; tc < test_cases; tc++){
-
-		//cin >> size
-		getline(cin , inputString);;
-		cout << "Sample Input:[" << inputString << "]" << endl;
-		InsertValue(__pTrieHead, (char*)inputString.c_str());
-		//int Ans = Solve();
-		//cout << "# " << tc + 1 <<" " << Ans << endl;
+	// This code converts from string to number safely.
+	stringstream myStream(inputString);
+	if ( myStream >> test_cases ){
+		cout << "Test cases [:" << test_cases << "]" <<  endl;
+	} else {
+		cout << "Invalid number, please try again" << endl;
 	}
+	
+	fflush(stdin);
+	for (int tc = 0; tc < test_cases; tc++){
+		cin.clear();        //clear badbit flag
+    	cin.sync();   
+		getline(cin , inputString);;
+		//cout << "Sample Input:[" << inputString << "]" << endl;
+		InsertValue(__pTrieHead, (char*)inputString.c_str());
+		
+	}
+	fflush(stdin);
+	fclose(stdin);
+
+	int Ans = Solve();
+	inputString.clear();
+
+	//std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+	__fpurge(stdin);
+	  
+	cin >> inputString;
+	if( cin.fail() ){
+		cout << "CIN failed" << endl;
+		cin.clear();        //clear badbit flag
+    	cin.sync(); 
+	} else {
+		cout << "CIN worked" << endl;
+	}
+
+	int i= 0;
+	cin >> i;
+	cout << i << endl;
+
+	cout <<"Test:" << inputString << endl;
 }
 void Test_RandomisedDataInput(){
 
@@ -316,12 +326,32 @@ void Test_RandomisedDataInput(){
 
 }
 
+void SearchWordByPrefixInLoop(){
+
+	/*while(1){
+
+		std::string searchString;
+		cin.clear();        //clear badbit flag
+    	cin.sync();   
+		//getline(cin, searchString);
+		
+		char ch = getchar();
+		if ( ch == 'q' || ch == 'Q'){
+			return;
+		} else {
+			cin >> searchString;
+			cout << "Search Input String is:" << searchString << endl;
+			FindWordByPrefix(__pTrieHead, searchString);
+		}
+	}*/
+
+	return;
+}
+
 
 int Solve(){
 	//This is fixed at first so, you know the fixed characters and iterate untill you reach EOW.
-	std::string searchString("t");
-	//cin >> searchString;
-	FindWordByPrefix(__pTrieHead, searchString);
+	//SearchWordByPrefixInLoop();
 	FreeTrieTree(__pTrieHead);
 	return 0;
 }
