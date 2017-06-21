@@ -101,6 +101,17 @@ bool	TrieTree::AddWord(std::string	inputString)
 						pTempNode->bEndOfWord = false;
 
 					pTempHead->pChild[tempChar]= pTempNode; 
+					/*
+						The currently where a new child has been added, 
+						would be the end of the world for earlier added word, 
+						but when new matching word is added, 
+						it still would be an end of the world but should be marked fas has child 
+						so that it won't be deleted while freeing trie.
+					*/
+
+					if( pTempHead->bEndOfWord ){
+						pTempHead->bHasChild =true ;
+					}
 					pTempHead = pTempNode;
 				}
 			}
@@ -230,7 +241,7 @@ int	TrieTree::FreeTrieTree(TTNodePtr pHeadNode)
 		return 0;
 	}
 
-	if ( pHeadNode->bEndOfWord ){
+	if ( pHeadNode->bEndOfWord && pHeadNode->bHasChild==false ){
 		//cout << "End of word detected at [" << pHead->charValue << "]" << endl;
 		delete pHeadNode;
 		return 0;
@@ -250,9 +261,10 @@ TTNodePtr TrieTree::CreateTrieTreeNode(){
 	TTNodePtr pNewNode = NULL;
 	pNewNode = new TrieTreeNode();
 
-	//pNewNode->charValue ='\0';
-	//pNewNode->bEndOfWord = false;
-	//memset(pNewNode->pChild, 0, sizeof(char)*MAX_SIZE);
+	pNewNode->charValue ='\0';
+	pNewNode->bEndOfWord = false;
+	pNewNode->bHasChild = false;
+	memset(pNewNode->pChild, 0, sizeof(char)*MAX_SIZE);
 
 	return pNewNode;
 }
