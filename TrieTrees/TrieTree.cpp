@@ -5,18 +5,21 @@
 
 TTPtr TrieTree::pInstance = NULL;
 
+static int charCounter = 0;
 TrieTree::TrieTree(){
-	pTreeHead = CreateTrieTreeNode();
+
+	pTreeHead = TrieNodeFactory();
 }
 
 TrieTree::~TrieTree(){
 	cout << "Destructor++" << endl;
 	FreeTrieTree(pTreeHead);
 	pTreeHead = NULL;
+	cout << "Current Character Counter:[" << charCounter <<"]" << endl;
 	cout << "Destructor--" << endl;
 }	
 
-TTNodePtr 	TrieTree::FindNewHead(std::string inputText){
+TTNodePtr 	TrieTree::FindNewHead(const std::string& inputText){
 
 	char tempChar = '\0';
 	if( pInstance == NULL || pTreeHead == NULL ){ return NULL; }
@@ -49,6 +52,7 @@ TrieTree* TrieTree::GetInstance(){
 }
 
 void TrieTree::TrieTerminate(){
+	cout << "Current Character Counter:[" << charCounter <<"]" << endl;
 	cout << "TrieTerminate++" << endl;
 	if ( pInstance ){
 		delete pInstance;
@@ -57,12 +61,12 @@ void TrieTree::TrieTerminate(){
 	cout << "TrieTerminate--" << endl;
 }
 
-bool TrieTree::DeleteWord(std::string inputWord){
+bool TrieTree::DeleteWord(const std::string& inputWord){
 	return false;
 }
 
 //Trie Tree Implementation
-bool	TrieTree::AddWord(std::string	inputString)
+bool	TrieTree::AddWord(const std::string& inputString)
 {
 	int					iInputStringLength = 0, iIndex=0;
 	char				tempChar='\0';
@@ -91,16 +95,17 @@ bool	TrieTree::AddWord(std::string	inputString)
 
 			if ( pTempHead->pChild[tempChar]==NULL )
 			{	
-				TTNodePtr pTempNode = CreateTrieTreeNode();			//Make a factory and ask it to generate new nodes., use sample program template to generate new input data 
-				if ( pTempNode )
+				TTNodePtr pNewNode = TrieNodeFactory();			//Make a factory and ask it to generate new nodes., use sample program template to generate new input data 
+				if ( pNewNode )
 				{
-					pTempNode->charValue = inputString[iIndex];
+					pNewNode->charValue = inputString[iIndex];
 					if ( iIndex == iInputStringLength-1)
-						pTempNode->bEndOfWord = true;
+						pNewNode->bEndOfWord = true;
 					else
-						pTempNode->bEndOfWord = false;
+						pNewNode->bEndOfWord = false;
 
-					pTempHead->pChild[tempChar]= pTempNode; 
+					pTempHead->pChild[tempChar]= pNewNode; 
+
 					/*
 						The currently where a new child has been added, 
 						would be the end of the world for earlier added word, 
@@ -112,7 +117,7 @@ bool	TrieTree::AddWord(std::string	inputString)
 					if( pTempHead->bEndOfWord ){
 						pTempHead->bHasChild =true ;
 					}
-					pTempHead = pTempNode;
+					pTempHead = pNewNode;
 				}
 			}
 			else{
@@ -126,12 +131,12 @@ bool	TrieTree::AddWord(std::string	inputString)
 	}
 	return true;
 }
-void	TrieTree::FindWord( std::string inputString)
+void	TrieTree::FindWord(const std::string& inputString)
 {
 	int					iInputStringLength = 0, iIndex=0;
 	char				tempChar='\0';
 	TTNodePtr		pTempHead= NULL;
-	
+
 	if ( pTreeHead == NULL || pTreeHead == NULL) {
 		cout << "Input String is Incorrect!" << endl;
 		return ;
@@ -174,7 +179,7 @@ void	TrieTree::FindWord( std::string inputString)
 	return ;
 }
 
-int	TrieTree::FindWordByPrefix(std::string inputText)
+int	TrieTree::FindWordByPrefix(const std::string& inputText)
 {
 	char				tempChar='\0';
 	int					iIndex=0;
@@ -208,7 +213,7 @@ int	TrieTree::FindWordByPrefix(std::string inputText)
 }
 
 
-int TrieTree::ExtractWordFromNode(TTNodePtr pHead, std::string prefix,std::string& outputText)
+int TrieTree::ExtractWordFromNode(TTNodePtr pHead, const std::string& prefix, std::string& outputText)
 {
 	if ( pHead == NULL ){ cout << "Invalid Head Pointer!" << endl; return -1;
 	}
@@ -242,29 +247,39 @@ int	TrieTree::FreeTrieTree(TTNodePtr pHeadNode)
 	}
 
 	if ( pHeadNode->bEndOfWord && pHeadNode->bHasChild==false ){
-		//cout << "End of word detected at [" << pHead->charValue << "]" << endl;
+		//cout << "Freed:[" << pHeadNode->charValue << "]" << endl;
 		delete pHeadNode;
+		charCounter--;
 		return 0;
 	}
 	for ( int iIndex = 0; iIndex < MAX_SIZE; iIndex++) {
 
 		if ( pHeadNode->pChild[iIndex]) {
+			//cout << "Trace:[" <<pHeadNode->pChild[iIndex]->charValue <<"]" << endl;
 			FreeTrieTree(pHeadNode->pChild[iIndex]);		
 		}
 	}
+	//cout << "Freeing:[" << pHeadNode->charValue << "]" << endl;
     delete pHeadNode;
+    charCounter--;
 	return 1;
 }
 
 
-TTNodePtr TrieTree::CreateTrieTreeNode(){
+TTNodePtr TrieTree::TrieNodeFactory(){
+
 	TTNodePtr pNewNode = NULL;
 	pNewNode = new TrieTreeNode();
+
+	if ( pNewNode == NULL ){
+		return NULL;
+	}
 
 	pNewNode->charValue ='\0';
 	pNewNode->bEndOfWord = false;
 	pNewNode->bHasChild = false;
 	memset(pNewNode->pChild, 0, sizeof(char)*MAX_SIZE);
 
+	charCounter++;
 	return pNewNode;
 }
