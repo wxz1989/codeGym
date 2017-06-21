@@ -9,6 +9,9 @@
 
 #include "TrieTree.h"
 
+#define SAMPLE_INPUT_SIZE 10
+#define MAX_ARRAY_SIZE 100
+
 void Test_SampleInput();
 void Test_RandomisedDataInput();
 int Solve();
