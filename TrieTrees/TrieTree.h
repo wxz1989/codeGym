@@ -7,8 +7,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define SAMPLE_INPUT_SIZE 10
-#define MAX_ARRAY_SIZE 100
 #define MAX_SIZE 26
 
 using namespace std;
