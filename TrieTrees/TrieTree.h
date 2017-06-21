@@ -14,9 +14,10 @@
 using namespace std;
 
 struct TrieTreeNode{
+	bool 				bHasChild;
+	bool				bEndOfWord;
 	char				charValue;
 	TrieTreeNode*		pChild[MAX_SIZE];
-	bool				bEndOfWord;
 };
 
 typedef TrieTreeNode  TTNode;
@@ -26,14 +27,14 @@ typedef TrieTreeNode** TTNodeDPtr;
 class TrieTree{
 
 public:
-	bool	AddWord(std::string	inputString);
-	void	FindWord(std::string inputString);
-	int		FindWordByPrefix(std::string inputText);
-	bool 	DeleteWord(std::string inputWord);
+	bool	AddWord(const std::string& inputString);
+	void	FindWord(const std::string& inputString);
+	int		FindWordByPrefix(const std::string& inputText);
+	bool 	DeleteWord(const std::string& inputWord);
 private:
-	TTNodePtr 	CreateTrieTreeNode();
-	TTNodePtr 	FindNewHead(std::string);
-	int	ExtractWordFromNode(TTNodePtr pHead, std::string, std::string&);
+	TTNodePtr 	TrieNodeFactory();
+	TTNodePtr 	FindNewHead(const std::string&);
+	int	ExtractWordFromNode(TTNodePtr pHead, const std::string&, std::string&);
 	int	FreeTrieTree(TTNodePtr);
 	TrieTree();
 
