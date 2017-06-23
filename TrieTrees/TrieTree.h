@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_SIZE 26
+#define MAX_SIZE 	128//26	//All character set representable by ASCII character set
 
 using namespace std;
 
@@ -30,6 +30,8 @@ public:
 	int		FindWordByPrefix(const std::string& inputText);
 	bool 	DeleteWord(const std::string& inputWord);
 private:
+
+	int FindCharIndex(char currentChar);
 	TTNodePtr 	TrieNodeFactory();
 	TTNodePtr 	FindNewHead(const std::string&);
 	int	ExtractWordFromNode(TTNodePtr pHead, const std::string&, std::string&);
@@ -48,7 +50,6 @@ private:
 
 typedef TrieTree* TTPtr;
 typedef TrieTree** TTDPtr;
-
 
 
 #endif //#ifndef __TRIE_TREE_H__
