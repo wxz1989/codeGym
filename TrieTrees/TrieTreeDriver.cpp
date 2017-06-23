@@ -9,8 +9,11 @@
 
 #include "TrieTree.h"
 
-#define SAMPLE_INPUT_SIZE 10
+#define SAMPLE_INPUT_SIZE 9999
 #define MAX_ARRAY_SIZE 100
+#define ASCII_TABLE_SIZE 128
+#define ASCII_SPACE_CHAR 32
+#define WORD_LENGTH 25
 
 void Test_SampleInput();
 void Test_RandomisedDataInput();
@@ -74,16 +77,21 @@ void Test_RandomisedDataInput(){
 	size = rand() % SAMPLE_INPUT_SIZE;
 
 
-	//cout << "Size:[" << size <<"]" << endl;
+	cout << "InputData Size:[" << size <<"]" << endl;
 	for (int i = 0; i< size; i++){
 
 		//Word length
-		int wordLength = rand() % MAX_SIZE;
+		int wordLength = rand() % WORD_LENGTH;
 
 		for ( int j = 0;j < wordLength;j++){
 			//Word's Chracters
-			int value = rand() % MAX_SIZE;
-			A[j] =  'a' + value;
+			int value = rand() % ASCII_TABLE_SIZE;
+			//A[j] =  'a' + value;
+			if ( value >= ASCII_SPACE_CHAR && value < ASCII_TABLE_SIZE)
+				A[j] =  value;
+			else {
+				A[j] =  ' ';
+			}
 		}
 
 		pInstance->AddWord(A);
@@ -94,7 +102,7 @@ void Test_RandomisedDataInput(){
 
 
 int Solve(){
-	std::string searchString("a");
+	std::string searchString("r");
 	cout << "************** SEARCH ***************"<< endl ;
 	cout << "Search string is: [" << searchString << "]" <<  endl;
 	cout << "************** SEARCH RESULTS ***************"<< endl ;
