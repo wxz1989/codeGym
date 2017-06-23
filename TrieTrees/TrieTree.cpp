@@ -21,16 +21,21 @@ TrieTree::~TrieTree(){
 
 TTNodePtr 	TrieTree::FindNewHead(const std::string& inputText){
 
-	char tempChar = '\0';
+	//char tempChar = '\0';
+	int tempChar = -1;
 	if( pInstance == NULL || pTreeHead == NULL ){ return NULL; }
 	TTNodePtr pTempHead = pTreeHead;
 
 	for ( int i=0 ; i<inputText.length();i++ ){
+		/*
 		if ( inputText[i] >'A' && inputText[i] <'Z') {				// As of now inputText is considered to be a Single character input
 			tempChar = abs('A'- inputText[i] );
 		} else {
 			tempChar = abs('a'- inputText[i] );
 		}
+		*/
+		tempChar = FindCharIndex (inputText[i]);
+
 		if ( pTempHead->pChild[tempChar] ){
 			pTempHead = pTempHead->pChild[tempChar];
 		} else {
@@ -69,7 +74,8 @@ bool TrieTree::DeleteWord(const std::string& inputWord){
 bool	TrieTree::AddWord(const std::string& inputString)
 {
 	int					iInputStringLength = 0, iIndex=0;
-	char				tempChar='\0';
+	//char				tempChar='\0';
+	int tempChar = -1;
 	TTNodePtr			pTempHead= NULL;
 
 	iInputStringLength  = inputString.length();
@@ -88,10 +94,14 @@ bool	TrieTree::AddWord(const std::string& inputString)
 	{
 		if ( pTempHead )
 		{
-			if ( inputString[iIndex] >'A' && inputString[iIndex]<'Z')
+			//cout << "ASCII CharIndex:[" << FindCharIndex(inputString[iIndex]) << "]" << endl;
+
+			/*if ( inputString[iIndex] >'A' && inputString[iIndex]<'Z')
 				tempChar = abs('A'- inputString[iIndex]);
 			else 
 				tempChar = abs('a'- inputString[iIndex]);
+			*/
+			tempChar = FindCharIndex (inputString[iIndex]);
 
 			if ( pTempHead->pChild[tempChar]==NULL )
 			{	
@@ -134,7 +144,8 @@ bool	TrieTree::AddWord(const std::string& inputString)
 void	TrieTree::FindWord(const std::string& inputString)
 {
 	int					iInputStringLength = 0, iIndex=0;
-	char				tempChar='\0';
+	//char				tempChar='\0';
+	int tempChar = 0;
 	TTNodePtr		pTempHead= NULL;
 
 	if ( pTreeHead == NULL || pTreeHead == NULL) {
@@ -154,11 +165,15 @@ void	TrieTree::FindWord(const std::string& inputString)
 	{
 		if ( pTempHead )
 		{
+			/*
 			if ( inputString[iIndex] >'A' && inputString[iIndex]<'Z'){
 				tempChar = abs('A'- inputString[iIndex]);
 			} else {
 				tempChar = abs('a'- inputString[iIndex]);
 			}
+			*/
+			tempChar =  FindCharIndex(inputString[iIndex]);
+
 			if ( pTempHead->pChild[tempChar] )
 			{	
 				cout<<"CharValue:[" << pTempHead->pChild[tempChar]->charValue << "]" <<  endl;
@@ -179,9 +194,16 @@ void	TrieTree::FindWord(const std::string& inputString)
 	return ;
 }
 
+/*
+	This functiuon should check for both upper and lower test case character
+	If input character is any character from alphabest character range. (65-90 OR 97-122)
+*/
+
+
 int	TrieTree::FindWordByPrefix(const std::string& inputText)
 {
-	char				tempChar='\0';
+	//char				tempChar='\0';
+	int tempChar = -1;
 	int					iIndex=0;
 	TTNodePtr		pTempHead= NULL;
 	std::string prefix;// = inputText;
@@ -198,13 +220,16 @@ int	TrieTree::FindWordByPrefix(const std::string& inputText)
 		if ( pTempHead == NULL ){ cout << "New Head is NULL" << endl; return -1; }
 	} else {
 		pTempHead = pTreeHead;
-		tempChar = inputText[0];
+		//tempChar = inputText[0];
 
+		/*
 		if ( tempChar >'A' && tempChar <'Z'){				// As of now inputText is considered to be a Single character input
 			tempChar = abs('A'- tempChar);
 		} else {
 			tempChar = abs('a'- tempChar);
 		}
+		*/
+		tempChar = FindCharIndex(inputText[0]);
 		pTempHead = pTempHead->pChild[tempChar];
 	}
 
@@ -227,7 +252,10 @@ int TrieTree::ExtractWordFromNode(TTNodePtr pHead, const std::string& prefix, st
 				cout  <<  outputText <<  endl;
 				outputText.erase(outputText.length()-1, 1);
 					//cout  <<"Removed Last Char: ["<<  outputText << "]" << endl;
-				return 0;
+				if ( !pHead->pChild[iIndex]->bHasChild )
+					return 0;
+				else
+					continue;
 			} else { 
 				//	cout << "Found Character: [" << pHead->pChild[iIndex]->charValue << "]" << endl;
 				outputText += pHead->pChild[iIndex]->charValue;
@@ -282,4 +310,13 @@ TTNodePtr TrieTree::TrieNodeFactory(){
 
 	charCounter++;
 	return pNewNode;
+}
+
+int TrieTree::FindCharIndex(char currentChar){
+
+	int charIndex = -1;
+	if ( (int) currentChar >=32 && (int)currentChar <MAX_SIZE){
+		charIndex = currentChar % MAX_SIZE;
+	}
+	return charIndex;
 }
