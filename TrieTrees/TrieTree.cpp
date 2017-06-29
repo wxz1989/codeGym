@@ -3,12 +3,17 @@
 #include <iostream>
 #include "TrieTree.h"
 
+
+namespace Tries{
+
 TTPtr TrieTree::pInstance = NULL;
 
 static int charCounter = 0;
 TrieTree::TrieTree(){
 
-	pTreeHead = TrieNodeFactory();
+	//nodeFactoryPtr = TTNodeFactory::GetInstance();
+	pTreeHead = TTNodeFactory::GetInstance()->CreateTrieNode();
+
 }
 
 TrieTree::~TrieTree(){
@@ -21,23 +26,16 @@ TrieTree::~TrieTree(){
 
 TTNodePtr 	TrieTree::FindNewHead(const std::string& inputText){
 
-	//char tempChar = '\0';
 	int tempChar = -1;
 	if( pInstance == NULL || pTreeHead == NULL ){ return NULL; }
 	TTNodePtr pTempHead = pTreeHead;
 
 	for ( int i=0 ; i<inputText.length();i++ ){
-		/*
-		if ( inputText[i] >'A' && inputText[i] <'Z') {				// As of now inputText is considered to be a Single character input
-			tempChar = abs('A'- inputText[i] );
-		} else {
-			tempChar = abs('a'- inputText[i] );
-		}
-		*/
 		tempChar = FindCharIndex (inputText[i]);
 
-		if ( pTempHead->pChild[tempChar] ){
-			pTempHead = pTempHead->pChild[tempChar];
+		TTNodePtr pChildPtr = pTempHead->GetChildPtr(tempChar);
+		if (  pChildPtr ){
+			pTempHead = pChildPtr;
 		} else {
 			pTempHead = NULL;
 			break;
@@ -87,51 +85,37 @@ bool	TrieTree::AddWord(const std::string& inputString)
 		return false;
 	}
 	pTempHead = pTreeHead;
-	//while(pInput[iInputStringLength++]);
-	
-	cout<<"Adding: [" << inputString << "], Length:["   << iInputStringLength << "]" << endl;
 	for ( iIndex = 0; iIndex < iInputStringLength; iIndex++)
 	{
 		if ( pTempHead )
 		{
-			//cout << "ASCII CharIndex:[" << FindCharIndex(inputString[iIndex]) << "]" << endl;
-
-			/*if ( inputString[iIndex] >'A' && inputString[iIndex]<'Z')
-				tempChar = abs('A'- inputString[iIndex]);
-			else 
-				tempChar = abs('a'- inputString[iIndex]);
-			*/
 			tempChar = FindCharIndex (inputString[iIndex]);
 
-			if ( pTempHead->pChild[tempChar]==NULL )
+			TTNodePtr pChildPtr = pTempHead->GetChildPtr(tempChar);
+
+			if ( pChildPtr == NULL )
 			{	
-				TTNodePtr pNewNode = TrieNodeFactory();			//Make a factory and ask it to generate new nodes., use sample program template to generate new input data 
+				TTNodePtr pNewNode = TTNodeFactory::GetInstance()->CreateTrieNode();//nodeFactoryPtr->CreateTrieNode(); //TrieNodeFactory();			//Make a factory and ask it to generate new nodes., use sample program template to generate new input data 
+				charCounter = TTNodeFactory::GetInstance()->GetNodeCount();
+				
 				if ( pNewNode )
 				{
-					pNewNode->charValue = inputString[iIndex];
+					pNewNode->SetCharValue(inputString[iIndex]);
 					if ( iIndex == iInputStringLength-1)
-						pNewNode->bEndOfWord = true;
+						pNewNode->SetEOW(true);
 					else
-						pNewNode->bEndOfWord = false;
+						pNewNode->SetEOW(false);
 
-					pTempHead->pChild[tempChar]= pNewNode; 
+					pTempHead->SetChildPtr(pNewNode, tempChar);
 
-					/*
-						The currently where a new child has been added, 
-						would be the end of the world for earlier added word, 
-						but when new matching word is added, 
-						it still would be an end of the world but should be marked fas has child 
-						so that it won't be deleted while freeing trie.
-					*/
-
-					if( pTempHead->bEndOfWord ){
-						pTempHead->bHasChild =true ;
+					if( pTempHead->IsEOW() ){
+						pTempHead->SetHasChild(true);
 					}
 					pTempHead = pNewNode;
 				}
 			}
 			else{
-				pTempHead = pTempHead->pChild[tempChar];
+				pTempHead = pChildPtr;
 			}
 		}
 		else {
@@ -144,7 +128,6 @@ bool	TrieTree::AddWord(const std::string& inputString)
 void	TrieTree::FindWord(const std::string& inputString)
 {
 	int					iInputStringLength = 0, iIndex=0;
-	//char				tempChar='\0';
 	int tempChar = 0;
 	TTNodePtr		pTempHead= NULL;
 
@@ -165,24 +148,19 @@ void	TrieTree::FindWord(const std::string& inputString)
 	{
 		if ( pTempHead )
 		{
-			/*
-			if ( inputString[iIndex] >'A' && inputString[iIndex]<'Z'){
-				tempChar = abs('A'- inputString[iIndex]);
-			} else {
-				tempChar = abs('a'- inputString[iIndex]);
-			}
-			*/
 			tempChar =  FindCharIndex(inputString[iIndex]);
 
-			if ( pTempHead->pChild[tempChar] )
+			TTNodePtr pChildPtr = pTempHead->GetChildPtr(tempChar);
+
+			if ( pChildPtr )
 			{	
-				cout<<"CharValue:[" << pTempHead->pChild[tempChar]->charValue << "]" <<  endl;
-				if( pTempHead->pChild[tempChar]->bEndOfWord ) 
+				cout<<"CharValue:[" << pChildPtr->GetCharValue() << "]" <<  endl;
+				if( pChildPtr->IsEOW() ) 
 				{
 					cout<<"Word Found"<< endl;
 					return;
 				}
-				pTempHead = pTempHead->pChild[tempChar];
+				pTempHead = pChildPtr;
 			} else {
 				return;
 			}
@@ -208,29 +186,15 @@ int	TrieTree::FindWordByPrefix(const std::string& inputText)
 	TTNodePtr		pTempHead= NULL;
 	std::string prefix;// = inputText;
 
-	if (pTreeHead == NULL || inputText.empty() ) {
-		// cout << "Input String is Incorrect!" << endl;
-		return -1;
-	}
-
-	//pTempHead = pTreeHead;
+	if (pTreeHead == NULL || inputText.empty() ) { return -1; }
 
 	if ( inputText.length() > 1 ){
 		pTempHead = FindNewHead(inputText); 
 		if ( pTempHead == NULL ){ cout << "New Head is NULL" << endl; return -1; }
 	} else {
 		pTempHead = pTreeHead;
-		//tempChar = inputText[0];
-
-		/*
-		if ( tempChar >'A' && tempChar <'Z'){				// As of now inputText is considered to be a Single character input
-			tempChar = abs('A'- tempChar);
-		} else {
-			tempChar = abs('a'- tempChar);
-		}
-		*/
 		tempChar = FindCharIndex(inputText[0]);
-		pTempHead = pTempHead->pChild[tempChar];
+		pTempHead = pTempHead->GetChildPtr(tempChar);
 	}
 
 	prefix.append(inputText);
@@ -240,28 +204,26 @@ int	TrieTree::FindWordByPrefix(const std::string& inputText)
 
 int TrieTree::ExtractWordFromNode(TTNodePtr pHead, const std::string& prefix, std::string& outputText)
 {
-	if ( pHead == NULL ){ cout << "Invalid Head Pointer!" << endl; return -1;
-	}
-	for ( int iIndex =0; iIndex < MAX_SIZE; iIndex++)
+	if ( pHead == NULL ){ cout << "Invalid Head Pointer!" << endl; return -1; }
+	
+	for ( int iIndex =0; iIndex < Tries::TRIE_MAX_SIZE; iIndex++)
 	{
-		if ( pHead->pChild[iIndex] )
-		{
-			if ( pHead->pChild[iIndex]->bEndOfWord )
-			{
-				outputText += pHead->pChild[iIndex]->charValue;
+		TTNodePtr pChildPtr = NULL;
+		pChildPtr =  pHead->GetChildPtr(iIndex);
+		if ( pChildPtr != NULL ){
+			if ( pChildPtr->IsEOW() ){
+
+				outputText += pChildPtr->GetCharValue(); //pHead->pChild[iIndex]->charValue;
 				cout  <<  outputText <<  endl;
 				outputText.erase(outputText.length()-1, 1);
-					//cout  <<"Removed Last Char: ["<<  outputText << "]" << endl;
-				if ( !pHead->pChild[iIndex]->bHasChild )
+				if ( !pChildPtr->HasChild() )
 					return 0;
 				else
 					continue;
 			} else { 
-				//	cout << "Found Character: [" << pHead->pChild[iIndex]->charValue << "]" << endl;
-				outputText += pHead->pChild[iIndex]->charValue;
-				ExtractWordFromNode(pHead->pChild[iIndex], prefix, outputText);
+				outputText +=  pChildPtr->GetCharValue(); // pHead->pChild[iIndex]->charValue;
+				ExtractWordFromNode(pChildPtr, prefix, outputText);
 				outputText.erase(outputText.length()-1, 1);
-					//cout  <<"Again Removed Last Char: ["<<  outputText << "]" << endl;
 			}
 		}
 	}
@@ -274,49 +236,50 @@ int	TrieTree::FreeTrieTree(TTNodePtr pHeadNode)
 		return 0;
 	}
 
-	if ( pHeadNode->bEndOfWord && pHeadNode->bHasChild==false ){
-		//cout << "Freed:[" << pHeadNode->charValue << "]" << endl;
+	if ( pHeadNode->IsEOW() && pHeadNode->HasChild() ==false ){
 		delete pHeadNode;
 		charCounter--;
 		return 0;
 	}
-	for ( int iIndex = 0; iIndex < MAX_SIZE; iIndex++) {
+	for ( int iIndex = 0; iIndex < Tries::TRIE_MAX_SIZE; iIndex++) {
 
-		if ( pHeadNode->pChild[iIndex]) {
-			//cout << "Trace:[" <<pHeadNode->pChild[iIndex]->charValue <<"]" << endl;
-			FreeTrieTree(pHeadNode->pChild[iIndex]);		
+		TTNodePtr pChildPtr = pHeadNode->GetChildPtr(iIndex);
+		if ( pChildPtr ) {
+			FreeTrieTree(pChildPtr);		
 		}
 	}
-	//cout << "Freeing:[" << pHeadNode->charValue << "]" << endl;
     delete pHeadNode;
     charCounter--;
 	return 1;
 }
 
+/*
+1. Node Creation is move the a differnet class which has it's concrete and abstract implementaion
+2. So this API shold not be used anymore
 
 TTNodePtr TrieTree::TrieNodeFactory(){
 
 	TTNodePtr pNewNode = NULL;
 	pNewNode = new TrieTreeNode();
 
-	if ( pNewNode == NULL ){
-		return NULL;
-	}
+	if ( pNewNode == NULL ){ return NULL; }
 
-	pNewNode->charValue ='\0';
-	pNewNode->bEndOfWord = false;
-	pNewNode->bHasChild = false;
-	memset(pNewNode->pChild, 0, sizeof(char)*MAX_SIZE);
+	pNewNode->SetCharValue(EMPTY_CHAR);
+	pNewNode->SetEOW(false);
+	pNewNode->SetHasChild(false);
+	pNewNode->ResetChildren();
 
 	charCounter++;
 	return pNewNode;
-}
+}*/
 
 int TrieTree::FindCharIndex(char currentChar){
 
 	int charIndex = -1;
-	if ( (int) currentChar >=32 && (int)currentChar <MAX_SIZE){
-		charIndex = currentChar % MAX_SIZE;
+	if ( (int) currentChar >=Tries::TRIE_START_CHAR && (int)currentChar <Tries::TRIE_MAX_SIZE){
+		charIndex = currentChar % Tries::TRIE_MAX_SIZE;
 	}
 	return charIndex;
+}
+
 }
