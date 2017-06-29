@@ -7,20 +7,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_SIZE 	128//26	//All character set representable by ASCII character set
+#include "TrieNode.h"
+
+namespace Tries{
 
 using namespace std;
 
-struct TrieTreeNode{
-	bool 				bHasChild;
-	bool				bEndOfWord;
-	char				charValue;
-	TrieTreeNode*		pChild[MAX_SIZE];
-};
+class TrieTree;
 
-typedef TrieTreeNode  TTNode;
-typedef TrieTreeNode* TTNodePtr;
-typedef TrieTreeNode** TTNodeDPtr;
+typedef TrieTree* TTPtr;
+typedef TrieTree** TTDPtr;
 
 class TrieTree{
 
@@ -36,20 +32,22 @@ private:
 	TTNodePtr 	FindNewHead(const std::string&);
 	int	ExtractWordFromNode(TTNodePtr pHead, const std::string&, std::string&);
 	int	FreeTrieTree(TTNodePtr);
+
+	//Private Constructor
 	TrieTree();
 
 public:
+	//Public Destructor
 	~TrieTree();
-	static TrieTree* 	GetInstance();
+	static TTPtr 	GetInstance();
 	static void TrieTerminate();
 private:
-	static TrieTree* pInstance;
+	static TTPtr pInstance;
 	TTNodePtr pTreeHead;
+	//TTNFPtr	nodeFactoryPtr;			//No Specific need of keeping this as member
 };
 
-
-typedef TrieTree* TTPtr;
-typedef TrieTree** TTDPtr;
+}
 
 
 #endif //#ifndef __TRIE_TREE_H__
