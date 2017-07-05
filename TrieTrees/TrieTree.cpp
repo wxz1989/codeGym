@@ -18,22 +18,22 @@ TrieTree::TrieTree(){
 
 TrieTree::~TrieTree(){
 	cout << "Destructor++" << endl;
-	FreeTrieTree(pTreeHead);
+	//FreeTrieTree(pTreeHead);
 	pTreeHead = NULL;
-	cout << "Current Character Counter:[" << charCounter <<"]" << endl;
+	cout << "Current Character Counter:[" << TTNodeFactory::GetInstance()->GetNodeCount() <<"]" << endl;
 	cout << "Destructor--" << endl;
 }	
 
-TTNodePtr 	TrieTree::FindNewHead(const std::string& inputText){
+ITrieNodeIntSharedPtr 	TrieTree::FindNewHead(const std::string& inputText){
 
 	int tempChar = -1;
 	if( pInstance == NULL || pTreeHead == NULL ){ return NULL; }
-	TTNodePtr pTempHead = pTreeHead;
+	ITrieNodeIntSharedPtr pTempHead = pTreeHead;
 
 	for ( int i=0 ; i<inputText.length();i++ ){
 		tempChar = FindCharIndex (inputText[i]);
 
-		TTNodePtr pChildPtr = pTempHead->GetChildPtr(tempChar);
+		ITrieNodeIntSharedPtr pChildPtr = pTempHead->GetChildPtr(tempChar);
 		if (  pChildPtr ){
 			pTempHead = pChildPtr;
 		} else {
@@ -44,7 +44,7 @@ TTNodePtr 	TrieTree::FindNewHead(const std::string& inputText){
 	return ((pTempHead == pTreeHead || pTempHead == NULL) ? NULL : pTempHead);
 }
 
-TrieTree* TrieTree::GetInstance(){
+TTPtr TrieTree::GetInstance(){
 	if( !pInstance ){
 		pInstance = new TrieTree();
 		if ( pInstance == NULL ){ return NULL;  }
@@ -55,7 +55,7 @@ TrieTree* TrieTree::GetInstance(){
 }
 
 void TrieTree::TrieTerminate(){
-	cout << "Current Character Counter:[" << charCounter <<"]" << endl;
+	cout << "Current Character Counter:[" << TTNodeFactory::GetInstance()->GetNodeCount() <<"]" << endl;
 	cout << "TrieTerminate++" << endl;
 	if ( pInstance ){
 		delete pInstance;
@@ -72,9 +72,8 @@ bool TrieTree::DeleteWord(const std::string& inputWord){
 bool	TrieTree::AddWord(const std::string& inputString)
 {
 	int					iInputStringLength = 0, iIndex=0;
-	//char				tempChar='\0';
 	int tempChar = -1;
-	TTNodePtr			pTempHead= NULL;
+	ITrieNodeIntSharedPtr			pTempHead=NULL;
 
 	iInputStringLength  = inputString.length();
 
@@ -91,11 +90,11 @@ bool	TrieTree::AddWord(const std::string& inputString)
 		{
 			tempChar = FindCharIndex (inputString[iIndex]);
 
-			TTNodePtr pChildPtr = pTempHead->GetChildPtr(tempChar);
+			ITrieNodeIntSharedPtr pChildPtr = pTempHead->GetChildPtr(tempChar);
 
 			if ( pChildPtr == NULL )
 			{	
-				TTNodePtr pNewNode = TTNodeFactory::GetInstance()->CreateTrieNode();//nodeFactoryPtr->CreateTrieNode(); //TrieNodeFactory();			//Make a factory and ask it to generate new nodes., use sample program template to generate new input data 
+				ITrieNodeIntSharedPtr pNewNode = TTNodeFactory::GetInstance()->CreateTrieNode();//nodeFactoryPtr->CreateTrieNode(); //TrieNodeFactory();			//Make a factory and ask it to generate new nodes., use sample program template to generate new input data 
 				charCounter = TTNodeFactory::GetInstance()->GetNodeCount();
 				
 				if ( pNewNode )
@@ -129,7 +128,7 @@ void	TrieTree::FindWord(const std::string& inputString)
 {
 	int					iInputStringLength = 0, iIndex=0;
 	int tempChar = 0;
-	TTNodePtr		pTempHead= NULL;
+	ITrieNodeIntSharedPtr		pTempHead= NULL;
 
 	if ( pTreeHead == NULL || pTreeHead == NULL) {
 		cout << "Input String is Incorrect!" << endl;
@@ -150,7 +149,7 @@ void	TrieTree::FindWord(const std::string& inputString)
 		{
 			tempChar =  FindCharIndex(inputString[iIndex]);
 
-			TTNodePtr pChildPtr = pTempHead->GetChildPtr(tempChar);
+			ITrieNodeIntSharedPtr pChildPtr = pTempHead->GetChildPtr(tempChar);
 
 			if ( pChildPtr )
 			{	
@@ -180,17 +179,16 @@ void	TrieTree::FindWord(const std::string& inputString)
 
 int	TrieTree::FindWordByPrefix(const std::string& inputText)
 {
-	//char				tempChar='\0';
 	int tempChar = -1;
 	int					iIndex=0;
-	TTNodePtr		pTempHead= NULL;
+	ITrieNodeIntSharedPtr		pTempHead= NULL;
 	std::string prefix;// = inputText;
 
 	if (pTreeHead == NULL || inputText.empty() ) { return -1; }
 
 	if ( inputText.length() > 1 ){
 		pTempHead = FindNewHead(inputText); 
-		if ( pTempHead == NULL ){ cout << "New Head is NULL" << endl; return -1; }
+		if ( pTempHead == NULL ){ cout << "New Head is NULL!" << endl; return -1; }
 	} else {
 		pTempHead = pTreeHead;
 		tempChar = FindCharIndex(inputText[0]);
@@ -202,13 +200,13 @@ int	TrieTree::FindWordByPrefix(const std::string& inputText)
 }
 
 
-int TrieTree::ExtractWordFromNode(TTNodePtr pHead, const std::string& prefix, std::string& outputText)
+int TrieTree::ExtractWordFromNode(ITrieNodeIntSharedPtr pHead, const std::string& prefix, std::string& outputText)
 {
 	if ( pHead == NULL ){ cout << "Invalid Head Pointer!" << endl; return -1; }
 	
 	for ( int iIndex =0; iIndex < Tries::TRIE_MAX_SIZE; iIndex++)
 	{
-		TTNodePtr pChildPtr = NULL;
+		ITrieNodeIntSharedPtr pChildPtr = NULL;
 		pChildPtr =  pHead->GetChildPtr(iIndex);
 		if ( pChildPtr != NULL ){
 			if ( pChildPtr->IsEOW() ){
@@ -216,19 +214,27 @@ int TrieTree::ExtractWordFromNode(TTNodePtr pHead, const std::string& prefix, st
 				outputText += pChildPtr->GetCharValue(); //pHead->pChild[iIndex]->charValue;
 				cout  <<  outputText <<  endl;
 				outputText.erase(outputText.length()-1, 1);
-				if ( !pChildPtr->HasChild() )
+				//cout << " EOW :[" << pChildPtr->HasChild() << "]" << endl;
+				if ( !pChildPtr->HasChild() ){
 					return 0;
-				else
-					continue;
+				}
+				else{
+					ExtractWordFromNode(pChildPtr, prefix, outputText);
+					outputText.erase(outputText.length()-1, 1);
+				}
 			} else { 
 				outputText +=  pChildPtr->GetCharValue(); // pHead->pChild[iIndex]->charValue;
 				ExtractWordFromNode(pChildPtr, prefix, outputText);
+				//cout << "Op Len:[" << outputText.length() << "], Op:[" << outputText << "]" << endl;
 				outputText.erase(outputText.length()-1, 1);
 			}
 		}
 	}
 	return 1;
 }
+
+//Usage of Shared pointer make use of this API obsolete..
+#if 0 
 int	TrieTree::FreeTrieTree(TTNodePtr pHeadNode)
 {
 	if ( pInstance ==NULL || pHeadNode == NULL ) {
@@ -252,6 +258,7 @@ int	TrieTree::FreeTrieTree(TTNodePtr pHeadNode)
     charCounter--;
 	return 1;
 }
+#endif
 
 /*
 1. Node Creation is move the a differnet class which has it's concrete and abstract implementaion
