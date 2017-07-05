@@ -7,10 +7,11 @@ namespace Tries {
 	TTNFPtr TrieNodeFactory::mInstance= NULL;
 
 	TrieTreeNode::TrieTreeNode(){
+		nodeCounter++;
 	}
 
 	TrieTreeNode::~TrieTreeNode(){
-
+		nodeCounter--;
 	}
 
 	bool TrieTreeNode::HasChild(){
@@ -34,10 +35,11 @@ namespace Tries {
 	void TrieTreeNode::ResetChildren(){
 		memset(pChild, '\0', sizeof(char)*TRIE_MAX_SIZE);
 	}
-	ITrieNodeInterfacePtr TrieTreeNode::GetChildPtr(int index)	{
+	ITrieNodeIntSharedPtr TrieTreeNode::GetChildPtr(int index)	{
 		return pChild[index];
 	}
-	void TrieTreeNode::SetChildPtr(ITrieNodeInterfacePtr pChildPtr, int index){
+	void TrieTreeNode::SetChildPtr(ITrieNodeIntSharedPtr pChildPtr, int index){
+		//pChild[index] = pChildPtr;
 		pChild[index] = pChildPtr;
 	}
 
@@ -56,17 +58,25 @@ namespace Tries {
 	void TrieNodeFactory::CleanUp(void){
 		delete mInstance;
 	}	
-	TTNodePtr TrieNodeFactory::CreateTrieNode(){
+	ITrieNodeIntSharedPtr TrieNodeFactory::CreateTrieNode(){
+		
+#if 0 
 		TTNodePtr newNode = new TTNode();
-
 		newNode->SetEOW(false);
 		newNode->SetCharValue(Tries::TRIE_EMPTY_CHAR);
 		newNode->SetHasChild(false);
 		newNode->ResetChildren();
-
 		nodeCounter++;
-
 		return newNode;
+#else 
+		ITrieNodeIntSharedPtr newSharedPtr = std::make_shared<TTNode>();
+		newSharedPtr->SetEOW(false);
+		newSharedPtr->SetCharValue(Tries::TRIE_EMPTY_CHAR);
+		newSharedPtr->SetHasChild(false);
+		newSharedPtr->ResetChildren();
+		return newSharedPtr;
+	#endif
+		
 	}
 	int TrieNodeFactory::GetNodeCount(void){
 		return nodeCounter;
