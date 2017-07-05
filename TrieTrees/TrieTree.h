@@ -18,6 +18,8 @@ class TrieTree;
 typedef TrieTree* TTPtr;
 typedef TrieTree** TTDPtr;
 
+typedef std::shared_ptr<TrieTree> TTSharedPtr;
+
 class TrieTree{
 
 public:
@@ -28,11 +30,12 @@ public:
 private:
 
 	int FindCharIndex(char currentChar);
+	/*TTNodePtr*/ ITrieNodeIntSharedPtr FindNewHead(const std::string&);
+	int	ExtractWordFromNode(/*TTNodePtr*/ITrieNodeIntSharedPtr pHead, const std::string&, std::string&);
+#if 0 
 	TTNodePtr 	TrieNodeFactory();
-	TTNodePtr 	FindNewHead(const std::string&);
-	int	ExtractWordFromNode(TTNodePtr pHead, const std::string&, std::string&);
 	int	FreeTrieTree(TTNodePtr);
-
+#endif
 	//Private Constructor
 	TrieTree();
 
@@ -43,7 +46,7 @@ public:
 	static void TrieTerminate();
 private:
 	static TTPtr pInstance;
-	TTNodePtr pTreeHead;
+	/*TTNodePtr*/ ITrieNodeIntSharedPtr pTreeHead;
 	//TTNFPtr	nodeFactoryPtr;			//No Specific need of keeping this as member
 };
 
