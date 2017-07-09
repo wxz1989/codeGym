@@ -125,7 +125,7 @@ void Test_RandomisedDataInput(){
 
 
 int Solve(){
-	std::string searchString("r");
+	std::string searchString("abcdefghijklmnopqrstuvwxy");
 	cout << "************** SEARCH ***************"<< endl ;
 	cout << "Search string is: [" << searchString << "]" <<  endl;
 	cout << "************** SEARCH RESULTS ***************"<< endl ;

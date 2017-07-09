@@ -192,6 +192,11 @@ int	TrieTree::FindWordByPrefix(const std::string& inputText)
 	} else {
 		pTempHead = pTreeHead;
 		tempChar = FindCharIndex(inputText[0]);
+
+		//If inputText is of only One character and it matches with already inserted word(Single char) then print that first
+		if ( inputText.length() ==1 && pTempHead->GetChildPtr(tempChar)->GetCharValue() == inputText[0]){
+			cout << inputText <<  endl;
+		}
 		pTempHead = pTempHead->GetChildPtr(tempChar);
 	}
 
@@ -211,9 +216,9 @@ int TrieTree::ExtractWordFromNode(ITrieNodeIntSharedPtr pHead, const std::string
 		if ( pChildPtr != NULL ){
 			if ( pChildPtr->IsEOW() ){
 
-				outputText += pChildPtr->GetCharValue(); //pHead->pChild[iIndex]->charValue;
+				outputText += pChildPtr->GetCharValue(); 
 				cout  <<  outputText <<  endl;
-				outputText.erase(outputText.length()-1, 1);
+				//outputText.erase(outputText.length()-1, 1);
 				//cout << " EOW :[" << pChildPtr->HasChild() << "]" << endl;
 				if ( !pChildPtr->HasChild() ){
 					return 0;
