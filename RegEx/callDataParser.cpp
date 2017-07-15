@@ -21,18 +21,18 @@ static inline void ltrim(std::string &s) {
 void IterativeMatching(std::string inputString){
 	std::smatch m;
 	//std::regex e ("\\b(sub)([^ ]*)");   // matches words beginning by "sub"
-	std::regex cost("(.?chrg).*([0-9])|(.?call.*cost).*([0-9])|(.?dur.*).*([0-9])|(.?bal.*).*([0-9])", ECMAScript | icase);
+	std::regex cost("(?:.?cost.?(?:Rs.|Rs|:|\\.)?[0-9]+(?:\\.[0-9]+)?)|(?:.?chrg.?(?:Rs.|Rs|:|\\.)?[0-9]+(?:\\.[0-9]+)?)", ECMAScript | icase);
 	//std::regex duration("(.?dur.*(?:(?:[0-9]+:[0-9]+)|(?:[0-9]+(?:.)?(?:se(?:c|cond|conds|cs)|mi(?:ns|nutes)|h(?:our||hr)))))", ECMAScript | icase);
 	std::regex duration("(.?dur.*(?:(?:(?:.)?[0-9]+(?:.)?:(?:.)?[0-9]+(?:.)?)|(?:(?:.)?[0-9]+(?:.)?(?:se(?:c|cond|conds|cs)|mi(?:ns|nutes)|h(?:our||hr)))))", ECMAScript|icase);
 	std::regex balance(".?bal.*(?:Rs)?.*[0-9]+\\.[0-9]{0,5}(?:inr|INR|.{0,1})?", ECMAScript | icase);
 	std::cout << "Target sequence: " << inputString << std::endl;
-	std::string durationNumbers="Duration:00:00:08";
-	std::regex durRegExe("[0-9:]+", ECMAScript | icase);
+	std::string durationStr="Duration:00:00:08";
+	std::regex duraValues("[0-9:]+", ECMAScript | icase);
 	std::regex balanceValues("[0-9]+(?:\\.[0-9]+|\\.)", ECMAScript | icase);
 
 	int matchCount = 0;
 	cout << "Match begins" << endl;
-	std::regex_search ( inputString, m, balance );
+	std::regex_search ( inputString, m, cost );
 
   	std::cout << "matches:" << std::endl;
   	for (std::smatch::iterator it = m.begin(); it!=m.end(); ++it) {
