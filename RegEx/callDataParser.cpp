@@ -23,16 +23,16 @@ void IterativeMatching(std::string inputString){
 	//std::regex e ("\\b(sub)([^ ]*)");   // matches words beginning by "sub"
 	std::regex cost("(?:.?cost.?(?:Rs.|Rs|:|\\.)?[0-9]+(?:\\.[0-9]+)?)|(?:.?chrg.?(?:Rs.|Rs|:|\\.)?[0-9]+(?:\\.[0-9]+)?)", ECMAScript | icase);
 	//std::regex duration("(.?dur.*(?:(?:[0-9]+:[0-9]+)|(?:[0-9]+(?:.)?(?:se(?:c|cond|conds|cs)|mi(?:ns|nutes)|h(?:our||hr)))))", ECMAScript | icase);
-	std::regex duration("(.?dur.*(?:(?:(?:.)?[0-9]+(?:.)?:(?:.)?[0-9]+(?:.)?)|(?:(?:.)?[0-9]+(?:.)?(?:se(?:c|cond|conds|cs)|mi(?:ns|nutes)|h(?:our||hr)))))", ECMAScript|icase);
+	std::regex duration("(?:.?dur.*(?:(?:(?:.)?[0-9]+(?:.)?:(?:.)?[0-9]+(?:.)?)|(?:(?:.)?[0-9]+(?:.)?(?:se(?:c|cond|conds|cs)|mi(?:ns|nutes)|h(?:our||hr)))))", ECMAScript|icase);
 	std::regex balance(".?bal.*(?:Rs)?.*[0-9]+\\.[0-9]{0,5}(?:inr|INR|.{0,1})?", ECMAScript | icase);
 	std::cout << "Target sequence: " << inputString << std::endl;
-	std::string durationStr="Duration:00:00:08";
-	std::regex duraValues("[0-9:]+", ECMAScript | icase);
-	std::regex balanceValues("[0-9]+(?:\\.[0-9]+|\\.)", ECMAScript | icase);
+	std::regex durValRegex("(?:[0-9](?::)?(?:.)*)+");
+	std::regex CostAndBalValRegEx("[0-9]+(?:\\.[0-9]+|\\.)");
+	std::regex durUnitRegEx("sec|min|hours|hr", ECMAScript|icase);
 
 	int matchCount = 0;
 	cout << "Match begins" << endl;
-	std::regex_search ( inputString, m, cost );
+	std::regex_search ( inputString, m, duration );
 
   	std::cout << "matches:" << std::endl;
   	for (std::smatch::iterator it = m.begin(); it!=m.end(); ++it) {
@@ -42,9 +42,19 @@ void IterativeMatching(std::string inputString){
 
 		std::smatch numMatches;
 		cout << "Digit Match begins" << endl;
-		std::regex_search ( numSearch, numMatches, balanceValues );
+		std::regex_search ( numSearch, numMatches, durValRegex );
 		for (std::smatch::iterator ite= numMatches.begin(); ite!=numMatches.end(); ++ite) {
 			std::cout << *ite << std::endl;
+
+			std::string unitSearch = *ite;
+
+			std::smatch unitMatch;
+			cout << "Unit Match begins" << endl;
+			std::regex_search ( unitSearch, unitMatch, durUnitRegEx );
+			for (std::smatch::iterator iteU= unitMatch.begin(); iteU!=unitMatch.end(); ++iteU) {
+				std::cout << *iteU << std::endl;
+			}
+			cout << "Unit Match ends" << endl;
   		}
   		cout << "Digit Match ends" << endl;
   	}
