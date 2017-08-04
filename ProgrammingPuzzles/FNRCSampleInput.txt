@@ -1,0 +1,11 @@
+5
+4
+a a b c
+3
+a a c
+7
+a b c z c a b
+15
+a b c z  c  a d e f  b w x y  z v
+5
+a a b c a
