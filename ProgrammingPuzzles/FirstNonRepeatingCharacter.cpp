@@ -19,7 +19,14 @@ int Solve(char* arr, int size);
 void PrintArray(ArrayType* pArr, int size ){
 	cout << "Array:[";
 	for ( int i = 0; i< size;i++){
-		cout << (char)pArr[i]<< " ";
+		cout << pArr[i]<< " ";
+	}
+	cout << "]" <<endl;
+}
+void PrintMapArray(int* pArr, int size ){
+	cout << "MapArray:[";
+	for ( int i = 0; i< size;i++){
+		cout << pArr[i]<< " ";
 	}
 	cout << "]" <<endl;
 }
@@ -38,6 +45,7 @@ int Solve(char* arr, int size){
 	int mapArray[MAX_ARRAY_SIZE] = {0};
 	for ( int i = 0; i< MAX_ARRAY_SIZE ;i++){ mapArray[i] = 0; }
 
+	PrintArray(arr, size);
 	list<char> fnrcList;
 	std::list<char>::iterator it = fnrcList.end();
 	for ( int i = 0; i< size;i++){
@@ -53,8 +61,9 @@ int Solve(char* arr, int size){
 			} 
 			if ( fnrcList.size() == 0 ){  cout << -1 << " "; } 
 			else { it=fnrcList.begin();  cout << *it << " " ; }
+			PrintMapArray(mapArray, size);
+			PrintSet(fnrcList);
 		}
-		else { continue; }
 	}
 	return 0;
 }
@@ -62,6 +71,7 @@ int Solve(char* arr, int size){
 void Test_SampleInput(){
 
 	char A[MAX_ARRAY_SIZE] = { 0 };	
+	
 
 	int test_cases = 0;
 	int size= 0;
@@ -71,6 +81,7 @@ void Test_SampleInput(){
 
 	for (int tc = 0; tc < test_cases; tc++){
 
+		for (int i = 0; i < MAX_ARRAY_SIZE; i++){ A[i] = 0; }
 		cin >> size;
 		for (int i = 0; i < size; i++){
 			cin >> A[i];
