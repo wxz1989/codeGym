@@ -56,6 +56,47 @@ void ReArrangeList(NodeDPtr pHead){
 	}
 }
 
+
+int ReArrange1(NodeDPtr pHead){
+
+	if ( pHead == NULL && *pHead == NULL ){ return -1; }
+
+	NodePtr pTemp = *pHead;
+	NodePtr pPrev = NULL;
+	NodePtr pLast = NULL;
+
+	int count = 1;
+	while( pTemp->next != NULL ){ pTemp = pTemp->next; ++count; }
+
+	pLast = pTemp;
+	pTemp = *pHead;
+
+	//while (  pTemp != NULL ){			//this doesn't work, becuase processed nodes are processed again
+										// when they are encountered before end of ths list and it can keep looping, 
+										// by making change in node structure or by keeping visiting nodes we can keep != NULL check 
+	while (  count != 0){
+		if ( pTemp->data % 2 != 0 ){
+			NodePtr pOdd = pTemp;		
+			if ( pPrev == NULL ){
+				*pHead = pTemp->next;
+				pTemp = *pHead;
+			} else {
+				pPrev->next = pTemp->next;	
+				pTemp = pTemp->next;		
+			}
+			pLast->next = pOdd;
+			pOdd->next = NULL;
+			pLast = pOdd;
+		} else {
+			pPrev = pTemp;
+			pTemp = pTemp->next;
+		}
+		count--;
+		
+	}
+	return 0;
+}
+
 int main() {
 	int T;
 	int Length;
