@@ -97,6 +97,7 @@ int ReArrange1(NodeDPtr pHead){
 	return 0;
 }
 
+
 int main() {
 	int T;
 	int Length;
@@ -107,6 +108,10 @@ int main() {
 	{
 		NodePtr pHead = NULL, pNew = NULL, pLast = NULL;
 		cin >> Length;
+		
+		cout << "Tc#" <<  test_case << endl;
+		if ( Length <=0 ){ std::cout <<-1 << endl; continue; }
+
 		for ( int i = 0;i < Length; i++){
 			int data;
 			cin >> data;
@@ -122,8 +127,11 @@ int main() {
 			}
 			pLast= pNew;
 		}
-		ReArrangeList(&pHead);
-		PrintList(pHead);
+
+
+		if( ReArrangeList1(&pHead) == -1){ std::cout <<-1 << endl; } 
+		else { PrintList(pHead); }
+
 	}
 	return 0;
 }
