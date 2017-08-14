@@ -57,7 +57,7 @@ void ReArrangeList(NodeDPtr pHead){
 }
 
 
-int ReArrange1(NodeDPtr pHead){
+int ReArrangeList1(NodeDPtr pHead){
 
 	if ( pHead == NULL && *pHead == NULL ){ return -1; }
 
