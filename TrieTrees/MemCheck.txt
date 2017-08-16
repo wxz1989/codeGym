@@ -1,0 +1,3 @@
+valgrind -v --tool=memcheck --leak-check=yes --track-origins=yes <ExecutableName> <Args-taken-by-that-app>
+e.g.:
+valgrind -v --tool=memcheck --leak-check=yes --track-origins=yes ./TrieTest 0 
