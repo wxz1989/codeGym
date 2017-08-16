@@ -1,3 +1,8 @@
+BULD COMMAND:(make a shell scrip file for easy building when no of files increases)
+#!/bin/bash
+g++ -v --std=c++11 TrieNode.cpp TrieTree.cpp TrieTreeDriver.cpp -o TrieTest
+
+MEM LEAK CHECK:
 valgrind -v --tool=memcheck --leak-check=yes --track-origins=yes <ExecutableName> <Args-taken-by-that-app>
 e.g.:
 valgrind -v --tool=memcheck --leak-check=yes --track-origins=yes ./TrieTest 0 
