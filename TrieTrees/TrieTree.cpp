@@ -7,12 +7,13 @@
 namespace Tries{
 
 TTPtr TrieTree::pInstance = NULL;
+//_TRIE_DIRECTORY_FILE_NAME_
 
 static int charCounter = 0;
 TrieTree::TrieTree(){
-
 	//nodeFactoryPtr = TTNodeFactory::GetInstance();
 	pTreeHead = TTNodeFactory::GetInstance()->CreateTrieNode();
+	//m_DirHandle = freopen("TrieDirectory.txt", "r+", stdout); ;
 
 }
 
@@ -34,12 +35,8 @@ ITrieNodeIntSharedPtr 	TrieTree::FindNewHead(const std::string& inputText){
 		tempChar = FindCharIndex (inputText[i]);
 
 		ITrieNodeIntSharedPtr pChildPtr = pTempHead->GetChildPtr(tempChar);
-		if (  pChildPtr ){
-			pTempHead = pChildPtr;
-		} else {
-			pTempHead = NULL;
-			break;
-		}
+		if (  pChildPtr ){ pTempHead = pChildPtr; } 
+		else { pTempHead = NULL; break; }
 	}
 	return ((pTempHead == pTreeHead || pTempHead == NULL) ? NULL : pTempHead);
 }
@@ -64,8 +61,47 @@ void TrieTree::TrieTerminate(){
 	cout << "TrieTerminate--" << endl;
 }
 
-bool TrieTree::DeleteWord(const std::string& inputWord){
-	return false;
+bool TrieTree::DeleteWord(const std::string& inputString){
+
+	if ( pTreeHead == NULL || inputString.length() == 0 ){ cout << "Delete failed, returning!!!"  <<  endl;return false; }
+
+	cout << "Delete Word Entered" <<  endl;
+	DeleteWordUtil(pTreeHead, inputString, 0);
+	return true;
+}
+
+bool TrieTree::DeleteWordUtil(ITrieNodeIntSharedPtr pHead, std::string inputString, int currentIndex){
+
+	bool retValue = false;
+	int tempChar = -1;
+
+	if( pHead == NULL || inputString.length() == 0) { cout << "returning!!!"  <<  endl;return retValue; }
+	if ( (currentIndex < 0 || currentIndex  > inputString.length()-1)) { cout << "returning!!!"  <<  endl;return retValue; }
+
+	tempChar = FindCharIndex (inputString[currentIndex]);
+
+
+	ITrieNodeIntSharedPtr pChildPtr = pHead->GetChildPtr(tempChar);
+	if (  pChildPtr ){ 
+		cout << "Before Child of "<<  pChildPtr->GetCharValue() << ":[ " << pChildPtr->GetChildCount() << "]" <<endl;
+		retValue = DeleteWordUtil(pChildPtr, inputString, currentIndex+1);
+		cout << "After Child of "<<  pChildPtr->GetCharValue() << ":[ " << pChildPtr->GetChildCount() << "]" <<endl;
+
+		/*if ( pChildPtr->IsEOW() && pChildPtr->HasChild() == false ){
+			cout << "Cann Delete "<<  pChildPtr->GetCharValue() << ":[ " << pChildPtr->GetChildCount() << "] For Sure " <<endl;
+		} else if ( !pChildPtr->IsEOW() && pChildPtr->HasChild() == false ){
+			cout << "Cann Delete "<<  pChildPtr->GetCharValue() << ":[ " << pChildPtr->GetChildCount() << "] For Sure " <<endl;
+		} else if ( !pChildPtr->IsEOW() && pChildPtr->HasChild() == true && pChildPtr->GetChildCount() == 1 ){
+			cout << "Cann Delete "<<  pChildPtr->GetCharValue() << ":[ " << pChildPtr->GetChildCount() << "] For Sure " <<endl;
+		}*/
+		
+	} 
+	else { 
+		//pTempHead = NULL; 
+		return retValue; 
+	}
+	return retValue;
+	
 }
 
 //Trie Tree Implementation
@@ -74,6 +110,9 @@ bool	TrieTree::AddWord(const std::string& inputString)
 	int					iInputStringLength = 0, iIndex=0;
 	int tempChar = -1;
 	ITrieNodeIntSharedPtr			pTempHead=NULL;
+
+	//if ( FindWord(inputString) ){ cout << inputString << " already Exists!"<< endl; return true; }
+	//else { cout << " Not found inserting it again" << endl; }
 
 	iInputStringLength  = inputString.length();
 
@@ -115,6 +154,10 @@ bool	TrieTree::AddWord(const std::string& inputString)
 			}
 			else{
 				pTempHead = pChildPtr;
+				if ( iIndex == iInputStringLength -1 ){
+					pChildPtr->SetEOW(true);
+				}
+				
 			}
 		}
 		else {
@@ -122,21 +165,21 @@ bool	TrieTree::AddWord(const std::string& inputString)
 			return false;
 		}
 	}
+	//m_DirHandle.write(inputString);
+	AddToDirectory(inputString);
 	return true;
 }
-void	TrieTree::FindWord(const std::string& inputString)
+bool	TrieTree::FindWord(const std::string& inputString)
 {
+	bool ret = false;
 	int					iInputStringLength = 0, iIndex=0;
 	int tempChar = 0;
 	ITrieNodeIntSharedPtr		pTempHead= NULL;
 
-	if ( pTreeHead == NULL || pTreeHead == NULL) {
-		cout << "Input String is Incorrect!" << endl;
-		return ;
-	}
-
+	if ( pTreeHead == NULL || inputString.length() == 0) {  return false; }
 	pTempHead = pTreeHead;
-	iInputStringLength  = inputString.length();
+	
+	/*iInputStringLength  = inputString.length();
 
 	if ( iInputStringLength == 0 ){ return ; }
 
@@ -167,8 +210,19 @@ void	TrieTree::FindWord(const std::string& inputString)
 			cout << "Head is NULL!" << endl;
 			return ;
 		}
+	}*/
+
+	pTempHead = FindNewHead(inputString);
+	if( pTempHead != NULL ){
+		cout << "Found" << endl; 
+		ret = true;
+	} else {
+		cout << "Not Found" << endl;
+		AddWord(inputString);
+		ret = false;
 	}
-	return ;
+
+	return ret;
 }
 
 /*
@@ -199,9 +253,7 @@ int	TrieTree::FindWordByPrefix(const std::string& inputText)
 	}
 
 	prefix.append(inputText);
-	if ( pTempHead->IsEOW()){
-		cout << prefix << endl;
-	}
+	if ( pTempHead->IsEOW()){ cout << prefix << endl; }
 	//return ExtractWordFromNode(pTempHead, inputText, prefix);
 	return ExtractWordsFromNode(pTempHead, prefix);
 }
@@ -349,6 +401,27 @@ int TrieTree::FindCharIndex(char currentChar){
 		charIndex = currentChar % Tries::TRIE_MAX_SIZE;
 	}
 	return charIndex;
+}
+
+void TrieTree::ListAll(){
+	std::string value;
+	if( pTreeHead == NULL ){ cout << "Trie tree is empty"<<endl; return;}
+
+	ExtractWordsFromNode(pTreeHead, value);
+}
+
+void TrieTree::AddToDirectory(const std::string& inputString){
+	std::ofstream ofs;
+	ofs.open (TrieTree::_TRIE_DIRECTORY_FILE_NAME_, std::ofstream::out | std::ofstream::app);
+	cout << "Writing to Trie Directory:[" << TrieTree::_TRIE_DIRECTORY_FILE_NAME_ << "]" << endl;
+
+	if (ofs.is_open()){
+		ofs << inputString;
+		ofs << endl;
+	} else {
+		cout << "Error in opening/writing to directory file" << endl;
+	}
+	ofs.close();
 }
 
 }
