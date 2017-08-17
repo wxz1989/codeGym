@@ -54,6 +54,7 @@ namespace Tries{
 		virtual void ResetChildren() = 0;
 		virtual ITrieNodeIntSharedPtr GetChildPtr(int index) = 0;
 		virtual void SetChildPtr(ITrieNodeIntSharedPtr pChildPtr, int index) = 0;
+		virtual int GetChildCount(void) = 0;
 	};
 
 	class TrieTreeNode : public ITrieTreeNode{
@@ -71,6 +72,7 @@ namespace Tries{
 		void ResetChildren();
 		ITrieNodeIntSharedPtr  GetChildPtr(int index);
 		void SetChildPtr(ITrieNodeIntSharedPtr pChildPtr, int index);
+		int GetChildCount(void);
 	};
 
 	class TrieNodeFactory{
