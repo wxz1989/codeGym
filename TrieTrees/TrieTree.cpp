@@ -107,9 +107,9 @@ bool	TrieTree::AddWord(const std::string& inputString)
 
 					pTempHead->SetChildPtr(pNewNode, tempChar);
 
-					if( pTempHead->IsEOW() ){
+					//if( pTempHead->IsEOW() ){
 						pTempHead->SetHasChild(true);
-					}
+					//}
 					pTempHead = pNewNode;
 				}
 			}
@@ -188,53 +188,110 @@ int	TrieTree::FindWordByPrefix(const std::string& inputText)
 
 	if ( inputText.length() > 1 ){
 		pTempHead = FindNewHead(inputText); 
-		if ( pTempHead == NULL ){ cout << "New Head is NULL!" << endl; return -1; }
+		if ( pTempHead == NULL ){ /*cout << "New Head is NULL!" << endl;*/ return -1; }
 	} else {
+		
 		pTempHead = pTreeHead;
 		tempChar = FindCharIndex(inputText[0]);
 
-		//If inputText is of only One character and it matches with already inserted word(Single char) then print that first
-		if ( inputText.length() ==1 && pTempHead->GetChildPtr(tempChar)->GetCharValue() == inputText[0]){
-			cout << inputText <<  endl;
-		}
+		if( pTempHead->GetChildPtr(tempChar) == NULL ) { return -1; }
 		pTempHead = pTempHead->GetChildPtr(tempChar);
 	}
 
 	prefix.append(inputText);
-	return ExtractWordFromNode(pTempHead, inputText, prefix);
+	if ( pTempHead->IsEOW()){
+		cout << prefix << endl;
+	}
+	//return ExtractWordFromNode(pTempHead, inputText, prefix);
+	return ExtractWordsFromNode(pTempHead, prefix);
 }
 
+int TrieTree::ExtractWordsFromNode(ITrieNodeIntSharedPtr pHead, std::string& outputText){
+
+	if ( pHead == NULL ){ return -1; }
+
+	ITrieNodeIntSharedPtr pChildPtr = NULL;
+
+	for ( int iIndex =0; iIndex < Tries::TRIE_MAX_SIZE; iIndex++) {	
+
+		pChildPtr = pHead->GetChildPtr(iIndex);
+		if( pChildPtr  == NULL ){ continue;  } 
+		outputText += pChildPtr->GetCharValue();
+		if( pChildPtr->IsEOW() ){ 
+			cout <<outputText << endl; 
+		}
+
+		ExtractWordsFromNode(pChildPtr, outputText);
+		outputText.erase(outputText.length()-1, 1);
+	}
+}
 
 int TrieTree::ExtractWordFromNode(ITrieNodeIntSharedPtr pHead, const std::string& prefix, std::string& outputText)
 {
 	if ( pHead == NULL ){ cout << "Invalid Head Pointer!" << endl; return -1; }
+
+	/*if ( pHead->IsEOW() ){ 
+		outputText += pHead->GetCharValue();
+		cout << outputText << endl; 
+		if ( !pHead->HasChild() ){ return 0;  } 
+	}*/
 	
-	for ( int iIndex =0; iIndex < Tries::TRIE_MAX_SIZE; iIndex++)
+//	cout << "Current Head:[" << pHead->GetCharValue()<<"]"; 
+
+	/*for ( int iIndex =0; iIndex < Tries::TRIE_MAX_SIZE; iIndex++){
+
+		ITrieNodeIntSharedPtr pChildPtr = NULL;
+		pChildPtr =  pHead->GetChildPtr(iIndex);
+
+		if ( pChildPtr != NULL ){
+
+			if ( pChildPtr->IsEOW() ){
+
+				outputText += pHead->GetCharValue();
+				cout << outputText << endl;
+
+				if ( !pChildPtr->HasChild() ){ return 0; }
+				else {
+					ExtractWordFromNode(pChildPtr, prefix, outputText);
+					//outputText.erase(outputText.length()-1, 1);
+				}
+			} else { 
+				//outputText +=  pChildPtr->GetCharValue(); 
+				ExtractWordFromNode(pChildPtr, prefix, outputText);
+				//outputText.erase(outputText.length()-1, 1);
+			}
+		}
+	}*/
+
+	/*for ( int iIndex =0; iIndex < Tries::TRIE_MAX_SIZE; iIndex++)
 	{
 		ITrieNodeIntSharedPtr pChildPtr = NULL;
 		pChildPtr =  pHead->GetChildPtr(iIndex);
-		if ( pChildPtr != NULL ){
-			if ( pChildPtr->IsEOW() ){
 
-				outputText += pChildPtr->GetCharValue(); 
-				cout  <<  outputText <<  endl;
-				//outputText.erase(outputText.length()-1, 1);
-				//cout << " EOW :[" << pChildPtr->HasChild() << "]" << endl;
-				if ( !pChildPtr->HasChild() ){
-					return 0;
-				}
-				else{
-					ExtractWordFromNode(pChildPtr, prefix, outputText);
-					outputText.erase(outputText.length()-1, 1);
-				}
-			} else { 
-				outputText +=  pChildPtr->GetCharValue(); // pHead->pChild[iIndex]->charValue;
+		if( pChildPtr == NULL ){continue;}
+		
+		if ( pChildPtr->IsEOW() ){
+
+			cout  << "Result EOW:[" <<  outputText << "]" <<  endl;
+			outputText += pChildPtr->GetCharValue(); 
+			cout  <<"Output:["  << outputText <<  "]" << endl;
+			//outputText.erase(outputText.length()-1, 1);
+			//cout << " EOW :[" << pChildPtr->HasChild() << "]" << endl;
+			if ( !pChildPtr->HasChild() ){ return 0; }
+			else{
 				ExtractWordFromNode(pChildPtr, prefix, outputText);
-				//cout << "Op Len:[" << outputText.length() << "], Op:[" << outputText << "]" << endl;
 				outputText.erase(outputText.length()-1, 1);
+				cout  << "Text While Returning EOW:[" << outputText << "]" <<  endl;
 			}
+		} else { 
+			outputText +=  pChildPtr->GetCharValue(); // pHead->pChild[iIndex]->charValue;
+			ExtractWordFromNode(pChildPtr, prefix, outputText);
+			//cout << "Op Len:[" << outputText.length() << "], Op:[" << outputText << "]" << endl;
+			outputText.erase(outputText.length()-1, 1);
+			cout  << "Text While Returning No EOW:[" << outputText << "]" <<  endl;
 		}
-	}
+		
+	}*/
 	return 1;
 }
 
