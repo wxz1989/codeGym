@@ -63,23 +63,25 @@ void Test_SampleInput(std::string searchString){
 		cout << "Read String:[" << inputString << "]" << endl;
 		pInstance->AddWord(inputString);
 	}
-	int Ans = Solve(searchString);	
+	//int Ans = Solve(searchString);	
 /*	inputString.clear();
 	cout << "Last CIN String:[" << inputString << "]" << endl;
-*/	fclose(stdin);
+*/	
 #else 
 	//std::cin >> test_cases;
 	//cout << "Read TCs:[" << test_cases << "]" << endl;
-	inputString = "r";
+	//inputString = "r";
 	while(std::cin>>inputString)  {
 		cout << "Read String:[" << inputString << "]" << endl;
 		pInstance->AddWord(inputString);
 	}
-	int Ans = Solve(searchString);
-	std::cin >> inputString;
+	//int Ans = Solve(searchString);
+	//std::cin >> inputString;
 
 #endif
-
+	pInstance->ListAll();
+	fflush(stdin);
+	fclose(stdin);
 }
 
 
@@ -120,27 +122,84 @@ void Test_RandomisedDataInput(std::string searchString){
 		pInstance->AddWord(A);
 		memset(A, 0, sizeof(char)*wordLength);
 	}
-	int Ans = Solve(searchString);
-}
+	//int Ans = Solve(searchString);
+	pInstance->ListAll();
+} 
 
 
 int Solve(std::string searchString){
 	
-	cout << "************** SEARCH ***************"<< endl ;
-	cout << "Search string is: [" << searchString << "]" <<  endl;
-	cout << "************** SEARCH RESULTS ***************"<< endl ;
+	/*cout << "************** SEARCH ***************"<< endl ;
+	cout << "Search string is: [" << searchString << "] : " << (pInstance->FindWord(searchString) ? "Found :)" : "not found :(") << endl;
+	//pInstance->ListAll();
+	cout << "************** SEARCH RESULTS ***************"<< endl ;*/
 
-	if ( pInstance->FindWordByPrefix(searchString) == -1 ){
+	/*if ( pInstance->FindWordByPrefix(searchString) == -1 ){
 		cout << "No results found" <<  endl;
-	}
+	}*/
+	cout << "************** SEARCH RESULTS ***************"<< endl ;
+	pInstance->ListAll();
 	cout << "************** SEARCH ENDS ******************"<< endl ;
 	return 0;
+}
+
+void TestTrieTree(){
+
+	pInstance  = TrieTree::GetInstance();
+	//cout << "*********Trie Operations*********" << endl << "1. Add Word" << endl << "2. Find Word" << endl << "3. Delete Word" << endl << "4. Find Word By Prefix" << endl << "5. List All Word" << endl;
+	int opt;
+	std::string in;
+	do {
+		cout << "*********Trie Operations*********" << endl << "1. Add Word" << endl << "2. Find Word" << endl << "3. Delete Word" << endl << "4. Find Word By Prefix" << endl << "5. List All Word" <<endl <<  "**************************" << endl;
+		cin >> opt;		
+		switch (opt){
+			case 1:{
+				cin >> in;
+				cout << "Add Word:" << endl;
+				pInstance->AddWord(in);
+			}
+			break;
+			case 2:{
+				cin >> in;
+				pInstance->FindWord(in);
+			}
+			break;
+			case 3:{
+				cin >> in;
+				pInstance->DeleteWord(in);
+			}
+			break;
+			case 4:{
+				cin >> in;
+				pInstance->FindWordByPrefix(in);
+			}
+			break;
+			case 5:{
+				cout << "*****List*****" << endl;
+				pInstance->ListAll();
+				cout << "**************" << endl;
+			}
+			break;
+			/*case 6:{
+				Test_SampleInput("");
+			}
+			break;
+			case 7:{
+				Test_RandomisedDataInput("");
+			}
+			break;*/
+			default:{
+				cout << "Unsupported Operation!" << endl;
+			}
+		}
+	}
+	while(getchar() != 'q' || getchar() == 'Q');
 }
 
 int main(int argc, char* argv[]){
 
 	std::string searchString("a");
-	cout << "Arg Count:" << argc << endl;
+	/*cout << "Arg Count:" << argc << endl;
 
 	if ( argc == 3 ) {
 		if ( strlen(argv[2]) > 0 ){
@@ -163,6 +222,27 @@ int main(int argc, char* argv[]){
 	}
 	else {
 		Test_SampleInput(searchString);
+	}*/
+	if (argc > 1){
+
+		cout << "Arg Count:["<< argc <<"]" << endl;
+		for ( int i = 0; i< argc; i++){
+			cout << argv[i] << endl;
+		}
+		if ( strcmp(argv[1], "__test_mode__") ==0 ){
+			//Test_SampleInput(searchString);
+			cout << "Executing test mode" << endl;
+			if ( strcmp(argv[2], "0") == 0 ){
+				cout << "Sample" << endl;
+				Test_SampleInput(searchString);
+			}
+			else if (strcmp(argv[2], "1") == 0){
+				cout << "Randomized data" << endl;
+				Test_RandomisedDataInput(searchString);
+			}
+		}
+	} else {
+		TestTrieTree();
 	}
 	return 0;
 }
