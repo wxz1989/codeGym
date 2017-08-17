@@ -81,4 +81,11 @@ namespace Tries {
 	int TrieNodeFactory::GetNodeCount(void){
 		return nodeCounter;
 	}
+
+	int TrieTreeNode::GetChildCount(void){
+		int childCount;
+		for ( int i = 0; i < Tries::TRIE_MAX_SIZE; i++){
+			if ( pChild[i] != NULL ){ childCount++; }
+		}
+	}
 }
