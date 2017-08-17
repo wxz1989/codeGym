@@ -10,7 +10,7 @@
 
 #include "TrieTree.h"
 
-#define SAMPLE_INPUT_SIZE 99999
+#define SAMPLE_INPUT_SIZE 999
 #define MAX_ARRAY_SIZE 100
 #define ASCII_TABLE_SIZE 128
 #define ASCII_SPACE_CHAR 32
@@ -21,15 +21,15 @@
 #define _USE_GET_LINE_
 #endif
 
-void Test_SampleInput();
-void Test_RandomisedDataInput();
-int Solve();
+void Test_SampleInput(std::string);
+void Test_RandomisedDataInput(std::string);
+int Solve(std::string);
 
 using namespace Tries;
 
 TrieTree* pInstance =NULL;
 
-void Test_SampleInput(){
+void Test_SampleInput(std::string searchString){
 
 	int test_cases = 0;
 	int size= 0;
@@ -41,7 +41,6 @@ void Test_SampleInput(){
 	if ( !pInstance ){  cout << "TrieTree failed!" << endl; return ; }
 	
 	freopen("TrieTree_Sample_Input.txt", "r", stdin);
-
 	
 #ifdef _USE_GET_LINE_
 	//Converting String to Number using getline
@@ -64,18 +63,19 @@ void Test_SampleInput(){
 		cout << "Read String:[" << inputString << "]" << endl;
 		pInstance->AddWord(inputString);
 	}
-	int Ans = Solve();	
-	inputString.clear();
+	int Ans = Solve(searchString);	
+/*	inputString.clear();
 	cout << "Last CIN String:[" << inputString << "]" << endl;
-	fclose(stdin);
+*/	fclose(stdin);
 #else 
-	std::cin >> test_cases;
-	cout << "Read TCs:[" << test_cases << "]" << endl;
+	//std::cin >> test_cases;
+	//cout << "Read TCs:[" << test_cases << "]" << endl;
+	inputString = "r";
 	while(std::cin>>inputString)  {
 		cout << "Read String:[" << inputString << "]" << endl;
 		pInstance->AddWord(inputString);
 	}
-	int Ans = Solve();
+	int Ans = Solve(searchString);
 	std::cin >> inputString;
 
 #endif
@@ -83,7 +83,7 @@ void Test_SampleInput(){
 }
 
 
-void Test_RandomisedDataInput(){
+void Test_RandomisedDataInput(std::string searchString){
 
 	pInstance = TrieTree::GetInstance();
 	if ( !pInstance ){
@@ -120,12 +120,12 @@ void Test_RandomisedDataInput(){
 		pInstance->AddWord(A);
 		memset(A, 0, sizeof(char)*wordLength);
 	}
-	int Ans = Solve();
+	int Ans = Solve(searchString);
 }
 
 
-int Solve(){
-	std::string searchString("abcdefghijklmnopqrstuvwxy");
+int Solve(std::string searchString){
+	
 	cout << "************** SEARCH ***************"<< endl ;
 	cout << "Search string is: [" << searchString << "]" <<  endl;
 	cout << "************** SEARCH RESULTS ***************"<< endl ;
@@ -139,21 +139,30 @@ int Solve(){
 
 int main(int argc, char* argv[]){
 
+	std::string searchString("a");
 	cout << "Arg Count:" << argc << endl;
+
+	if ( argc == 3 ) {
+		if ( strlen(argv[2]) > 0 ){
+			searchString.clear();
+			searchString += argv[2];
+		}
+	}
 	
 	if (argc > 1){
 		cout << "Arg :" << argv[1] << endl;
-		if (strcmp(argv[1], "0") == 0){
-			Test_SampleInput();
+		if ( strcmp(argv[1], "0") == 0 ){
+			Test_SampleInput(searchString);
 		}
 		else if (strcmp(argv[1], "1") == 0){
-			Test_RandomisedDataInput();
+			Test_RandomisedDataInput(searchString);
 		}
 		else {
-			Test_SampleInput();
+			Test_SampleInput(searchString);
 		}
-	} else {
-		Test_SampleInput();
+	}
+	else {
+		Test_SampleInput(searchString);
 	}
 	return 0;
 }
