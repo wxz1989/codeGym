@@ -40,6 +40,7 @@ namespace Tries{
 		bool	bHasChild;
 		bool	bEndOfWord;
 		char	charValue;
+		int 	childCount;
 		//ITrieNodeInterfacePtr	pChild[TRIE_MAX_SIZE];
 		ITrieNodeIntSharedPtr 	pChild[TRIE_MAX_SIZE];
 	public:
@@ -55,6 +56,7 @@ namespace Tries{
 		virtual ITrieNodeIntSharedPtr GetChildPtr(int index) = 0;
 		virtual void SetChildPtr(ITrieNodeIntSharedPtr pChildPtr, int index) = 0;
 		virtual int GetChildCount(void) = 0;
+		virtual void ResetSharedPtr(int index) = 0;
 	};
 
 	class TrieTreeNode : public ITrieTreeNode{
@@ -73,6 +75,7 @@ namespace Tries{
 		ITrieNodeIntSharedPtr  GetChildPtr(int index);
 		void SetChildPtr(ITrieNodeIntSharedPtr pChildPtr, int index);
 		int GetChildCount(void);
+		void ResetSharedPtr(int index);
 	};
 
 	class TrieNodeFactory{
