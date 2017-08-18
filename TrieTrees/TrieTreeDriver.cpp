@@ -40,7 +40,7 @@ void Test_SampleInput(std::string searchString){
 	pInstance  = TrieTree::GetInstance();
 	if ( !pInstance ){  cout << "TrieTree failed!" << endl; return ; }
 	
-	freopen("TrieTree_Sample_Input.txt", "r", stdin);
+	/*freopen("TrieTree_Sample_Input.txt", "r", stdin);
 	
 #ifdef _USE_GET_LINE_
 	//Converting String to Number using getline
@@ -64,9 +64,9 @@ void Test_SampleInput(std::string searchString){
 		pInstance->AddWord(inputString);
 	}
 	//int Ans = Solve(searchString);	
-/*	inputString.clear();
-	cout << "Last CIN String:[" << inputString << "]" << endl;
-*/	
+//	inputString.clear();
+	//cout << "Last CIN String:[" << inputString << "]" << endl;
+
 #else 
 	//std::cin >> test_cases;
 	//cout << "Read TCs:[" << test_cases << "]" << endl;
@@ -81,7 +81,15 @@ void Test_SampleInput(std::string searchString){
 #endif
 	pInstance->ListAll();
 	fflush(stdin);
-	fclose(stdin);
+	fclose(stdin);*/
+	ifstream sampleInputFile ("TrieTree_Sample_Input.txt");
+	if (sampleInputFile.is_open()){
+		while ( getline (sampleInputFile,inputString) ) {
+			pInstance->AddWord(inputString);
+		}
+		sampleInputFile.close();
+	}  else { cout << "Unable to open Sample Input File" << endl; return; }
+	pInstance->ListAll();
 }
 
 
@@ -151,25 +159,29 @@ void TestTrieTree(){
 	std::string in;
 	do {
 		cout << "*********Trie Operations*********" << endl << "1. Add Word" << endl << "2. Find Word" << endl << "3. Delete Word" << endl << "4. Find Word By Prefix" << endl << "5. List All Word" <<endl <<  "**************************" << endl;
+		cout << "Enter option:";
 		cin >> opt;		
 		switch (opt){
 			case 1:{
+				cout << "Enter string:";
 				cin >> in;
-				cout << "Add Word:" << endl;
 				pInstance->AddWord(in);
 			}
 			break;
 			case 2:{
+				cout << "Enter string:";
 				cin >> in;
 				pInstance->FindWord(in);
 			}
 			break;
 			case 3:{
+				cout << "Enter string:";
 				cin >> in;
 				pInstance->DeleteWord(in);
 			}
 			break;
 			case 4:{
+				cout << "Enter string:";
 				cin >> in;
 				pInstance->FindWordByPrefix(in);
 			}
@@ -180,14 +192,18 @@ void TestTrieTree(){
 				cout << "**************" << endl;
 			}
 			break;
-			/*case 6:{
+			case 6:{
 				Test_SampleInput("");
 			}
 			break;
 			case 7:{
 				Test_RandomisedDataInput("");
 			}
-			break;*/
+			break;
+			case 8:{
+				pInstance->BuildFromDirectory();
+			}
+			break;
 			default:{
 				cout << "Unsupported Operation!" << endl;
 			}
