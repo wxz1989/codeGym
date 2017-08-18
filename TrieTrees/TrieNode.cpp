@@ -7,6 +7,7 @@ namespace Tries {
 	TTNFPtr TrieNodeFactory::mInstance= NULL;
 
 	TrieTreeNode::TrieTreeNode(){
+		childCount = 0;
 		nodeCounter++;
 	}
 
@@ -40,7 +41,11 @@ namespace Tries {
 	}
 	void TrieTreeNode::SetChildPtr(ITrieNodeIntSharedPtr pChildPtr, int index){
 		//pChild[index] = pChildPtr;
-		pChild[index] = pChildPtr;
+		if ( pChild[index] == NULL ){
+			pChild[index].reset();
+			pChild[index] = pChildPtr;
+			childCount++;
+		}
 	}
 
 	TrieNodeFactory::TrieNodeFactory(){
@@ -83,9 +88,10 @@ namespace Tries {
 	}
 
 	int TrieTreeNode::GetChildCount(void){
-		int childCount;
-		for ( int i = 0; i < Tries::TRIE_MAX_SIZE; i++){
-			if ( pChild[i] != NULL ){ childCount++; }
-		}
+		return childCount;
+	}
+	void TrieTreeNode::ResetSharedPtr(int index){
+		cout << "Parent:[" << GetCharValue() <<"], Child:["<< pChild[index]->GetCharValue() <<"] Index:[" << index << "]" << endl;
+		pChild[index].reset();
 	}
 }
