@@ -32,6 +32,7 @@ public:
 	void	ListAll(void);
 	int		FindWordByPrefix(const std::string& inputText);
 	bool 	DeleteWord(const std::string& inputWord);
+	bool 	BuildFromDirectory(void);
 private:
 
 	bool 	DeleteWordUtil(ITrieNodeIntSharedPtr pHead, std::string inputText, int currentIndex);
@@ -53,6 +54,7 @@ public:
 	static TTPtr 	GetInstance();
 	static void TrieTerminate();
 private:
+	bool buildFromDir;
 	//File* m_DirHandle;
 	static TTPtr pInstance;
 	/*TTNodePtr*/ ITrieNodeIntSharedPtr pTreeHead;
