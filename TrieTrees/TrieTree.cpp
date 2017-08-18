@@ -11,6 +11,7 @@ TTPtr TrieTree::pInstance = NULL;
 
 static int charCounter = 0;
 TrieTree::TrieTree(){
+	buildFromDir = false;
 	//nodeFactoryPtr = TTNodeFactory::GetInstance();
 	pTreeHead = TTNodeFactory::GetInstance()->CreateTrieNode();
 	//m_DirHandle = freopen("TrieDirectory.txt", "r+", stdout); ;
@@ -75,33 +76,35 @@ bool TrieTree::DeleteWordUtil(ITrieNodeIntSharedPtr pHead, std::string inputStri
 	bool retValue = false;
 	int tempChar = -1;
 
-	if( pHead == NULL || inputString.length() == 0) { cout << "returning!!!"  <<  endl;return retValue; }
-	if ( (currentIndex < 0 || currentIndex  > inputString.length()-1)) { cout << "returning!!!"  <<  endl;return retValue; }
+	if( pHead == NULL || inputString.length() == 0 ||  (currentIndex < 0)) { cout << "returning!!!"  <<  endl;return retValue; }
+	if (currentIndex  > inputString.length()-1) { cout << "returning!!!"  <<  endl;return true; }
 
 	tempChar = FindCharIndex (inputString[currentIndex]);
 
-
 	ITrieNodeIntSharedPtr pChildPtr = pHead->GetChildPtr(tempChar);
 	if (  pChildPtr ){ 
-		cout << "Before Child of "<<  pChildPtr->GetCharValue() << ":[ " << pChildPtr->GetChildCount() << "]" <<endl;
 		retValue = DeleteWordUtil(pChildPtr, inputString, currentIndex+1);
-		cout << "After Child of "<<  pChildPtr->GetCharValue() << ":[ " << pChildPtr->GetChildCount() << "]" <<endl;
-
-		/*if ( pChildPtr->IsEOW() && pChildPtr->HasChild() == false ){
-			cout << "Cann Delete "<<  pChildPtr->GetCharValue() << ":[ " << pChildPtr->GetChildCount() << "] For Sure " <<endl;
-		} else if ( !pChildPtr->IsEOW() && pChildPtr->HasChild() == false ){
-			cout << "Cann Delete "<<  pChildPtr->GetCharValue() << ":[ " << pChildPtr->GetChildCount() << "] For Sure " <<endl;
-		} else if ( !pChildPtr->IsEOW() && pChildPtr->HasChild() == true && pChildPtr->GetChildCount() == 1 ){
-			cout << "Cann Delete "<<  pChildPtr->GetCharValue() << ":[ " << pChildPtr->GetChildCount() << "] For Sure " <<endl;
-		}*/
-		
+		if ( retValue == true ){
+			if ( pChildPtr->IsEOW() && (currentIndex == (inputString.length() - 1) ) ){		//last element of the word
+				if (  pChildPtr->HasChild() == false  ){
+					pHead->ResetSharedPtr(tempChar);
+					return true;
+				} else {								//Last element of the word being serached but it still has more children
+					pChildPtr->SetEOW(false);
+					return false;
+				}
+			} else {
+				pChildPtr->SetEOW(false);
+				return true;
+			}
+		} /*else {
+			return false;
+		}*/			
 	} 
-	else { 
-		//pTempHead = NULL; 
-		return retValue; 
-	}
+	/*else { 
+		return false; 
+	}*/
 	return retValue;
-	
 }
 
 //Trie Tree Implementation
@@ -165,8 +168,11 @@ bool	TrieTree::AddWord(const std::string& inputString)
 			return false;
 		}
 	}
-	//m_DirHandle.write(inputString);
-	AddToDirectory(inputString);
+
+	if ( buildFromDir == false ){
+		//m_DirHandle.write(inputString);
+		AddToDirectory(inputString);
+	}
 	return true;
 }
 bool	TrieTree::FindWord(const std::string& inputString)
@@ -177,40 +183,6 @@ bool	TrieTree::FindWord(const std::string& inputString)
 	ITrieNodeIntSharedPtr		pTempHead= NULL;
 
 	if ( pTreeHead == NULL || inputString.length() == 0) {  return false; }
-	pTempHead = pTreeHead;
-	
-	/*iInputStringLength  = inputString.length();
-
-	if ( iInputStringLength == 0 ){ return ; }
-
-	cout<<"Input String Length is:" << iInputStringLength << endl;
-	cout << "Word Searching..."<< endl;
-
-	for ( iIndex = 0; iIndex < iInputStringLength; iIndex++)
-	{
-		if ( pTempHead )
-		{
-			tempChar =  FindCharIndex(inputString[iIndex]);
-
-			ITrieNodeIntSharedPtr pChildPtr = pTempHead->GetChildPtr(tempChar);
-
-			if ( pChildPtr )
-			{	
-				cout<<"CharValue:[" << pChildPtr->GetCharValue() << "]" <<  endl;
-				if( pChildPtr->IsEOW() ) 
-				{
-					cout<<"Word Found"<< endl;
-					return;
-				}
-				pTempHead = pChildPtr;
-			} else {
-				return;
-			}
-		} else {
-			cout << "Head is NULL!" << endl;
-			return ;
-		}
-	}*/
 
 	pTempHead = FindNewHead(inputString);
 	if( pTempHead != NULL ){
@@ -229,8 +201,6 @@ bool	TrieTree::FindWord(const std::string& inputString)
 	This functiuon should check for both upper and lower test case character
 	If input character is any character from alphabest character range. (65-90 OR 97-122)
 */
-
-
 int	TrieTree::FindWordByPrefix(const std::string& inputText)
 {
 	int tempChar = -1;
@@ -347,53 +317,6 @@ int TrieTree::ExtractWordFromNode(ITrieNodeIntSharedPtr pHead, const std::string
 	return 1;
 }
 
-//Usage of Shared pointer make use of this API obsolete..
-#if 0 
-int	TrieTree::FreeTrieTree(TTNodePtr pHeadNode)
-{
-	if ( pInstance ==NULL || pHeadNode == NULL ) {
-		cout << "Trie Head node is NULL! Nothing to Free." << endl;
-		return 0;
-	}
-
-	if ( pHeadNode->IsEOW() && pHeadNode->HasChild() ==false ){
-		delete pHeadNode;
-		charCounter--;
-		return 0;
-	}
-	for ( int iIndex = 0; iIndex < Tries::TRIE_MAX_SIZE; iIndex++) {
-
-		TTNodePtr pChildPtr = pHeadNode->GetChildPtr(iIndex);
-		if ( pChildPtr ) {
-			FreeTrieTree(pChildPtr);		
-		}
-	}
-    delete pHeadNode;
-    charCounter--;
-	return 1;
-}
-#endif
-
-/*
-1. Node Creation is move the a differnet class which has it's concrete and abstract implementaion
-2. So this API shold not be used anymore
-
-TTNodePtr TrieTree::TrieNodeFactory(){
-
-	TTNodePtr pNewNode = NULL;
-	pNewNode = new TrieTreeNode();
-
-	if ( pNewNode == NULL ){ return NULL; }
-
-	pNewNode->SetCharValue(EMPTY_CHAR);
-	pNewNode->SetEOW(false);
-	pNewNode->SetHasChild(false);
-	pNewNode->ResetChildren();
-
-	charCounter++;
-	return pNewNode;
-}*/
-
 int TrieTree::FindCharIndex(char currentChar){
 
 	int charIndex = -1;
@@ -424,4 +347,18 @@ void TrieTree::AddToDirectory(const std::string& inputString){
 	ofs.close();
 }
 
+bool TrieTree::BuildFromDirectory(void){
+	string line;
+	ifstream myfile (TrieTree::_TRIE_DIRECTORY_FILE_NAME_);
+	if (myfile.is_open()){
+		buildFromDir = true;
+		while ( getline (myfile,line) ) {
+			AddWord(line);
+		}
+		myfile.close();
+	}  else { cout << "Unable to open file" << endl; }
+
+	buildFromDir = false;
+	return false;
+}
 }
