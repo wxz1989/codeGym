@@ -76,8 +76,8 @@ bool TrieTree::DeleteWordUtil(ITrieNodeIntSharedPtr pHead, std::string inputStri
 	bool retValue = false;
 	int tempChar = -1;
 
-	if( pHead == NULL || inputString.length() == 0 ||  (currentIndex < 0)) { cout << "returning!!!"  <<  endl;return retValue; }
-	if (currentIndex  > inputString.length()-1) { cout << "returning!!!"  <<  endl;return true; }
+	if( pHead == NULL || inputString.length() == 0 ||  (currentIndex < 0)) { return retValue; }
+	if (currentIndex  > inputString.length()-1) { return true; }
 
 	tempChar = FindCharIndex (inputString[currentIndex]);
 
@@ -85,25 +85,31 @@ bool TrieTree::DeleteWordUtil(ITrieNodeIntSharedPtr pHead, std::string inputStri
 	if (  pChildPtr ){ 
 		retValue = DeleteWordUtil(pChildPtr, inputString, currentIndex+1);
 		if ( retValue == true ){
-			if ( pChildPtr->IsEOW() && (currentIndex == (inputString.length() - 1) ) ){		//last element of the word
+			if ( currentIndex == (inputString.length() - 1))  {				//pChildPtr->SetEOW(false);				//pChildPtr->SetEOW(false); ){		//last element of the word 
 				if (  pChildPtr->HasChild() == false  ){
 					pHead->ResetSharedPtr(tempChar);
+					pHead->SetChildPtr(NULL, tempChar);
+					if ( pHead->GetChildCount() < 1  ){
+						pHead->SetHasChild(false);
+					}
 					return true;
 				} else {								//Last element of the word being serached but it still has more children
 					pChildPtr->SetEOW(false);
 					return false;
 				}
-			} else {
-				pChildPtr->SetEOW(false);
-				return true;
+			} else  {
+				if ( pChildPtr->HasChild() == false ){
+					pHead->ResetSharedPtr(tempChar);
+					pHead->SetChildPtr(NULL, tempChar);
+					if ( pHead->GetChildCount() < 1 ){
+						pHead->SetHasChild(false);
+					}
+					return true;
+				}  
+				return false;
 			}
-		} /*else {
-			return false;
-		}*/			
+		} 	
 	} 
-	/*else { 
-		return false; 
-	}*/
 	return retValue;
 }
 
@@ -246,6 +252,7 @@ int TrieTree::ExtractWordsFromNode(ITrieNodeIntSharedPtr pHead, std::string& out
 		ExtractWordsFromNode(pChildPtr, outputText);
 		outputText.erase(outputText.length()-1, 1);
 	}
+	return 0;
 }
 
 int TrieTree::ExtractWordFromNode(ITrieNodeIntSharedPtr pHead, const std::string& prefix, std::string& outputText)
@@ -320,7 +327,7 @@ int TrieTree::ExtractWordFromNode(ITrieNodeIntSharedPtr pHead, const std::string
 int TrieTree::FindCharIndex(char currentChar){
 
 	int charIndex = -1;
-	if ( (int) currentChar >=Tries::TRIE_START_CHAR && (int)currentChar <Tries::TRIE_MAX_SIZE){
+	if ( (int) currentChar >=Tries::TRIE_START_CHAR && (int) currentChar <Tries::TRIE_MAX_SIZE){
 		charIndex = currentChar % Tries::TRIE_MAX_SIZE;
 	}
 	return charIndex;
@@ -339,8 +346,7 @@ void TrieTree::AddToDirectory(const std::string& inputString){
 	cout << "Writing to Trie Directory:[" << TrieTree::_TRIE_DIRECTORY_FILE_NAME_ << "]" << endl;
 
 	if (ofs.is_open()){
-		ofs << inputString;
-		ofs << endl;
+		ofs << inputString << endl;
 	} else {
 		cout << "Error in opening/writing to directory file" << endl;
 	}
