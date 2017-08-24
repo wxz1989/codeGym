@@ -25,6 +25,7 @@ typedef std::shared_ptr<TrieTree> TTSharedPtr;
 
 class TrieTree{
 
+	long mWordCount;
 	const std::string _TRIE_DIRECTORY_FILE_NAME_ = ".trie_words_directory.txt";
 public:
 	bool	AddWord(const std::string& inputString);
@@ -35,7 +36,7 @@ public:
 	bool 	BuildFromDirectory(void);
 private:
 
-	bool 	DeleteWordUtil(ITrieNodeIntSharedPtr pHead, std::string inputText, int currentIndex);
+	bool 	DeleteWordUtil(ITrieNodeIntSharedPtr pHead, std::string inputText, int currentIndex, bool& wordRemoved);
 	void AddToDirectory(const std::string&);
 	int FindCharIndex(char currentChar);
 	/*TTNodePtr*/ ITrieNodeIntSharedPtr FindNewHead(const std::string&);
