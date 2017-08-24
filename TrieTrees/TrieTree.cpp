@@ -11,6 +11,7 @@ TTPtr TrieTree::pInstance = NULL;
 
 static int charCounter = 0;
 TrieTree::TrieTree(){
+	mWordCount = 0;
 	buildFromDir = false;
 	//nodeFactoryPtr = TTNodeFactory::GetInstance();
 	pTreeHead = TTNodeFactory::GetInstance()->CreateTrieNode();
@@ -67,11 +68,15 @@ bool TrieTree::DeleteWord(const std::string& inputString){
 	if ( pTreeHead == NULL || inputString.length() == 0 ){ cout << "Delete failed, returning!!!"  <<  endl;return false; }
 
 	cout << "Delete Word Entered" <<  endl;
-	DeleteWordUtil(pTreeHead, inputString, 0);
+	bool wordRemoved = false;
+	DeleteWordUtil(pTreeHead, inputString, 0, wordRemoved);
+	if ( wordRemoved == true ){
+		mWordCount--;
+	}
 	return true;
 }
 
-bool TrieTree::DeleteWordUtil(ITrieNodeIntSharedPtr pHead, std::string inputString, int currentIndex){
+bool TrieTree::DeleteWordUtil(ITrieNodeIntSharedPtr pHead, std::string inputString, int currentIndex, bool& wordRemoved){
 
 	bool retValue = false;
 	int tempChar = -1;
@@ -83,7 +88,7 @@ bool TrieTree::DeleteWordUtil(ITrieNodeIntSharedPtr pHead, std::string inputStri
 
 	ITrieNodeIntSharedPtr pChildPtr = pHead->GetChildPtr(tempChar);
 	if (  pChildPtr ){ 
-		retValue = DeleteWordUtil(pChildPtr, inputString, currentIndex+1);
+		retValue = DeleteWordUtil(pChildPtr, inputString, currentIndex+1, wordRemoved);
 		if ( retValue == true ){
 			if ( currentIndex == (inputString.length() - 1))  {				//pChildPtr->SetEOW(false);				//pChildPtr->SetEOW(false); ){		//last element of the word 
 				if (  pChildPtr->HasChild() == false  ){
@@ -92,20 +97,25 @@ bool TrieTree::DeleteWordUtil(ITrieNodeIntSharedPtr pHead, std::string inputStri
 					if ( pHead->GetChildCount() < 1  ){
 						pHead->SetHasChild(false);
 					}
+					wordRemoved = true;
 					return true;
-				} else {								//Last element of the word being serached but it still has more children
+				} else {			
+									//Last element of the word being serached but it still has more children
+					wordRemoved = true;
 					pChildPtr->SetEOW(false);
 					return false;
 				}
 			} else  {
-				if ( pChildPtr->HasChild() == false ){
-					pHead->ResetSharedPtr(tempChar);
-					pHead->SetChildPtr(NULL, tempChar);
-					if ( pHead->GetChildCount() < 1 ){
-						pHead->SetHasChild(false);
-					}
-					return true;
-				}  
+				if ( ! pChildPtr->IsEOW() ){
+					if ( pChildPtr->HasChild() == false ){
+						pHead->ResetSharedPtr(tempChar);
+						pHead->SetChildPtr(NULL, tempChar);
+						if ( pHead->GetChildCount() < 1 ){
+							pHead->SetHasChild(false);
+						}
+						return true;
+					} 
+				}
 				return false;
 			}
 		} 	
@@ -175,6 +185,7 @@ bool	TrieTree::AddWord(const std::string& inputString)
 		}
 	}
 
+	mWordCount++;
 	if ( buildFromDir == false ){
 		//m_DirHandle.write(inputString);
 		AddToDirectory(inputString);
@@ -252,7 +263,6 @@ int TrieTree::ExtractWordsFromNode(ITrieNodeIntSharedPtr pHead, std::string& out
 		ExtractWordsFromNode(pChildPtr, outputText);
 		outputText.erase(outputText.length()-1, 1);
 	}
-	return 0;
 }
 
 int TrieTree::ExtractWordFromNode(ITrieNodeIntSharedPtr pHead, const std::string& prefix, std::string& outputText)
@@ -327,7 +337,7 @@ int TrieTree::ExtractWordFromNode(ITrieNodeIntSharedPtr pHead, const std::string
 int TrieTree::FindCharIndex(char currentChar){
 
 	int charIndex = -1;
-	if ( (int) currentChar >=Tries::TRIE_START_CHAR && (int) currentChar <Tries::TRIE_MAX_SIZE){
+	if ( (int) currentChar >=Tries::TRIE_START_CHAR && (int)currentChar <Tries::TRIE_MAX_SIZE){
 		charIndex = currentChar % Tries::TRIE_MAX_SIZE;
 	}
 	return charIndex;
@@ -336,7 +346,7 @@ int TrieTree::FindCharIndex(char currentChar){
 void TrieTree::ListAll(){
 	std::string value;
 	if( pTreeHead == NULL ){ cout << "Trie tree is empty"<<endl; return;}
-
+	cout << "Words Found in Trie : ["<< mWordCount << "]" << endl;
 	ExtractWordsFromNode(pTreeHead, value);
 }
 
@@ -346,7 +356,8 @@ void TrieTree::AddToDirectory(const std::string& inputString){
 	cout << "Writing to Trie Directory:[" << TrieTree::_TRIE_DIRECTORY_FILE_NAME_ << "]" << endl;
 
 	if (ofs.is_open()){
-		ofs << inputString << endl;
+		ofs << inputString;
+		ofs << endl;
 	} else {
 		cout << "Error in opening/writing to directory file" << endl;
 	}
