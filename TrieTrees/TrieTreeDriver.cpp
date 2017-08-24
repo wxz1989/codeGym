@@ -158,6 +158,7 @@ void TestTrieTree(){
 	int opt;
 	std::string in;
 	do {
+		//cout << "*********Trie Operations*********" << endl << "1. Add Word" << endl << "2. Find Word" << endl << "3. Delete Word" << endl << "4. Find Word By Prefix" << endl << "5. List All Word" <<endl <<  "**************************" << endl;
 		cout << "*********Trie Operations*********" << endl << "1. Add Word" << endl << "2. Find Word" << endl << "3. Delete Word" << endl << "4. Find Word By Prefix" << endl << "5. List All Word" <<endl << "6. Test Sample Input" <<endl <<  "7. Test Randomized Input" <<endl << "8. Build Trie From Directory" <<endl << "**************************" << endl;
 		cout << "Enter option:";
 		cin >> opt;		
