@@ -97,7 +97,7 @@ namespace Tries {
 		return childCount;
 	}
 	void TrieTreeNode::ResetSharedPtr(int index){
-		// cout << "Parent:[" << GetCharValue() <<"], Child:["<<  pChild[index]->GetCharValue() <<"] Index:[" << index << "]" << endl;
+		//cout << "Parent:[" << GetCharValue() <<"], Child:["<< pChild[index]->GetCharValue() <<"] Index:[" << index << "]" << endl;
 		pChild[index].reset();
 	}
 }
