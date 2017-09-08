@@ -141,23 +141,20 @@ void Test_SampleInput(){
 	for (int tc = 0; tc < test_cases; tc++){
 
 		cin >> size;
-		cout << "#Size:" << size <<  endl;
+		cout << "#Size:" << size <<  endl << "Original i/p" << endl;
 
 		for (int i = 0; i < size; i++){
 			cin >> A[i];
-			//cout << A[i] <<" ";
+			cout << A[i] <<" ";
 		}
-		//cout << endl;
+		cout << endl;
 		for (int i = 0; i < size; i++){
 			cin >> aLN[i];
 			//cout << aLN[i] <<" ";
 		}
-		//cout << endl;
-
-
 		//int Ans = Solve();
 		struct Node* pRootNode = constructTree(size, A, aLN);
-		//cout << "Verifying using InOrder Traversal" << endl;
+		cout << "Results:(InOrder Traversal)" << endl;
 		printInorder(pRootNode);
 		cout<< endl;
 		//cout << "# " << tc<< "[" <<pRootNode->data <<"]" <<  endl;
