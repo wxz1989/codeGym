@@ -544,6 +544,7 @@ bool CreateMirrorImageTree(TreeNode **ppRootNode, int Value, int iDir)
 		//right child added
 	}
 	bRetValue = true;
+	
 Catch:
 	return bRetValue;
 }
