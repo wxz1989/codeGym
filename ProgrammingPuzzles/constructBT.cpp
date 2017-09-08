@@ -32,22 +32,27 @@ struct Node
 	struct Node *right;
 };
 
-struct Node* CreateNewNode(int nodeValue){
-	struct Node* pNewNode = new struct Node();
+
+typedef struct Node Node;
+typedef struct Node* NodePtr;
+typedef struct Node** NodeDPtr;
+
+NodePtr CreateNewNode(int nodeValue){
+	NodePtr pNewNode = new Node();
 	//cout << "New Node with value :[" << nodeValue << "]" << endl;
-	if ( pNewNode  != NULL){
+	if ( pNewNode  != nullptr){
 		pNewNode->data = nodeValue;
-		pNewNode->left = NULL;
-		pNewNode->right = NULL;
+		pNewNode->left = nullptr;
+		pNewNode->right = nullptr;
 		return pNewNode;
 	}
-	return NULL;
+	return nullptr;
 }
 
 /* Given a binary tree, print its nodes in inorder*/
-void printInorder(struct Node* node)
+void printInorder(NodePtr node)
 {
-     if (node == NULL)
+     if (node == nullptr)
           return;
  
      /* first recur on left child */
@@ -64,55 +69,60 @@ void printInorder(struct Node* node)
 // function should return the root of the new binary tree formed
 struct Node *constructTree(int n, int pre[], char preLN[])
 {
-	if( n <=0 )	{ return NULL; }
+	if( n <=0 )	{ return nullptr; }
 
-	struct Node* pRootToReturn = NULL;
-	vector<struct Node*> ptrNodes;
-	struct Node* pNewNode = CreateNewNode(pre[0]);
-	struct Node* pRoot;
+	NodePtr pRootToReturn = nullptr;
+	vector<NodePtr> nodeVector;
+	//Insert first Node of the stream as that's the root of the stream and has to be in Vector before processing all other nodes.
+	NodePtr pNewNode = CreateNewNode(pre[0]);
+	NodePtr pRoot;
 	pRootToReturn = pNewNode;
-	ptrNodes.push_back(pNewNode);
+	nodeVector.push_back(pNewNode);
 
-
-	int pi = 0, ci = 1;
+	int pi = nodeVector.size() - 1, ci = 1;
 
 	for ( int i = ci; i < n ; i++,  ci++){
-		if( preLN[i] ==  'N'){
-			pNewNode = CreateNewNode(pre[ci]);
-			ptrNodes.push_back(pNewNode);
-			pRoot = ptrNodes[pi];
 
+		pi = nodeVector.size() - 1;
+		if( preLN[i] ==  'N'){
+			pRoot = nodeVector[pi];
+			pNewNode = CreateNewNode(pre[ci]);
+			nodeVector.push_back(pNewNode);
+			
 			//cout << "Current Root:[" << pRoot->data <<"]" << endl;
 
-			if ( pRoot->left == NULL){
+			if ( pRoot->left == nullptr){
 				pRoot->left = pNewNode;
-			} else if ( pRoot->right == NULL){
+			} else if ( pRoot->right == nullptr){
 				pRoot->right = pNewNode;
-			}
-			pi += 1;
-			if ( pi >=n ){
-				pi = n-1;
+				/*Following line makes so much difference, 
+				as current parent node has been inserted with a Right Node 
+				and now that parent could not hold any more childs, 
+				it should have been removed. 
+				So nodeVector keeps consistent data and 
+				keeps only those nodes which are potential parents.*/
+				nodeVector.erase(nodeVector.begin() + pi);
 			}
 		} else {
 			pNewNode = CreateNewNode(pre[ci]);
-			ptrNodes.push_back(pNewNode);
-			pRoot = ptrNodes[pi];
+			/* Issue#1 : Fixed this issue, as those nodes which are already marked as Leaves, 
+			need not be added in the nodeVector. Purpose of nodeVector is,
+			to hold only those nodes which are potential parents.
+			*/
+			//nodeVector.push_back(pNewNode);
+			pRoot = nodeVector[pi];
 
 			//cout << "Current Root:[" << pRoot->data <<"]" << endl;
 
-			if ( pRoot->left == NULL){
+			if ( pRoot->left == nullptr){
 				pRoot->left = pNewNode;
-			} else if ( pRoot->right == NULL){
+			} else if ( pRoot->right == nullptr){
 				pRoot->right = pNewNode;
-				pi = pi -1;
-				if( pi < 0 ){
-					pi = 0;
-				}
+				nodeVector.pop_back();
 			}
 		}
 	}
 	return pRootToReturn;
-
 }
 
 void Test_SampleInput(){
@@ -127,11 +137,11 @@ void Test_SampleInput(){
 	freopen("ConstructBinTree.txt", "r", stdin);
 	cin >> test_cases;
 
-	//cout << "#TCs" << test_cases <<  endl;
+	cout << "#TCs" << test_cases <<  endl;
 	for (int tc = 0; tc < test_cases; tc++){
 
 		cin >> size;
-		//cout << "#Size:" << size <<  endl;
+		cout << "#Size:" << size <<  endl;
 
 		for (int i = 0; i < size; i++){
 			cin >> A[i];
@@ -165,9 +175,9 @@ void Test_RandomisedDataInput(){
 	int test_cases = 0;
 	int size = 0;
 
-	srand(time(NULL));
+	srand(time(nullptr));
 	size = rand() % 10;
-	srand(time(NULL));
+	srand(time(nullptr));
 
 	for (int i = 0; i< size; i++){
 		int value = rand() % 30;
@@ -194,4 +204,3 @@ int main(int argc, char* argv[]){
 	}
 	return 0;
 }
-
