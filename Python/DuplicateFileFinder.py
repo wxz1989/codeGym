@@ -1,4 +1,5 @@
 ##for i, v in enumerate(['tic', 'tac', 'toe']):##    print i, v##    
+
 import hashlibimport globimport os
 class DuplicateFinder(object):        def __init__(self, dirToSearch):        if not dirToSearch:            print "Empty directory, failed to find duplicates"            return        self.__curDir = dirToSearch        self.__fileListOfCurDir = []        self.__dupFileDict={}        self.__digests = []        self.__chunk = 2**7        self.__fileSize = 0        #self.hasher = hashlib.md5()
     def __del__(self):        self.__curDir = ""        self.__fileListOfCurDir = []        self.__dupFileDict={}        self.__digests = []        self.__chunk = 2**7        self.__fileSize = 0
