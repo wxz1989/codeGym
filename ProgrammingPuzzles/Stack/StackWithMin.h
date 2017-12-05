@@ -1,4 +1,4 @@
-
+#adding driver program code in comments at the end
 #include <iostream>
 
 using namespace std;
@@ -57,3 +57,59 @@ public:
 		}	
 	}
 };
+
+/* Driver program with Randomized data input for test purpose
+#include "StackWithMin.h"
+
+//#define MAX_ARRAY_SIZE 50
+
+//void Test_SampleInput();
+void Test_RandomisedDataInput();
+
+void Test_RandomisedDataInput(){
+
+	MinStack stkObj ;
+	
+	//int A[MAX_ELEMENTS] = { 0 };
+
+	int test_cases = 0;
+	int size = 0;
+
+	srand(time(NULL));
+	size = rand() % 20;
+	srand(time(NULL));
+
+	for (int i = 0; i< size; i++){
+		int value = rand() % 50;
+		//A[i] = value;
+		stkObj.Push(value);
+	}
+	stkObj.Print();
+}
+
+
+int main(){
+
+	/*MinStack stkObj ;
+
+	stkObj.Push(8);
+	stkObj.Push(5);
+	stkObj.Push(2);
+	stkObj.Push(6);
+	stkObj.Push(1);
+	stkObj.Push(3);
+
+	cout << "Peek Test1:"  << stkObj.Peek().value << endl;
+	stkObj.Pop();
+	cout << "Peek Test2:"  << stkObj.Peek().value << endl;
+	stkObj.Pop();
+	cout << "Peek Test3:"  << stkObj.Peek().value << endl;
+	stkObj.Pop();
+
+	stkObj.Print(); *//* comment ends
+
+	Test_RandomisedDataInput();
+
+	return 0;
+}
+*/
