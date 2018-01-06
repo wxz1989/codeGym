@@ -57,7 +57,7 @@ bool SortStack(stack<int> orgStk){
 
 void InsertIntoStack(std::stack<int>& stk, int Value){
 	//cout << "InsertIntoStack:[" << Value << "]" << endl;
-	if( stk.empty() || Value < stk.top() ){
+	if( stk.empty() || Value > stk.top() ){
 		stk.push(Value);
 	} else{
 		int top = stk.top();
