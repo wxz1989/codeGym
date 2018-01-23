@@ -51,7 +51,7 @@ namespace Tries {
 				childCount++;
 			}
 		}
-		cout <<  GetCharValue() <<":[" << childCount <<"]" << endl;
+		//cout <<  GetCharValue() <<":[" << childCount <<"]" << endl;
 	}
 
 	TrieNodeFactory::TrieNodeFactory(){
