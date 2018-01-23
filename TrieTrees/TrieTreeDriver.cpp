@@ -159,7 +159,7 @@ void TestTrieTree(){
 	std::string in;
 	do {
 		//cout << "*********Trie Operations*********" << endl << "1. Add Word" << endl << "2. Find Word" << endl << "3. Delete Word" << endl << "4. Find Word By Prefix" << endl << "5. List All Word" <<endl <<  "**************************" << endl;
-		cout << "*********Trie Operations*********" << endl << "1. Add Word" << endl << "2. Find Word" << endl << "3. Delete Word" << endl << "4. Find Word By Prefix" << endl << "5. List All Word" <<endl << "6. Test Sample Input" <<endl <<  "7. Test Randomized Input" <<endl << "8. Build Trie From Directory" <<endl << "**************************" << endl;
+		cout << "*********Trie Operations*********" << endl << "1. Add Word" << endl << "2. Find Word" << endl << "3. Delete Word" << endl << "4. Find Word By Prefix" << endl << "5. List All Word" <<endl << "6. Test Sample Input" <<endl <<  "7. Test Randomized Input" <<endl << "8. Build Trie From Directory" << endl << "9. ShowCollision" << endl << "10. BuildFromEnglishDictionary" << endl << "**************************" << endl;
 		cout << "Enter option:";
 		cin >> opt;		
 		switch (opt){
@@ -203,6 +203,14 @@ void TestTrieTree(){
 			break;
 			case 8:{
 				pInstance->BuildFromDirectory();
+			}
+			break;
+			case 9:{
+				pInstance->ShowCollisionArray();
+			}
+			break;
+			case 10:{
+				pInstance->BuildFromEnglishDirectory();
 			}
 			break;
 			default:{
