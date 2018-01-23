@@ -16,7 +16,8 @@ TrieTree::TrieTree(){
 	//nodeFactoryPtr = TTNodeFactory::GetInstance();
 	pTreeHead = TTNodeFactory::GetInstance()->CreateTrieNode();
 	//m_DirHandle = freopen("TrieDirectory.txt", "r+", stdout); ;
-
+	hashElementCount = 0 ;
+	for ( int i = 0; i< MOD_PRIME; i++) { CollisionArray[i] = 0; }
 }
 
 TrieTree::~TrieTree(){
@@ -132,6 +133,8 @@ bool	TrieTree::AddWord(const std::string& inputString)
 
 	//if ( FindWord(inputString) ){ cout << inputString << " already Exists!"<< endl; return true; }
 	//else { cout << " Not found inserting it again" << endl; }
+
+	Hash(inputString);
 
 	iInputStringLength  = inputString.length();
 
@@ -364,12 +367,67 @@ void TrieTree::AddToDirectory(const std::string& inputString){
 	ofs.close();
 }
 
+
+int TrieTree::Hash(const std::string& source){
+	if ( source.length() == 0 ){ return -1; }
+
+	char base_A  =  'A';
+	char base_a  =  'a';
+	char base_Z = 'Z';
+	char base_z = 'z';
+
+
+	int multiplier = 67;
+	unsigned int hash = 0;
+	hashElementCount++;
+	
+	for ( int i = 0; i < source.length(); i++){
+		if ( source[i] >= base_a && source[i] <= base_z ){
+			hash = (hash*multiplier) + abs ( source[i] - base_a);
+		}
+		else if ( source[i] >= base_A && source[i] <= base_Z ){
+			hash = (hash*multiplier) + abs ( source[i] - base_A);
+		}
+	}
+	hash %= MOD_PRIME;
+
+	CollisionArray[hash] += 1;
+
+	cout << "Hash of [" << source << "], Is:[" << hash <<"]"  << endl;
+	return hash;
+}
+void TrieTree::ShowCollisionArray(){
+	unsigned int count = 0;
+	for ( int i = 0; i< MOD_PRIME;i++){
+		cout << "# " << i << ":" << CollisionArray[i] << endl;
+		count += CollisionArray[i];
+	}
+	cout << "Collission Count:[" << count <<"]" << endl;
+}
 bool TrieTree::BuildFromDirectory(void){
 	string line;
 	ifstream myfile (TrieTree::_TRIE_DIRECTORY_FILE_NAME_);
 	if (myfile.is_open()){
 		buildFromDir = true;
 		while ( getline (myfile,line) ) {
+			//Hash(line);
+			AddWord(line);
+		}
+		myfile.close();
+	}  else { cout << "Unable to open file" << endl; }
+
+	buildFromDir = false;
+	return false;
+}
+
+bool TrieTree::BuildFromEnglishDirectory(void){
+	string line;
+	ifstream myfile (TrieTree::_ENGLISH_DICTIONARY_);
+	cout << "File Name:[" << TrieTree::_ENGLISH_DICTIONARY_ << "]" << endl ;
+	if (myfile.is_open()){
+		buildFromDir = true;
+		while ( getline (myfile,line) ) {
+			//Hash(line);
 			AddWord(line);
 		}
 		myfile.close();
