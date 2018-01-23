@@ -266,6 +266,7 @@ int TrieTree::ExtractWordsFromNode(ITrieNodeIntSharedPtr pHead, std::string& out
 		ExtractWordsFromNode(pChildPtr, outputText);
 		outputText.erase(outputText.length()-1, 1);
 	}
+	return 0;
 }
 
 int TrieTree::ExtractWordFromNode(ITrieNodeIntSharedPtr pHead, const std::string& prefix, std::string& outputText)

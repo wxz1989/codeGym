@@ -27,8 +27,8 @@ class TrieTree{
 
 	//Hash Computation
 	
-	static const unsigned int MOD_PRIME = 2069;
-	static const int HASH_TABLE_SIZE = 300;
+	static const unsigned int MOD_PRIME =  12289;//49157;//2069;
+	//static const int HASH_TABLE_SIZE = 300;
 	int hashElementCount;
 	int CollisionArray[MOD_PRIME];
 	//Hash Table
@@ -36,7 +36,7 @@ class TrieTree{
 
 	long mWordCount;
 	const std::string _TRIE_DIRECTORY_FILE_NAME_ = ".trie_words_directory.txt";
-	const std::string _ENGLISH_DICTIONARY_ = ".englishdictionary.txt";
+	const std::string _ENGLISH_DICTIONARY_ =  "words.txt";// ".englishdictionary.txt";
 public:
 	bool	AddWord(const std::string& inputString);
 	bool	FindWord(const std::string& inputString);
