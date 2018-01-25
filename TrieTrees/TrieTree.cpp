@@ -131,8 +131,8 @@ bool	TrieTree::AddWord(const std::string& inputString)
 	int tempChar = -1;
 	ITrieNodeIntSharedPtr			pTempHead=NULL;
 
-	//if ( FindWord(inputString) ){ cout << inputString << " already Exists!"<< endl; return true; }
-	//else { cout << " Not found inserting it again" << endl; }
+	if ( FindWord(inputString) ){ cout << inputString << " already Exists!"<< endl; return true; }
+	else { cout << " Not found inserting it again" << endl; }
 
 	Hash(inputString);
 
@@ -210,7 +210,6 @@ bool	TrieTree::FindWord(const std::string& inputString)
 		ret = true;
 	} else {
 		cout << "Not Found" << endl;
-		AddWord(inputString);
 		ret = false;
 	}
 
@@ -245,7 +244,8 @@ int	TrieTree::FindWordByPrefix(const std::string& inputText)
 	prefix.append(inputText);
 	if ( pTempHead->IsEOW()){ cout << prefix << endl; }
 	//return ExtractWordFromNode(pTempHead, inputText, prefix);
-	return ExtractWordsFromNode(pTempHead, prefix);
+	int retValue = ExtractWordsFromNode(pTempHead, prefix);
+	return retValue;
 }
 
 int TrieTree::ExtractWordsFromNode(ITrieNodeIntSharedPtr pHead, std::string& outputText){
