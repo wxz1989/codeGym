@@ -5,7 +5,6 @@
 #include <iostream>
 #include <stdio.h>
 #include <string.h>
-#include <conio.h>
 
 #define MAX_SIZE 100
 using namespace std;
@@ -17,18 +16,23 @@ int LPSBruteForce(char* str, int n, int& start, int& end){
 	for (int i = 0; i < n; i++){
 		for (int j = i+1; j < n; j++){
 			if (str[i] == str[j]){
+
+				int palinLen = (j - i)+1;
+
 				int matchCount = 1;			
 				for (int k = i + 1; k < j - 1; k++, matchCount++){
-					if (str[k] == str[j - matchCount]){
-						cout << "Matching :[" << str[k] << "] , End:[" << str[end - matchCount] << "]" << endl;
-					} 
-					else { break; }
+					if ( str[k] != str[j - matchCount]){ break; }
 				}
-				if (matchCount > maxLen){
-					maxLen = matchCount;
-					start = i-1;
-					end = j+1;
+				if ( palinLen == matchCount+2){ 
+					//cout << "String is really palindrome!" << endl; 
+					cout << "PalinLength:[" << palinLen <<"], MatchCount:[" << matchCount <<"]" << endl;
+					if (matchCount > maxLen){
+						maxLen = matchCount;
+						start = i;
+						end = j;
+					}
 				}
+				//else { cout << "PalinLength:[" << palinLen <<"], MatchCount:[" << matchCount <<"]" << endl; }
 			}
 		}
 	}
@@ -37,9 +41,10 @@ int LPSBruteForce(char* str, int n, int& start, int& end){
 // A utility function to print a substring str[low..high]
 void printSubStr(char* str, int low, int high)
 {
-	cout << "Start :[" << low << "] High:[" << high << "]" << endl;
 	for (int i = low; i <= high; ++i)
 		printf("%c", str[i]);
+
+	cout << endl<< "Start :[" << low << "] High:[" << high << "]" << endl;
 }
 
 void PrintTable(bool table[][MAX_SIZE], int n){
@@ -108,7 +113,7 @@ int longestPalSubstr(char *str)
 			}
 		}
 	}
-	PrintTable(table, n);
+	//PrintTable(table, n);
 
 	printf("Longest palindrome substring is: ");
 	printSubStr(str, start, start + maxLength - 1);
@@ -119,13 +124,17 @@ int longestPalSubstr(char *str)
 // Driver program to test above functions
 int main()
 {
-	char str[] = "forgeeksskeegfor";
-	printf("nLength is: %dn", longestPalSubstr(str));
+	string inputString;
+	//cin >> inputString;
+	std::getline(std::cin, inputString);
+
+	cout << "IP:[" << inputString <<"]" << endl;
+	char str[] =   "bbbab";//"forgeeksskeegfor";
+	printf("nLength is: %dn \n", longestPalSubstr(str));
 
 	int s = 0, e = 0;
-	cout << "LPS Brute Force:" ;
-	int len = LPSBruteForce(str, 15, s, e);
+	cout << "LPS Brute Force:" << endl ;
+	int len = LPSBruteForce(str, 5, s, e);
 	cout << len << endl << "Start:[" << s << "] ,End :[" << e << "]" << endl;
-	_getch();
 	return 0;
 }
