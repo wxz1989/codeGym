@@ -113,6 +113,7 @@ AddToList(NodeDPtr pHeadNode, int iData){
 NodePtr     ReverseKNodes(NodePtr   pHeadNode, int k){
 	
 	if (pHeadNode == nullptr){ return nullptr; }
+	if( k <=1) { cout << "No Change Required" << endl; return pHeadNode;}
 
 	NodePtr pNH = nullptr, pNxt = nullptr;
 	NodePtr pNewHead = nullptr, pPast = nullptr;
@@ -169,7 +170,7 @@ NodePtr     ReverseKUtil(NodePtr   pHeadNode, NodeDPtr pNH, NodeDPtr pNxt, int v
 
 	NodePtr pRet = ReverseKUtil(pHeadNode->pNext, pNH, pNxt, val-1, k);
 	
-	if( pRet != nullptr {  pRet->pNext = pHeadNode; }
+	if( pRet != nullptr ) {  pRet->pNext = pHeadNode; }
 
 	if ( val == k ){
 		pHeadNode->pNext = *pNxt;
