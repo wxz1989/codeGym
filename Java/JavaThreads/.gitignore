@@ -1,0 +1,6 @@
+/bin/
+#class path files
+*.class
+*.classpath
+*.project
+*.html

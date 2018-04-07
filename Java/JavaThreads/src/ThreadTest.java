@@ -1,5 +1,3 @@
-package com.rakesh.threads;
-
 import java.lang.*;
 import java.util.*;
  
