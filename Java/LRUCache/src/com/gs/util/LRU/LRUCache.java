@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-
 class LRUStats{
 	private boolean change = false;
 	private int hitCount, misCount, evictCount;
@@ -61,7 +60,6 @@ class LRUStats{
 
 
 public class LRUCache<K,V> {
-
 	
 	private LRUStats stats;
 	private AbstractQueue<K> lruQ = null;
@@ -72,7 +70,6 @@ public class LRUCache<K,V> {
 	public LRUCache(){ this(DEFAULT_CACHE_SIZE); }
 	
 	LRUCache(int s){
-		
 		size = s;
 		lruQ = new ConcurrentLinkedQueue<K>();
 		lruMap = new ConcurrentHashMap<K,V>();
@@ -88,25 +85,19 @@ public class LRUCache<K,V> {
 	public V get(K key) {
 		V value = null;
 		if ( lruQ.contains(key) ) {
-			
 			// Remove the key and add it to the back of the queue, 
 			// hence maintaining the order of first element least recently used.
-			
 			lruQ.remove(key);
 			lruQ.add(key);
-			
 			value = lruMap.get(key);
 		} else {
 			System.out.println("Cache Miss");
 			stats.MisCount(true);
 		}
-		
 		return value;
 	}
 	
-	
 	public K getLeastRecentlyUsed() {
-		
 		K front = null;
 		if( lruQ.size() > 0 ) {
 			front = lruQ.peek();
@@ -119,10 +110,8 @@ public class LRUCache<K,V> {
 		if ( lruQ.contains(k)) {			
 			V value = lruMap.get(k);
 			if( value == v){
-				
 				//no need to do anything with the map OR with the size of the Queue.
 				//Only Re-Schuffle element in queue.
-				
 				lruQ.remove(k);
 				lruQ.add(k);
 				
@@ -133,10 +122,12 @@ public class LRUCache<K,V> {
 				
 			} else {
 				//This would be considered as a new insertion
-				if (lruQ.size() >= size ) {
+				if (lruQ.size() > size ) {
 					lruQ.poll();
-					
 					stats.EvictCount(true);
+					lruMap.remove(k);
+					
+					System.out.println("Queue:[" + lruQ.size() + "], Map:[" + lruMap.size() + "]");
 				}
 				
 				stats.MisCount(true);
@@ -146,9 +137,12 @@ public class LRUCache<K,V> {
 			}
 			
 		} else {
-			if (lruQ.size() >= size ) {
+			if (lruQ.size() > size ) {
 				lruQ.poll();
 				stats.EvictCount(true);
+				lruMap.remove(k);
+				
+				System.out.println("Queue:[" + lruQ.size() + "], Map:[" + lruMap.size() + "]");
 			}
 			
 			stats.MisCount(true);
