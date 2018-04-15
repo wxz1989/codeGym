@@ -9,9 +9,15 @@
 #undef __PRINT_TRAVERSALS__
 #endif*/
 
-#include <bits/stdc++.h>
+//#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <stack>
+#include <queue>
+#include <assert.h>
+#include <fstream>
 
-#define MAX_NODES /*100*/ 100
+#define MAX_NODES /*100*/ 10
 #define __TREE_FILE_NAME__  ".bst_keys_directory.txt"
 
 struct _tree_node_;
@@ -76,5 +82,8 @@ void Release(NodePtr pR);
 void TreeNodeStats(NodePtr pR);
 //Writing content to directory
 void WriteToFile(const std::string& inputString, int keys);
+
+
+void DeepestLeaves(NodePtr pRoot, std::stack<int>& dl);
 
 #endif 		/*__TREE_H__*/

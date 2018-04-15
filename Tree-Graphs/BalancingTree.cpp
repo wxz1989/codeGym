@@ -1,5 +1,11 @@
-#include <bits/stdc++.h>
+//#include <bits/stdc++.h>
+#include <iostream>
 #include "Tree.h"
+#include <stack>
+#include <queue>
+#include <vector>
+#include <assert.h>
+#include <fstream>
 
 using namespace std;
 
@@ -13,7 +19,7 @@ void Test_SampleInput(){
 	int size= 0;
 
 	//cout << "Reading Sample Inputs" <<  endl;
-	//freopen("BalancingTree_Sample_Input.txt", "r", stdin);
+	freopen("BalancingTree_Sample_Input.txt", "r", stdin);
 	cin >> test_cases;
 
 	cout << "#TCs" << test_cases <<  endl;
@@ -32,7 +38,7 @@ void Test_SampleInput(){
 		cout << endl;
 		TreeNodeStats(_pRoot);
 	}
-	_pRoot = Balance(_pRoot);
+	//_pRoot = Balance(_pRoot);
 	TreeNodeStats(_pRoot);
 
 	cout << "PreOrder:" << endl;
@@ -72,6 +78,17 @@ void Test_SampleInput(){
 	} else {
 		cout << "InOrder Successor not found!" << endl; 
 	}
+
+	stack<int> deepestLeaves;
+	int sum = 0;
+
+	DeepestLeaves(_pRoot,deepestLeaves);
+
+	while ( deepestLeaves.empty() == false){
+		sum += deepestLeaves.top();
+		deepestLeaves.pop();
+	}
+	cout <<"Deepest Roots Sum:[" << sum << "]" << endl;
 
 	Release(_pRoot);
 }
@@ -142,6 +159,15 @@ void Test_RandomisedDataInput(){
 	NodePtr pMax = MaxValue(_pRoot);
 	cout << "Find Max Node:[" <<  pMax->data << "]" << endl;
 
+	stack<int> deepestLeaves;
+	int sum = 0;
+
+	DeepestLeaves(_pRoot,deepestLeaves);
+	while ( deepestLeaves.empty() == false){
+		sum += deepestLeaves.top();
+		deepestLeaves.pop();
+	}
+	cout <<"Deepest Roots Sum:[" << sum << "]" << endl;
 	Release(_pRoot);
 }
 

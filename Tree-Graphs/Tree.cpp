@@ -4,7 +4,6 @@
 
 using namespace std;
 
-
 int ar[MAX_NODES] ={0};
 //int balanced[MAX_NODES] ={0};
 
@@ -350,6 +349,20 @@ void WriteToFile( const std::string& inputString, vector<int> keys){
 		cout << "Error in opening/writing to directory file" << endl;
 	}
 	ofs.close();
+}
+
+void DeepestLeaves(NodePtr pRoot, stack<int>& dl){
+
+	if ( pRoot == nullptr){ return;}
+	if ( pRoot->pLeft == nullptr && pRoot->pRight == nullptr){
+		cout << "Deepest Node:[" << pRoot->data << "]" << endl;
+		dl.push(pRoot->data);
+		return;
+	}
+
+	DeepestLeaves(pRoot->pLeft, dl);
+	DeepestLeaves(pRoot->pRight, dl);
+	return;
 }
 
 /*

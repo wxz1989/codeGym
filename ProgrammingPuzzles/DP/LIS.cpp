@@ -137,6 +137,12 @@ int LIS(int a[], int& length){
 	return maxSum;
 }
 
+
+int MaxContiSum(int arr[], int len){
+	int maxSum = 0;
+	return maxSum;
+}
+
 int main(){
 	int TC = 0;
 	freopen("LIS_input.txt", "r", stdin);
