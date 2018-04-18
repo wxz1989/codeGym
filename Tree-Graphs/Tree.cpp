@@ -351,6 +351,18 @@ void WriteToFile( const std::string& inputString, vector<int> keys){
 	ofs.close();
 }
 
+NodePtr LCA(NodePtr pRoot, int left, int right){
+	
+	if (pRoot == NULL){  return nullptr; }
+	if (pRoot->data == right || pRoot->data == left){  return pRoot; }
+
+	NodePtr l = LCA(pRoot->pLeft, left, right, pLCA);
+	NodePtr r = LCA(pRoot->pRight, left, right, pLCA);
+
+	if ( l && r){  return pRoot }
+	return (l != nullptr ? l : r);
+}
+
 void DeepestLeaves(NodePtr pRoot, stack<int>& dl){
 
 	if ( pRoot == nullptr){ return;}
