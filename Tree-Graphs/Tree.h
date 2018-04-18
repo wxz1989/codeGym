@@ -82,8 +82,7 @@ void Release(NodePtr pR);
 void TreeNodeStats(NodePtr pR);
 //Writing content to directory
 void WriteToFile(const std::string& inputString, int keys);
-
-
 void DeepestLeaves(NodePtr pRoot, std::stack<int>& dl);
+NodePtr LCA(NodePtr pRoot, int left, int right);
 
 #endif 		/*__TREE_H__*/
