@@ -356,8 +356,8 @@ NodePtr LCA(NodePtr pRoot, int left, int right){
 	if (pRoot == NULL){  return nullptr; }
 	if (pRoot->data == right || pRoot->data == left){  return pRoot; }
 
-	NodePtr l = LCA(pRoot->pLeft, left, right, pLCA);
-	NodePtr r = LCA(pRoot->pRight, left, right, pLCA);
+	NodePtr l = LCA(pRoot->pLeft, left, right);
+	NodePtr r = LCA(pRoot->pRight, left, right);
 
 	if ( l && r){  return pRoot }
 	return (l != nullptr ? l : r);
