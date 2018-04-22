@@ -5,9 +5,11 @@
 
 #define INVALID_HASH -1
 #define MULTIPLIER		67
-#define FIELD_LENGTH	19
+#define FIELD_LENGTH	20
 #define MOD_PRIME		10009
 #define MAX_SIZE		50000
+
+using namespace std;
 
 struct ListNode;
 typedef struct ListNode Node;
@@ -51,8 +53,6 @@ NodePtr MemoHash[MOD_PRIME];
 
 DBRecord database[MAX_SIZE];
 
-
-
 typedef enum
 {
 	CMD_INIT,
@@ -94,6 +94,17 @@ void InitDB();
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
+
+
+void PrintRecordFromDatabase(int i){
+	cout << " ********* RECORD ********* "  << endl;
+	cout << "Name:[" << database[i].name <<"]" << endl;
+	cout << "Number:[" << database[i].number <<"]" << endl;
+	cout << "Birthday:[" << database[i].bday <<"]" << endl;
+	cout << "Email:[" << database[i].email <<"]" << endl;
+	cout << "Memo:[" << database[i].memo <<"]" << endl;
+	cout << " ************************** "  << endl;
+}
 
 void ClearAllHashArray();
 static int dummy[100];
@@ -185,8 +196,10 @@ static void cmd_delete()
 	scanf("%d %s %d", &field, str, &check);
 
 	result = Delete((FIELD)field, str);
-	if (result != check)
+	if (result != check){
 		Score -= ScoreIdx;
+		cout << "Delete Failed" << endl;
+	}
 }
 
 static void cmd_change()
@@ -196,8 +209,10 @@ static void cmd_change()
 	scanf("%d %s %d %s %d", &field, str, &changefield, changestr, &check);
 
 	result = Change((FIELD)field, str, (FIELD)changefield, changestr);
-	if (result != check)
+	if (result != check) {
 		Score -= ScoreIdx;
+		cout << "Change Failed" << endl;
+	}
 }
 
 static void cmd_search()
@@ -208,8 +223,10 @@ static void cmd_search()
 
 	RESULT result = Search((FIELD)field, str, (FIELD)returnfield);
 
-	if (result.count != check || (result.count == 1 && (strcmp(checkstr, result.str) != 0)))
+	if (result.count != check || (result.count == 1 && (strcmp(checkstr, result.str) != 0))){
 		Score -= ScoreIdx;
+		cout << "Search Failed" << endl;
+	}
 }
 
 static void run()
@@ -220,6 +237,7 @@ static void run()
 	{
 		int cmd;
 		scanf("%d", &cmd);
+		//cout << "Iteration:[" << i <<"]" << endl;
 		switch (cmd)
 		{
 		case CMD_INIT:   cmd_init();   break;
@@ -230,6 +248,7 @@ static void run()
 		default: break;
 		}
 	}
+	PrintHash(EmailHash, MOD_PRIME);
 }
 
 static void init()
@@ -272,8 +291,6 @@ int main()
 }
 
 
-using namespace std;
-
 void ResetHashArray(Node* array[], int size = MOD_PRIME);
 
 int myStrLen(char* str){
@@ -294,34 +311,45 @@ bool myStrCmp(char* source, char* dest){
 	int i = 0;
 	for ( i = 0; i< sourceLen;i++){
 		//cout << source[i] << " " << dest[i] << endl;
-		if (source[i] == dest[i])
-			continue;
-		else {
-			return false;
-		}
+		if (source[i] != dest[i]) { return false; }
 	}
 	//cout << "Comp Len :[" << i << "]" << endl;
 	return true;
 }
 
-void myStrCpy(char* source, char* dest, int size){
+void myStrCpy(char* dest, char* source, int size){
 	int sl= 0, dl = 0;
-	for ( int i = 0; i< size;i++){
+
+	if ( dest == nullptr || source == nullptr || myStrLen(source) == 0 ){ return; }
+
+	//cout << "String to Copy:[" ;
+	for ( int i = 0; i< myStrLen(source)+1;i++){
+		//cout << source[i] << "";
 		dest[i] = source[i];
 	}
+	//cout << "]" << endl;
 }
 
 
 int InsertRecordToDatabase(char* name, char* number, char* birthday, char* email, char* memo){
 	
 	if (dbRecordIndex > MAX_SIZE){ return INVALID_HASH; }
-	for (int i = 0; i < FIELD_LENGTH; i++){
+	
+	/*for (int i = 0; i < FIELD_LENGTH; i++){
 		database[dbRecordIndex].name[i]= name[i];
 		database[dbRecordIndex].number[i] = number[i];
 		database[dbRecordIndex].bday[i] = birthday[i];
 		database[dbRecordIndex].email[i] = email[i];
 		database[dbRecordIndex].memo[i] = memo[i];
-	}
+	}*/
+
+	for (int i = 0; i <myStrLen(name); i++){ database[dbRecordIndex].name[i]= name[i] ;};
+	for (int i = 0; i <myStrLen(number); i++){ database[dbRecordIndex].number[i]= number[i]; };
+	for (int i = 0; i <myStrLen(birthday); i++){ database[dbRecordIndex].bday[i]= birthday[i] ;};
+	//cout << "Email:[" << myStrLen(email) <<"]" <<  endl;
+	for (int i = 0; i <myStrLen(email); i++){ database[dbRecordIndex].email[i]= email[i] ;};
+	for (int i = 0; i <myStrLen(memo); i++){ database[dbRecordIndex].memo[i]= memo[i] ;};
+		
 	return dbRecordIndex++;
 }
 
@@ -392,7 +420,7 @@ void PrintHash(NodePtr hashArray[], int size){
 bool InsertIntoHashArray(Node* array[], int orgIndex, unsigned int hashValue, char value[FIELD_LENGTH]){
 
 	if (hashValue < 0 && hashValue > MOD_PRIME){ return false; }
-	//Collisson Occured
+
 	if (array[hashValue] != nullptr){
 		//cout << "Collision Occured" << endl;
 		NodePtr pHead = array[hashValue];
@@ -458,24 +486,20 @@ int HashLookup(FIELD field, char* str, FIELD retField, char* retValue){
 	NodePtr record = nullptr;
 	hashValue = Hash(str, myStrLen(str), field);
 
-	//record =  NameHash[hashValue];
-	//cout << "Hash is:[" << record->index << "]" << endl;
-	//cout << "Database :[" << database[record->index].name << "]" << endl;
 	switch(field){
 		case NAME:{
 			record = NameHash[hashValue];
 			//Compare with the main node
-			if ( record == nullptr ){ return INVALID_HASH;}
+			if ( record == nullptr ){ return count;}
+			if ( record->index == -1 ) { return count; }
 			//Node with Collission found, now iterate and find your matching node
 			NodePtr pTemp = record;
+
 			while ( pTemp !=nullptr){
-				
 				//cout << "Matching:[" << database[pTemp->index].name <<"], [" << str <<"]" << endl;
 				if ( myStrCmp(database[pTemp->index].name, str) == true){
 					//cout << "Match Found:[" << database[pTemp->index].name <<"], [" << str <<"]" << endl;
-					count++;
-
-					if( count  <=1 ){
+					if( count  <1 ){
 						if ( retField == NAME ){
 							myStrCpy(retValue, database[pTemp->index].name, FIELD_LENGTH);
 						} else if ( retField == NUMBER ){
@@ -488,6 +512,7 @@ int HashLookup(FIELD field, char* str, FIELD retField, char* retValue){
 							myStrCpy(retValue, database[pTemp->index].memo, FIELD_LENGTH);
 						}
 					}
+					count++;
 				} 
 				pTemp = pTemp->pNext;
 			}			
@@ -495,18 +520,18 @@ int HashLookup(FIELD field, char* str, FIELD retField, char* retValue){
 		break;
 		case NUMBER:{
 			record = NumberHash[hashValue];
+
 			//Compare with the main node
-			if ( record == nullptr ){ return INVALID_HASH;}
+			if ( record == nullptr ){ return count;}
+			if ( record->index == -1 ) { return count; }
 			//Node with Collission found, now iterate and find your matching node
 			NodePtr pTemp = record;
 			while ( pTemp !=nullptr){
 				
 				//cout << "Matching:[" << database[pTemp->index].number <<"], [" << str <<"]" << endl;
 				if ( myStrCmp(database[pTemp->index].number, str) == true){
-					//cout << "Match Found:[" << database[pTemp->index].number <<"], [" << str <<"]" << endl;
-					count++;
-
-					if( count  <=1 ){
+				//	cout << "Match Found:[" << database[pTemp->index].number <<"], [" << str <<"]" << endl;
+					if( count  <1 ){
 						if ( retField == NAME ){
 							myStrCpy(retValue, database[pTemp->index].name, FIELD_LENGTH);
 						} else if ( retField == NUMBER ){
@@ -519,6 +544,7 @@ int HashLookup(FIELD field, char* str, FIELD retField, char* retValue){
 							myStrCpy(retValue, database[pTemp->index].memo, FIELD_LENGTH);
 						}
 					}
+					count++;
 				} 
 				pTemp = pTemp->pNext;
 			}			
@@ -527,17 +553,16 @@ int HashLookup(FIELD field, char* str, FIELD retField, char* retValue){
 		case BIRTHDAY:{
 			record = BDayHash[hashValue];
 			//Compare with the main node
-			if ( record == nullptr ){ return INVALID_HASH;}
+			if ( record == nullptr ){ return count;}
+			if ( record->index == -1 ) { return count; }
 			//Node with Collission found, now iterate and find your matching node
 			NodePtr pTemp = record;
 			while ( pTemp !=nullptr){
 				
 				//cout << "Matching:[" << database[pTemp->index].bday <<"], [" << str <<"]" << endl;
 				if ( myStrCmp(database[pTemp->index].bday, str) == true){
-					//cout << "Match Found:[" << database[pTemp->index].bday <<"], [" << str <<"]" << endl;
-					count++;
-
-					if( count  <=1 ){
+				//	cout << "Match Found:[" << database[pTemp->index].bday <<"], [" << str <<"]" << endl;
+					if( count  <1 ){
 						if ( retField == NAME ){
 							myStrCpy(retValue, database[pTemp->index].name, FIELD_LENGTH);
 						} else if ( retField == NUMBER ){
@@ -550,6 +575,7 @@ int HashLookup(FIELD field, char* str, FIELD retField, char* retValue){
 							myStrCpy(retValue, database[pTemp->index].memo, FIELD_LENGTH);
 						}
 					}
+					count++;
 				} 
 				pTemp = pTemp->pNext;
 			}			
@@ -558,17 +584,20 @@ int HashLookup(FIELD field, char* str, FIELD retField, char* retValue){
 		case EMAIL:{
 			record = EmailHash[hashValue];
 			//Compare with the main node
-			if ( record == nullptr ){ return INVALID_HASH;}
+			if ( record == nullptr ){ return count;}
+			if ( record->index == -1 ) { return count; }
 			//Node with Collission found, now iterate and find your matching node
 			NodePtr pTemp = record;
-			while ( pTemp !=nullptr){
-				
-				//cout << "Matching:[" << database[pTemp->index].email <<"], [" << str <<"]" << endl;
-				if ( myStrCmp(database[pTemp->index].email, str) == true){
-					//cout << "Match Found:[" << database[pTemp->index].email <<"], [" << str <<"]" << endl;
-					count++;
 
-					if( count  <=1 ){
+			while ( pTemp !=nullptr){
+
+				//PrintRecordFromDatabase(pTemp->index);
+				//cout << "Matching:[" << database[pTemp->index].email <<"], To [" << str <<"]" << endl;
+				if ( myStrCmp(database[pTemp->index].email, str) == true){
+
+					PrintRecordFromDatabase(pTemp->index);
+				//	cout << "Match Found:[" << database[pTemp->index].email <<"], [" << str <<"]" << endl;
+					if( count  <1 ){
 						if ( retField == NAME ){
 							myStrCpy(retValue, database[pTemp->index].name, FIELD_LENGTH);
 						} else if ( retField == NUMBER ){
@@ -581,6 +610,7 @@ int HashLookup(FIELD field, char* str, FIELD retField, char* retValue){
 							myStrCpy(retValue, database[pTemp->index].memo, FIELD_LENGTH);
 						}
 					}
+					count++;
 				} 
 				pTemp = pTemp->pNext;
 			}			
@@ -589,17 +619,15 @@ int HashLookup(FIELD field, char* str, FIELD retField, char* retValue){
 		case MEMO:{
 			record = MemoHash[hashValue];
 			//Compare with the main node
-			if ( record == nullptr ){ return INVALID_HASH;}
+			if ( record == nullptr ){ return count;}
+			if ( record->index == -1 ) { return count; }
 			//Node with Collission found, now iterate and find your matching node
 			NodePtr pTemp = record;
 			while ( pTemp !=nullptr){
 				//cout << "Matching:[" << database[pTemp->index].memo <<"], [" << str <<"]" << endl;
 				if ( myStrCmp(database[pTemp->index].memo, str) == true){
-					
-					//cout << "Match Found:[" << database[pTemp->index].memo <<"], [" << str <<"]" << endl;
-					count++;
-
-					if( count  <=1 ){
+				//	cout << "Match Found:[" << database[pTemp->index].memo <<"], [" << str <<"]" << endl;
+					if( count  <1 ){
 						if ( retField == NAME ){
 							myStrCpy(retValue, database[pTemp->index].name, FIELD_LENGTH);
 						} else if ( retField == NUMBER ){
@@ -612,6 +640,7 @@ int HashLookup(FIELD field, char* str, FIELD retField, char* retValue){
 							myStrCpy(retValue, database[pTemp->index].memo, FIELD_LENGTH);
 						}
 					}
+					count++;
 				} 
 				pTemp = pTemp->pNext;
 			}			
@@ -621,8 +650,429 @@ int HashLookup(FIELD field, char* str, FIELD retField, char* retValue){
 	return count;
 }
 
+int DeleteLookUp(FIELD field, char* str){
+	unsigned int hashValue = -1;
+	int count= 0;
+	NodePtr record = nullptr;
+	hashValue = Hash(str, myStrLen(str), field);
+
+	switch(field){
+		case NAME:{
+			record = NameHash[hashValue];
+			//Compare with the main node
+			if ( record == nullptr ){ return count;}
+			if ( record->index == -1 ) { return count; }
+			//Node with Collission found, now iterate and find your matching node
+			NodePtr pTemp = record;
+			while ( pTemp !=nullptr){
+				//cout << "Matching:[" << database[pTemp->index].name <<"], [" << str <<"]" << endl;
+				if ( myStrCmp(database[pTemp->index].name, str) == true){
+					//cout << "Match Found:[" << database[pTemp->index].name <<"], [" << str <<"]" << endl;
+					count++;
+					pTemp->index = -1;
+				} 
+				pTemp = pTemp->pNext;
+			}			
+		}
+		break;
+		case NUMBER:{
+			record = NumberHash[hashValue];
+			//Compare with the main node
+			if ( record == nullptr ){ return count;}
+			if ( record->index == -1 ) { return count; }
+			NodePtr pTemp = record;
+			while ( pTemp !=nullptr){
+				//cout << "Matching:[" << database[pTemp->index].name <<"], [" << str <<"]" << endl;
+				if ( myStrCmp(database[pTemp->index].number, str) == true){
+					//cout << "Match Found:[" << database[pTemp->index].name <<"], [" << str <<"]" << endl;
+					count++;
+					pTemp->index = -1;
+				} 
+				pTemp = pTemp->pNext;
+			}	
+		}
+		break;
+		case BIRTHDAY:{
+			record = BDayHash[hashValue];
+			//Compare with the main node
+			if ( record == nullptr ){ return count;}
+			if ( record->index == -1 ) { return count; }
+			NodePtr pTemp = record;
+			while ( pTemp !=nullptr){
+				//cout << "Matching:[" << database[pTemp->index].name <<"], [" << str <<"]" << endl;
+				if ( myStrCmp(database[pTemp->index].bday, str) == true){
+					//cout << "Match Found:[" << database[pTemp->index].name <<"], [" << str <<"]" << endl;
+					count++;
+					pTemp->index = -1;
+				} 
+				pTemp = pTemp->pNext;
+			}	
+		}
+		break;
+		case EMAIL:{
+			record = EmailHash[hashValue];
+			//Compare with the main node
+			if ( record == nullptr ){ return count;}
+			if ( record->index == -1 ) { return count; }
+			NodePtr pTemp = record;
+			while ( pTemp !=nullptr){
+				//cout << "Matching:[" << database[pTemp->index].name <<"], [" << str <<"]" << endl;
+				if ( myStrCmp(database[pTemp->index].email, str) == true){
+					//cout << "Match Found:[" << database[pTemp->index].name <<"], [" << str <<"]" << endl;
+					count++;
+					pTemp->index = -1;
+				} 
+				pTemp = pTemp->pNext;
+			}	
+		}
+		break;
+		case MEMO:{
+			record = MemoHash[hashValue];
+			//Compare with the main node
+			if ( record == nullptr ){ return count;}
+			if ( record->index == -1 ) { return count; }
+			NodePtr pTemp = record;
+			while ( pTemp !=nullptr){
+				//cout << "Matching:[" << database[pTemp->index].name <<"], [" << str <<"]" << endl;
+				if ( myStrCmp(database[pTemp->index].memo, str) == true){
+					//cout << "Match Found:[" << database[pTemp->index].name <<"], [" << str <<"]" << endl;
+					count++;
+					pTemp->index = -1;
+				} 
+				pTemp = pTemp->pNext;
+			}	
+		}
+		break;
+	}
+	return count;
+}
+
+int ChangeLookUp(FIELD field, char* str, FIELD fieldToChange, char* val){
+	unsigned int hashValue = -1;
+	int count= 0;
+	NodePtr record = nullptr;
+	hashValue = Hash(str, myStrLen(str), field);
+
+	switch(field){
+		case NAME:{
+			record = NameHash[hashValue];
+			//Compare with the main node
+			if ( record == nullptr ){ return count;}
+			if ( record->index == -1 ) { return count; }
+			//Node with Collission found, now iterate and find your matching node
+			NodePtr pTemp = record;
+			while ( pTemp !=nullptr){
+				if ( myStrCmp(database[pTemp->index].name, str) == true){
+					count++;
+					switch(fieldToChange){
+						case NAME:{
+							for ( int i = 0; i< FIELD_LENGTH ;i++) {
+								database[pTemp->index].name[i] = '\0';
+								database[pTemp->index].name[i] = val[i];
+							}
+							unsigned int newValue = Hash(val, myStrLen(val), NAME);
+							InsertIntoHashArray(NameHash, pTemp->index, newValue, val);
+						}
+						break;
+						case NUMBER:{
+							for ( int i = 0; i< FIELD_LENGTH ;i++) {
+								database[pTemp->index].number[i] = '\0';
+								database[pTemp->index].number[i] = val[i];
+							}
+							unsigned int newValue = Hash(val, myStrLen(val), NUMBER);
+							InsertIntoHashArray(NumberHash, pTemp->index, newValue, val);
+						}
+						break;
+						case BIRTHDAY:{
+							for ( int i = 0; i< FIELD_LENGTH ;i++) {
+								database[pTemp->index].bday[i] = '\0';
+								database[pTemp->index].bday[i] = val[i];
+							}
+							unsigned int newValue = Hash(val, myStrLen(val), BIRTHDAY);
+							InsertIntoHashArray(BDayHash, pTemp->index, newValue, val);
+						}
+						break;
+						case EMAIL:{
+							for ( int i = 0; i< FIELD_LENGTH ;i++) {
+								database[pTemp->index].email[i] = '\0';
+								database[pTemp->index].email[i] = val[i];
+							}
+							unsigned int newValue = Hash(val, myStrLen(val), EMAIL);
+							InsertIntoHashArray(EmailHash, pTemp->index, newValue, val);
+						}
+						break;
+						case MEMO:{
+							for ( int i = 0; i< FIELD_LENGTH ;i++) {
+								database[pTemp->index].memo[i] = '\0';
+								database[pTemp->index].memo[i] = val[i];
+							}
+							unsigned int newValue = Hash(val, myStrLen(val), MEMO);
+							InsertIntoHashArray(MemoHash, pTemp->index, newValue, val);
+						}
+						break;
+					}
+					//cout << "Matching:[" << database[pTemp->index].name <<"], [" << str <<"]" << endl;
+				
+				}
+				pTemp = pTemp->pNext;			
+			}
+		}
+		break;
+		case NUMBER:{
+			record = NumberHash[hashValue];
+			//Compare with the main node
+			if ( record == nullptr ){ return count;}
+			if ( record->index == -1 ) { return count; }
+			NodePtr pTemp = record;
+			while ( pTemp !=nullptr){
+				if ( myStrCmp(database[pTemp->index].number, str) == true){
+					count++;
+					switch(fieldToChange){
+						case NAME:{
+							for ( int i = 0; i< FIELD_LENGTH ;i++) {
+								database[pTemp->index].name[i] = '\0';
+								database[pTemp->index].name[i] = val[i];
+							}
+							unsigned int newValue = Hash(val, myStrLen(val), NAME);
+							InsertIntoHashArray(NameHash, pTemp->index, newValue, val);
+						}
+						break;
+						case NUMBER:{
+							for ( int i = 0; i< FIELD_LENGTH ;i++) {
+								database[pTemp->index].number[i] = '\0';
+								database[pTemp->index].number[i] = val[i];
+							}
+							unsigned int newValue = Hash(val, myStrLen(val), NUMBER);
+							InsertIntoHashArray(NumberHash, pTemp->index, newValue, val);
+						}
+						break;
+						case BIRTHDAY:{
+							for ( int i = 0; i< FIELD_LENGTH ;i++) {
+								database[pTemp->index].bday[i] = '\0';
+								database[pTemp->index].bday[i] = val[i];
+							}
+							unsigned int newValue = Hash(val, myStrLen(val), BIRTHDAY);
+							InsertIntoHashArray(BDayHash, pTemp->index, newValue, val);
+						}
+						break;
+						case EMAIL:{
+							for ( int i = 0; i< FIELD_LENGTH ;i++) {
+								database[pTemp->index].email[i] = '\0';
+								database[pTemp->index].email[i] = val[i];
+							}
+							unsigned int newValue = Hash(val, myStrLen(val), EMAIL);
+							InsertIntoHashArray(EmailHash, pTemp->index, newValue, val);
+						}
+						break;
+						case MEMO:{
+							for ( int i = 0; i< FIELD_LENGTH ;i++) {
+								database[pTemp->index].memo[i] = '\0';
+								database[pTemp->index].memo[i] = val[i];
+							}
+							unsigned int newValue = Hash(val, myStrLen(val), MEMO);
+							InsertIntoHashArray(MemoHash, pTemp->index, newValue, val);
+						}
+						break;
+					}
+					//cout << "Matching:[" << database[pTemp->index].name <<"], [" << str <<"]" << endl;
+					
+				}
+				pTemp = pTemp->pNext;			
+			}
+		}
+		break;
+		case BIRTHDAY:{
+			record = BDayHash[hashValue];
+			//Compare with the main node
+			if ( record == nullptr ){ return count;}
+			if ( record->index == -1 ) { return count; }
+			NodePtr pTemp = record;
+			while ( pTemp !=nullptr){
+				if ( myStrCmp(database[pTemp->index].bday, str) == true){
+					count++;
+					switch(fieldToChange){
+						case NAME:{
+							for ( int i = 0; i< FIELD_LENGTH ;i++) {
+								database[pTemp->index].name[i] = '\0';
+								database[pTemp->index].name[i] = val[i];
+							}
+							unsigned int newValue = Hash(val, myStrLen(val), NAME);
+							InsertIntoHashArray(NameHash, pTemp->index, newValue, val);
+						}
+						break;
+						case NUMBER:{
+							for ( int i = 0; i< FIELD_LENGTH ;i++) {
+								database[pTemp->index].number[i] = '\0';
+								database[pTemp->index].number[i] = val[i];
+							}
+							unsigned int newValue = Hash(val, myStrLen(val), NUMBER);
+							InsertIntoHashArray(NumberHash, pTemp->index, newValue, val);
+						}
+						break;
+						case BIRTHDAY:{
+							for ( int i = 0; i< FIELD_LENGTH ;i++) {
+								database[pTemp->index].bday[i] = '\0';
+								database[pTemp->index].bday[i] = val[i];
+							}
+							unsigned int newValue = Hash(val, myStrLen(val), BIRTHDAY);
+							InsertIntoHashArray(BDayHash, pTemp->index, newValue, val);
+						}
+						break;
+						case EMAIL:{
+							for ( int i = 0; i< FIELD_LENGTH ;i++) {
+								database[pTemp->index].email[i] = '\0';
+								database[pTemp->index].email[i] = val[i];
+							}
+							unsigned int newValue = Hash(val, myStrLen(val), EMAIL);
+							InsertIntoHashArray(EmailHash, pTemp->index, newValue, val);
+						}
+						break;
+						case MEMO:{
+							for ( int i = 0; i< FIELD_LENGTH ;i++) {
+								database[pTemp->index].memo[i] = '\0';
+								database[pTemp->index].memo[i] = val[i];
+							}
+							unsigned int newValue = Hash(val, myStrLen(val), MEMO);
+							InsertIntoHashArray(MemoHash, pTemp->index, newValue, val);
+						}
+						break;
+					}
+					//cout << "Matching:[" << database[pTemp->index].name <<"], [" << str <<"]" << endl;
+				}
+				pTemp = pTemp->pNext;			
+			}
+		}
+		break;
+		case EMAIL:{
+			record = EmailHash[hashValue];
+			//Compare with the main node
+			if ( record == nullptr ){ return count;}
+			if ( record->index == -1 ) { return count; }
+			NodePtr pTemp = record;
+			while ( pTemp !=nullptr){
+				if ( myStrCmp(database[pTemp->index].email, str) == true){
+					count++;
+					switch(fieldToChange){
+						case NAME:{
+							for ( int i = 0; i< FIELD_LENGTH ;i++) {
+								database[pTemp->index].name[i] = '\0';
+								database[pTemp->index].name[i] = val[i];
+							}
+							unsigned int newValue = Hash(val, myStrLen(val), NAME);
+							InsertIntoHashArray(NameHash, pTemp->index, newValue, val);
+						}
+						break;
+						case NUMBER:{
+							for ( int i = 0; i< FIELD_LENGTH ;i++) {
+								database[pTemp->index].number[i] = '\0';
+								database[pTemp->index].number[i] = val[i];
+							}
+							unsigned int newValue = Hash(val, myStrLen(val), NUMBER);
+							InsertIntoHashArray(NumberHash, pTemp->index, newValue, val);
+						}
+						break;
+						case BIRTHDAY:{
+							for ( int i = 0; i< FIELD_LENGTH ;i++) {
+								database[pTemp->index].bday[i] = '\0';
+								database[pTemp->index].bday[i] = val[i];
+							}
+							unsigned int newValue = Hash(val, myStrLen(val), BIRTHDAY);
+							InsertIntoHashArray(BDayHash, pTemp->index, newValue, val);
+						}
+						break;
+						case EMAIL:{
+							for ( int i = 0; i< FIELD_LENGTH ;i++) {
+								database[pTemp->index].email[i] = '\0';
+								database[pTemp->index].email[i] = val[i];
+							}
+							unsigned int newValue = Hash(val, myStrLen(val), EMAIL);
+							InsertIntoHashArray(EmailHash, pTemp->index, newValue, val);
+						}
+						break;
+						case MEMO:{
+							for ( int i = 0; i< FIELD_LENGTH ;i++) {
+								database[pTemp->index].memo[i] = '\0';
+								database[pTemp->index].memo[i] = val[i];
+							}
+							unsigned int newValue = Hash(val, myStrLen(val), MEMO);
+							InsertIntoHashArray(MemoHash, pTemp->index, newValue, val);
+						}
+						break;
+					}
+					//cout << "Matching:[" << database[pTemp->index].name <<"], [" << str <<"]" << endl;
+				}
+				pTemp = pTemp->pNext;			
+			}
+		}
+		break;
+		case MEMO:{
+			record = MemoHash[hashValue];
+			//Compare with the main node
+			if ( record == nullptr ){ return count;}
+			if ( record->index == -1 ) { return count; }
+			NodePtr pTemp = record;
+			while ( pTemp !=nullptr){
+				if ( myStrCmp(database[pTemp->index].memo, str) == true){
+					count++;
+					switch(fieldToChange){
+						case NAME:{
+							for ( int i = 0; i< FIELD_LENGTH ;i++) {
+								database[pTemp->index].name[i] = '\0';
+								database[pTemp->index].name[i] = val[i];
+							}
+							unsigned int newValue = Hash(val, myStrLen(val), NAME);
+							InsertIntoHashArray(NameHash, pTemp->index, newValue, val);
+						}
+						break;
+						case NUMBER:{
+							for ( int i = 0; i< FIELD_LENGTH ;i++) {
+								database[pTemp->index].number[i] = '\0';
+								database[pTemp->index].number[i] = val[i];
+							}
+							unsigned int newValue = Hash(val, myStrLen(val), NUMBER);
+							InsertIntoHashArray(NumberHash, pTemp->index, newValue, val);
+						}
+						break;
+						case BIRTHDAY:{
+							for ( int i = 0; i< FIELD_LENGTH ;i++) {
+								database[pTemp->index].bday[i] = '\0';
+								database[pTemp->index].bday[i] = val[i];
+							}
+							unsigned int newValue = Hash(val, myStrLen(val), BIRTHDAY);
+							InsertIntoHashArray(BDayHash, pTemp->index, newValue, val);
+						}
+						break;
+						case EMAIL:{
+							for ( int i = 0; i< FIELD_LENGTH ;i++) {
+								database[pTemp->index].email[i] = '\0';
+								database[pTemp->index].email[i] = val[i];
+							}
+							unsigned int newValue = Hash(val, myStrLen(val), EMAIL);
+							InsertIntoHashArray(EmailHash, pTemp->index, newValue, val);
+						}
+						break;
+						case MEMO:{
+							for ( int i = 0; i< FIELD_LENGTH ;i++) {
+								database[pTemp->index].memo[i] = '\0';
+								database[pTemp->index].memo[i] = val[i];
+							}
+							unsigned int newValue = Hash(val, myStrLen(val), MEMO);
+							InsertIntoHashArray(MemoHash, pTemp->index, newValue, val);
+						}
+						break;
+					}
+					//cout << "Matching:[" << database[pTemp->index].name <<"], [" << str <<"]" << endl;
+				}
+				pTemp = pTemp->pNext;			
+			}
+		}
+		break;
+	}
+	return count;
+}
 
 void InitDB(){
+
 	dbRecordIndex = 0;
 	ResetDatabase();
 	ResetHashArray(NameHash);
@@ -635,7 +1085,7 @@ void InitDB(){
 
 void Add(char* name, char* number, char* birthday, char* email, char* memo){
 
-	//cout << "Add:[" << name << " " << number << " " << birthday << " "<< email << " "<< memo << "]" << endl;
+	cout << "Add:[" << name << " " << number << " " << birthday << " "<< email << " "<< memo << "]" << endl;
 	unsigned int nameHash = Hash(name, myStrLen(name), NAME);
 	unsigned int numberHash = Hash(number, myStrLen(number), NUMBER);
 	unsigned int bDayHash = Hash(birthday, myStrLen(birthday), BIRTHDAY);
@@ -650,32 +1100,37 @@ void Add(char* name, char* number, char* birthday, char* email, char* memo){
 	InsertIntoHashArray(BDayHash, index, bDayHash, birthday);
 	InsertIntoHashArray(EmailHash, index, emailHash, email);
 	InsertIntoHashArray(MemoHash, index, memoHash, memo);
-
-	//PrintHash(NameHash,dbRecordIndex);
-	//PrintHash(NumberHash,dbRecordIndex);
-	//PrintHash(BDayHash,dbRecordIndex);
-	//PrintHash(EmailHash,dbRecordIndex);
-	//PrintHash(MemoHash,dbRecordIndex);
-	//cout << "Add" << endl;
 }
 
 int Delete(FIELD field, char* str){
-	//cout << "Delete" << endl;
-return 0;
+	int count = 0;
+	count = DeleteLookUp(field, str);
+	if ( count <= 0 ){
+		cout << "Delete :[" << str << "] NOT FOUND" << endl;
+	} 
+	return count;
 }
 
 int Change(FIELD field, char* str, FIELD changefield, char* changestr){
-	//cout << "Change" << endl;
-	return 0;
+	int count = 0;
+	count = ChangeLookUp(field,str,changefield, changestr);
+	if ( count <= 0 ){
+		cout << "Change :[" << str << "] NOT FOUND" << endl;
+	} 
+	return count;
 }
 
 RESULT Search(FIELD field, char* str, FIELD returnfield){
 	RESULT ret;
 	
 	int count = 0;
+	cout << "Params :[" << field << " " << str << " " << returnfield << "]" << endl;
 	count = HashLookup(field, str, returnfield, ret.str);
-	if ( count == 0 ){
+	if ( count <= 0 ){
 		cout << "Searching:[" << str << "] NOT FOUND" << endl;
+	} else {
+		cout << "Seached:[" << count << "], Returns:[" << ret.str <<"]" << endl;
 	}
+	ret.count = count;
 	return ret;
 }
