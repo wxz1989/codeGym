@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 using namespace std;
+#define MAX_SIZE 100
 
 struct Node{
 
@@ -97,6 +98,44 @@ int ReArrangeList1(NodeDPtr pHead){
 	return 0;
 }
 
+//Time Complexity : O(N^2)
+int LLPairSumCount(NodePtr pHead, int num){
+	
+	int pairCount = 0;
+	int index = 0;
+
+	NodePtr pOuter = nullptr;
+	NodePtr pInner = nullptr;
+
+	int pairs[MAX_SIZE] = {0};
+
+	pOuter = pHead;
+
+	while (pOuter){
+		pInner = pOuter->next;
+		while(pInner){
+			if((pOuter->data + pInner->data) == num ){
+				pairs[index++] = pOuter->data;
+				pairs[index++] = pInner->data;
+				pairCount++;
+			}
+			pInner = pInner->next;
+		}
+		pOuter = pOuter->next;
+	}
+
+	cout << "Pairs: (";
+	for ( int i = 0 ;i < index ;i++){
+		cout << pairs[i] <<" ";
+
+		if( i>0 && i%2==1 ) {
+			cout << "),(";
+		}
+	}
+	cout << endl;
+	return pairCount;
+}
+
 
 int main() {
 	int T;
@@ -131,6 +170,9 @@ int main() {
 
 		if( ReArrangeList1(&pHead) == -1){ std::cout <<-1 << endl; } 
 		else { PrintList(pHead); }
+
+		int pairCount = LLPairSumCount(pHead, 10);
+		cout <<"No of Pairs:[" << pairCount <<"]" << endl;
 
 	}
 	return 0;
