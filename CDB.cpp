@@ -195,7 +195,7 @@ static void cmd_delete()
 	result = Delete((FIELD)field, str);
 	if (result != check){
 		Score -= ScoreIdx;
-		cout << "Delete Failed :FieldToDel.:["<< field <<"], Str:["<< str <<"] Expected Count:[" << check << "], Received Count:[" << result << "]" << endl;
+		//cout << "Delete Failed :FieldToDel.:["<< field <<"], Str:["<< str <<"] Expected Count:[" << check << "], Received Count:[" << result << "]" << endl;
 	}
 }
 
@@ -208,7 +208,7 @@ static void cmd_change()
 	result = Change((FIELD)field, str, (FIELD)changefield, changestr);
 	if (result != check) {
 		Score -= ScoreIdx;
-		cout << "Change Failed : Search Field:["<< field <<"] Search Str:[" <<  str <<"] ChangeField:["<< changefield <<"] ChangeTo:[" << changestr <<"] Exp.Count:[" << check << "], Rec.Count:[" << result << "]" << endl;
+		//cout << "Change Failed : Search Field:["<< field <<"] Search Str:[" <<  str <<"] ChangeField:["<< changefield <<"] ChangeTo:[" << changestr <<"] Exp.Count:[" << check << "], Rec.Count:[" << result << "]" << endl;
 	}
 }
 
@@ -222,7 +222,7 @@ static void cmd_search()
 
 	if (result.count != check || (result.count == 1 && (strcmp(checkstr, result.str) != 0))){
 		Score -= ScoreIdx;
-		cout << "Search Failed : Expected Count:[" << check << "], Received Count:[" << result.count << "], Expected Value:[" << checkstr << "], Received Value:[" << result.str << "]" << endl;
+		//cout << "Search Failed : Expected Count:[" << check << "], Received Count:[" << result.count << "], Expected Value:[" << checkstr << "], Received Value:[" << result.str << "]" << endl;
 	}
 }
 
@@ -281,10 +281,14 @@ int main()
 }
 
 void ResetHashArray(Node* array[], int size = MOD_PRIME);
-void ResetHashArray(Node* array[], int size){ for (int i = 0; i < size; i++){ array[i] = nullptr; } }
+void ResetHashArray(Node* array[], int size){ 
+	for (int i = 0; i < size; i++){ 
+		array[i] = nullptr; } 
+}
 
 void PrintRecordFromDatabase(int i){
 
+	/*
 	cout << " ********* RECORD ********* " << endl;
 	cout << "Name:[" << database[i].name << "]" << endl;
 	cout << "Number:[" << database[i].number << "]" << endl;
@@ -292,6 +296,7 @@ void PrintRecordFromDatabase(int i){
 	cout << "Email:[" << database[i].email << "]" << endl;
 	cout << "Memo:[" << database[i].memo << "]" << endl;
 	cout << " ************************** " << endl;
+	*/
 }
 
 void PrintDatabase(){ for (unsigned int i = 0; i < dbRecordIndex; i++){ PrintRecordFromDatabase(i); } }
@@ -318,15 +323,23 @@ void ClearAllHashArray(){
 	ClearHashArray(MemoHash);
 }
 
+void ResetAllHashArray(){
+	ResetHashArray(NameHash);
+	ResetHashArray(NumberHash);
+	ResetHashArray(BDayHash);
+	ResetHashArray(EmailHash);
+	ResetHashArray(MemoHash);
+}
+
 void PrintHash(NodePtr hashArray[], int size){
 	for (int i = 0; i < size; i++) {
 		NodePtr pTemp = hashArray[i];
-		cout << "Bucket:[" << i << "]: {";
+		//cout << "Bucket:[" << i << "]: {";
 		while (pTemp != nullptr){
-			cout << pTemp->index << " ,";
+			//cout << pTemp->index << " ,";
 			pTemp = pTemp->pNext;
 		}
-		cout << "}" << endl;
+		//cout << "}" << endl;
 	}
 }
 
@@ -408,9 +421,6 @@ void CompareAndCopy(NodePtr record, FIELD sourceField, char* str, FIELD retField
 	NodePtr pTemp = record;
 
 	while (pTemp != nullptr){
-		if (myStrCmp(database[pTemp->index].email, "nefnz@t.com")){
-			cout << "Found Email" << endl;
-		}
 		if (pTemp->index != -1){
 			char sourceFieldStr[FIELD_LENGTH] = { '\0' };
 
@@ -469,10 +479,10 @@ int Hash(char* source, int length, FIELD fID){
 	if (fID == NAME || fID == EMAIL || fID == MEMO) {
 		for (int i = 0; i < length; i++){
 			if (source[i] >= base_a && source[i] <= base_z){
-				hash = (hash*multiplier) + abs(source[i] - base_a);
+				hash = (hash*multiplier) + (source[i] - base_a);
 			}
 			else if (source[i] >= base_A && source[i] <= base_Z){
-				hash = (hash*multiplier) + abs(source[i] - base_A);
+				hash = (hash*multiplier) + (source[i] - base_A);
 			}
 		}
 	}
@@ -482,7 +492,7 @@ int Hash(char* source, int length, FIELD fID){
 
 		for (int i = 0; i < length; i++){
 			if (source[i] >= base_zero && source[i] <= base_nine){
-				hash = (hash*multiplier) + abs(source[i] - base_zero);
+				hash = (hash*multiplier) + (source[i] - base_zero);
 			}
 		}
 	}
@@ -526,10 +536,6 @@ void CompareAndChange(NodePtr pRecord, FIELD sourceField, char* str, FIELD field
 	//cout << "Match Started" << endl;
 	while (pTemp != nullptr){
 
-		if (myStrCmp(database[pTemp->index].memo, "pwvknijpbql")){
-			PrintRecordFromDatabase(pTemp->index);
-			cout << "found" << endl;
-		}
 		if (pTemp->index != -1){
 			char sourceFieldStr[FIELD_LENGTH] = { '\0' };
 			GetFieldString(pTemp->index, sourceField, sourceFieldStr);
@@ -542,11 +548,6 @@ void CompareAndChange(NodePtr pRecord, FIELD sourceField, char* str, FIELD field
 				ResetAndCopyField(fieldToChange, pTemp->index, valToChange);
 				unsigned int hashValue = Hash(valToChange, myStrLen(valToChange), fieldToChange);
 				InsertIntoHashArray(fieldToChange, pTemp->index, hashValue);
-
-				if (myStrCmp(database[pTemp->index].memo, "pwvknijpbql")){
-					PrintRecordFromDatabase(pTemp->index);
-					cout << "found&updated" << endl;
-				}
 			}
 		}
 		pTemp = pTemp->pNext;
@@ -659,7 +660,7 @@ int DeleteAll(int dbIndex, char* str, FIELD field){
 	NodePtr pTemp = nullptr;
 	unsigned int hash = 0;
 
-	if (dbIndex < 0 || dbIndex > MAX_SIZE) { cout << "dbIndex:[" << dbIndex <<"] Invalid Record Index" << endl;  return count; }
+	if (dbIndex < 0 || dbIndex > MAX_SIZE) { return count; }
 
 	switch (field){
 	case NAME:{
@@ -684,7 +685,7 @@ int DeleteAll(int dbIndex, char* str, FIELD field){
 
 					hash = Hash(database[dbIndex].number, myStrLen(database[dbIndex].number), NUMBER);
 					record = NumberHash[hash];
-					if (record == nullptr){ cout << "Number Record is null" << endl; return count; }
+					if (record == nullptr){ return count; }
 					pTemp = record;
 
 					while (pTemp != nullptr)
@@ -704,7 +705,7 @@ int DeleteAll(int dbIndex, char* str, FIELD field){
 
 					  hash = Hash(database[dbIndex].bday, myStrLen(database[dbIndex].bday), BIRTHDAY);
 					  record = BDayHash[hash];
-					  if (record == nullptr){ cout << "bday Record is null" << endl; return count; }
+					  if (record == nullptr){ return count; }
 
 					  pTemp = record;
 					  while (pTemp != nullptr)
@@ -724,7 +725,7 @@ int DeleteAll(int dbIndex, char* str, FIELD field){
 
 				   hash = Hash(database[dbIndex].email, myStrLen(database[dbIndex].email), EMAIL);
 				   record = EmailHash[hash];
-				   if (record == nullptr){ cout << "email Record is null" << endl; return count; }
+				   if (record == nullptr){ return count; }
 
 				   pTemp = record;
 				   while (pTemp != nullptr)
@@ -744,7 +745,7 @@ int DeleteAll(int dbIndex, char* str, FIELD field){
 	case MEMO:{
 				  hash = Hash(database[dbIndex].memo, myStrLen(database[dbIndex].memo), MEMO);
 				  record = MemoHash[hash];
-				  if (record == nullptr){ cout << "memo Record is null" << endl; return count; }
+				  if (record == nullptr){ return count; }
 
 				  pTemp = record;
 				  while (pTemp != nullptr)
@@ -803,20 +804,12 @@ int DeleteLookUp(FIELD field, char* str){
 	record = GetFieldRecord(field, hashValue);
 
 	if (record != nullptr){
-		if (myStrCmp(database[record->index].name, "choizonuwa") || myStrCmp(database[record->index].number, "01025521931") || 
-			myStrCmp(database[record->index].bday, "19880830") || myStrCmp(database[record->index].email, "nefnz@t.com") ||
-			myStrCmp(database[record->index].memo, "pwvknijpbql")){
-			cout << "Found" << endl;
-		}
 		//Node with Collission found, now iterate and find your matching node
 		NodePtr pTemp = record;
 		while (pTemp != nullptr){
 			if (pTemp->index != -1) {
 				GetFieldString(pTemp->index, field, sourceStr);
 
-				if (myStrCmp(database[pTemp->index].name, "choizonuwa")){
-					cout << "found" << endl;
-				}
 				if (myStrCmp(sourceStr, str) == true){
 					count = DeleteAll(pTemp->index, str, field);
 				}
@@ -874,10 +867,6 @@ RESULT Search(FIELD field, char* str, FIELD returnfield){
 	RESULT ret;
 	ret.count = 0;
 	for (int i = 0; i < FIELD_LENGTH; i++){ ret.str[i] = '\0'; }
-
-	if (myStrCmp(str, "nefnz@t.com")){
-		cout << "Found Email" << endl;
-	}
 	SearchLookUp(field, str, returnfield, ret);
 	return ret;
 }
@@ -887,9 +876,5 @@ void InitDB(){
 	dbRecordIndex = 0;
 	ResetDatabase();
 	ClearAllHashArray();
-	ResetHashArray(NameHash);
-	ResetHashArray(NumberHash);
-	ResetHashArray(BDayHash);
-	ResetHashArray(EmailHash);
-	ResetHashArray(MemoHash);
+	ResetAllHashArray();
 }
