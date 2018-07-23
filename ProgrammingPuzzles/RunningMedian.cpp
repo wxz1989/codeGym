@@ -2,90 +2,75 @@
 #include <queue>
 #include <conio.h>
 #include <functional>
-#include <iomanip>
-//#include <concurrent_priority_queue.h>
 
 using namespace std;
 
-#define SIZE 10
-
-int main(){
-
-	//int data[] = { 12, 4, 5, 3, 8, 7 };
-	int data[] = { 1,2,3,4,5,6,7,8,9,10};
+vector<double> runningMedian(vector<int> stream){
+	vector<double> rm;
 	int count = 0;
-	double median = 0;
-
-	std::setprecision(1);
+	double median = 0, divisor = 2.0;
 
 	priority_queue<int> maxHeap;
 	priority_queue<int, std::vector<int>, std::greater<int>> minHeap;
-	
-	priority_queue<int> maxTemp;
-	priority_queue<int, std::vector<int>, std::greater<int>> minTemp;
-	
-	for (count = 1; count <=SIZE; count++){
-		maxHeap.push(data[count-1]);
-		minHeap.push(data[count-1]);
-		
-		double minT = 0;
-		double maxT = 0;
 
-		if (count > 2){
-			if (count % 2 == 0){
 
-				maxTemp = maxHeap;
-				minTemp = minHeap;
+	for (unsigned int i = 0;  i< stream.size(); i++){
+		int ele = stream[i];
 
-				maxTemp.pop();
-				minTemp.pop();
+		if (maxHeap.size() && ele > maxHeap.top()){
+			minHeap.push(ele);
+		} else {
+			maxHeap.push(ele);
+		}
 
-				minT = minTemp.top();
-				maxT = maxTemp.top();
-
-				if (maxT == minT){
-					median = maxT;
-				} else {
-					median = double(minT + maxT) / 2.0;
-				}
+		int temp = 0;
+		if (abs(maxHeap.size() - minHeap.size() > 1)){
+			if (maxHeap.size() > minHeap.size()){
+				temp = maxHeap.top();
+				maxHeap.pop();
+				minHeap.push(temp);
 			}
-			else{
-				int popOperation = 0;
-				if (count > 3){
-					popOperation = (count-1) - 2;					
-				}
-				else {
-					popOperation = (count) - 2;
-				}
-
-				maxTemp = maxHeap;
-				minTemp = minHeap; 
-
-				for (int j = 0; j < popOperation; j++){
-					maxTemp.pop();
-					minTemp.pop();
-				}
-
-				minT = minTemp.top();
-				maxT = maxTemp.top();
-				
-				if (minT == maxT){
-					median = maxT;
-				}
-				else {
-					median = double(minT + maxT) / 2.0;
-				}
-			}
-		} else{
-			if (count == 1){
-				median = data[0];
-			} else { 
-				median = double((data[0] + data[1]) / 2.0);
+			else {
+				temp = minHeap.top();
+				minHeap.pop();
+				maxHeap.push(temp);
 			}
 		}
-		cout << "Median:[" << double(median) << "]" << endl;
-	}
 
+		//Error-1 : When there is only 1 element in the stream.
+		if (i == 0){ 
+			if ( maxHeap.size() > 0){
+				median = maxHeap.top();
+			} else {
+				median = minHeap.top();
+			}
+		}
+		else {
+			if ( (i+1) % 2 == 1){			//Error-2 : Stream size is dynamic, hence use i instead of stream size.
+				if (maxHeap.size() > minHeap.size()){ median = maxHeap.top(); } 
+				else { median = minHeap.top(); }
+			}
+			else {
+				median += maxHeap.top();
+				median += minHeap.top();
+				median /= divisor;
+			}
+			rm.push_back(median);
+		}
+		cout << "Median:[" << median << "]" << endl;
+		median = 0;
+	}
+	return rm;
+}
+int main(){
+
+	//int data[] = { 12, 4, 5, 3, 8, 7 };
+	//int data[] = { 1,2,3,4,5,6,7,8,9,10};
+	int data[] = { 5, 15, 1, 3, 2, 8, 7, 9, 10, 6, 11, 4 };
+
+	vector<double> rm;
+	vector<int> stream(data, data + 12);
+	rm = runningMedian(stream);
 	_getche();
 
 	return 0;
