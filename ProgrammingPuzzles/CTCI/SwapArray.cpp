@@ -44,36 +44,61 @@ void SwapArray(int arr[], int size, int swapSize){
 	int start = 0;
 	int end = 0;
 	int mid = 0;
-	for (start = 0; start< size; start++){
-		if ((start + swapSize) < size){
-			end = (start + swapSize) - 1;
-			mid = (start + end) / 2;
-		} else if( start < size){
-			end = size -1;
-			mid = (start + end) / 2;
+	if (swapSize == 2){
+		for (start = 1; start <size; start += swapSize){
+			int temp = arr[start-1];
+			arr[start-1] = arr[start];
+			arr[start] = temp;
 		}
-		else {
-			start = size;
-			return;
-		}
-		int temp = 0;
-		if (swapSize % 2 == 0){
-			for (; start <= mid ,end >= mid; (start++, end--)){
-				temp = arr[start];
-				arr[start] = arr[end];
-				arr[end] = temp;
+		return;
+	}
+	else {
+		for (start = 0; start < size; ){
+			{
+				if ((start + swapSize) < size){
+					end = (start + swapSize) - 1;
+					mid = (start + end) / 2;
+				}
+				else if (start < size){
+					end = size - 1;
+					mid = (start + end) / 2;
+				}
+				else {
+					start = size;
+					return;
+				}
+				int temp = 0;
+				if (swapSize % 2 == 0){
+					for (;(start < end);){
+						temp = arr[start];
+						arr[start] = arr[end];
+						arr[end] = temp;
+						start++;
+						end--;
+					}
+					start = (start + swapSize/2);
+				}
+				else {
+					for (; start < mid, end > mid; ){
+						temp = arr[start];
+						arr[start] = arr[end];
+						arr[end] = temp;
+						start++;
+						end--;
+					}
+					start = (start + swapSize / 2)+1;
+				}
 			}
 		}
-		else {
-			for (; start < mid,end > mid; (start++, end--)){
-				temp = arr[start];
-				arr[start] = arr[end];
-				arr[end] = temp;
-			}
-		}
-		start = end + 1;
 	}
 	//Swap the leftOvers if any.
+}
+void PrintArray(int arr[], int size){
+	cout << "Arr:[";
+	for (int i = 0; i < size; i++){
+		cout << arr[i] << " ";
+	}
+	cout << "]" << endl;
 }
 int main(){
 
@@ -85,8 +110,13 @@ int main(){
 		Seq[i] = data[i];
 		//MSIS[i] = Seq[i];
 	}
+	int swapSize = 0;
 	cout << "MaxSum Incr. SubSeq. :[" << Solve(Seq, arraySize) << "]" << endl;
-	SwapArray(Seq, arraySize, 3);
+	PrintArray(Seq, arraySize);
+	cout << "Enter SwapSize:";
+	cin >> swapSize;
+	SwapArray(Seq, arraySize, swapSize);
+	PrintArray(Seq, arraySize);
 	_getche();
 	return 0;
 }
