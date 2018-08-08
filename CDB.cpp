@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <iostream>
-#include <conio.h>
+//#include <conio.h>
 
 #define INVALID_HASH -1
 #define MULTIPLIER		67
@@ -276,7 +276,7 @@ int main()
 		printf("#%d %d\n", tc, Score);
 	}
 	printf("TotalScore = %d\n", TotalScore);
-	_getche();
+	//_getche();
 	return 0;
 }
 
