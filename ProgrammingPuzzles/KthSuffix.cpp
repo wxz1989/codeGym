@@ -8,8 +8,16 @@ using namespace std;
 
 string alphaDict[MAX_SIZE];
 
+
+struct Indices{
+	int orgIndex;
+	int alphaDiff;
+};
+
 struct trieNode{
+
 	int alphabets[DICT_SIZE][MAX_SIZE];
+	Indices IndStore[DICT_SIZE][MAX_SIZE];
 	char value;
 };
 
@@ -53,6 +61,35 @@ char suffix[MAX_SIZE] = { '\0' };
 SNodePtr sRootNode;
 TTNode rootNode;
 
+string sortString(std::string str){
+
+	int alphabets[DICT_SIZE] = { 0 };
+	//Initialize
+	for (int i = 0; i < DICT_SIZE; i++){ alphabets[i] = 0; } // n = 26
+	//Hash all characters keeping count of all
+	for (unsigned int i = 0; i < str.length(); i++){ alphabets[str[i] - 'a']++; }  // n = m (String length)
+
+	//Read hash and prepare sorted string
+	string ret;
+	for (int i = 0; i < DICT_SIZE; i++){			// n = 26
+		if (alphabets[i] != 0) { 
+			for (int j = 0; j < alphabets[i]; j++){   //n = M(no of times that character occured in that string) 26*m(length of the string)
+				ret += ((char)'a' + i); 
+			} 
+		} 
+	}
+	return ret;
+}
+
+
+/*Time complexity of this would be
+= n + m + 26 * m
+=>removing constant it would be
+= n + m + m
+= n + 2m;
+=	2m (twice the size of string, if string length is > 26)
+*/
+
 int strLength(char suffix[]){
 	int length = 0;
 	while (suffix[length++] != '\0'){}
@@ -64,6 +101,7 @@ void Release(SNodePtr pRoot){
 		if (pRoot != nullptr){
 			if (pRoot->suff[i] != nullptr){
 				Release(pRoot->suff[i]);
+				cout << "Deleting:[" << pRoot->value.c_str() << "]" << endl; 
 				delete pRoot->suff[i];
 				pRoot->suff[i] = nullptr;
 			}
@@ -90,8 +128,16 @@ void AddToTrie(string input, int dictionaryIndex){
 
 	int indexToPut = input[0] - 'a';
 	while (rootNode.alphabets[indexToPut][j] != -1){ j++;  }
+	
+	/*rootNode.IndStore[indexToPut][j].orgIndex = dictionaryIndex;
+	if (input.length() >= j )
+		rootNode.IndStore[indexToPut][j].alphaDiff = input[j] - 'a';
+	else 
+		rootNode.IndStore[indexToPut][j].alphaDiff = input[0] - 'a';
+	
+	*/
 	rootNode.alphabets[indexToPut][j] = dictionaryIndex;
-
+	
 	if (sRootNode == nullptr){
 		sRootNode = new SNode();
 		SNodePtr pNewNode = new SNode();
@@ -121,15 +167,32 @@ void AddSuffix(std::string input, int k){
 	}
 }
 
+string findKthSuffixRec(SNodePtr rootNode, int ind, int& found){
+
+	string ret("");
+	if (rootNode == nullptr || found > K){ 
+		return ""; 
+	}
+
+	
+	for (int i = ind; i< DICT_SIZE ;i++){
+		if (rootNode->suff[i] != nullptr){
+			found++;
+			ret = findKthSuffixRec(rootNode->suff[i], i, found);
+			if (found == K){
+				return rootNode[i].value;
+			}
+		}
+	}
+	return ret;
+}
+
 string findKthSuffix(int suffixIndex){
 	int kthElement = 0;
 	int j = 0;
 	if (suffixIndex > 0 ){ 
 		for (int i = 0; i < DICT_SIZE;i++){
 			if (rootNode.alphabets[i][0] != -1){
-				while (rootNode.alphabets[i][j++] != -1 ){
-					
-				}
 				kthElement++;
 				if (kthElement == suffixIndex){
 					int index = rootNode.alphabets[i][0];
@@ -156,6 +219,10 @@ int main(int argc, char** argv)
 	have to comment the following line when you submit for your scores.
 	*/
 
+	string test("wvotseejlcuuubtiaynoriiqscofsarulkpkncnotjioonwwtbmtrfrbizzaelsofdstuzfepimejxipwvmwnsdbiqwdmohcqnswxcpdecjvildcrofjcfhcjiwcynvkgalswnvivhakxnrfeasymuvlpyzxdwbmazjoauepxetkpvwzsfvwkgrojsfcedgvgdgqebwanhozynbwcvovasdciowvckoroeesuxsgczrbztrktitnvpblhvemmjesnfnltvmzodsiknkeguqmkzjlzcbbdluzvhhfzbbhabnfwlrqnfspacvpharaizgkteuelezbejipwoavulaxajrjkvpttkmmuyrgxblyjcgmfldvmnuoerftaxnnrkgtavuasyjijotyemwm");
+	cout << test.length() << endl;
+	sortString("banana");
+	return 0;
 
 	freopen("KthSuffixSampleInput.txt", "r", stdin);
 	cin >> T;
@@ -171,7 +238,10 @@ int main(int argc, char** argv)
 		cin >> suffix;
 		suffixStr.append(suffix);
 		AddSuffix(suffixStr, K);
-		string answer = findKthSuffix(K);
+		int foundCount = 0;
+		string answer = findKthSuffixRec(sRootNode, 0, foundCount);//findKthSuffix(K);
+
+		Release(sRootNode);
 
 		/////////////////////////////////////////////////////////////////////////////////////////////
 		/*
